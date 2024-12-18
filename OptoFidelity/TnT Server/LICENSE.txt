@@ -1,0 +1,25 @@
+OptoFidelity Ltd
+Business ID: 1959786-3
+Visiokatu 3
+33720 Tampere
+www.optofidelity.com
+
+SOFTWARE COPYRIGHT AND LICENSE NOTICE
+
+This software and its accompanying documentation (the "Software") are protected by copyright owned by OptoFidelity Ltd (the "Company") and/or its affiliates or licensors, as applicable. The Company and/or its affiliates or licensors, as applicable, retain all intellectual property rights, including, without limitation, any and all copyrights, patents, trade secrets, trademarks, and other proprietary rights pertaining to the Software.
+
+No transfer of ownership or title to any copyright or other intellectual property rights pertaining to the Software is granted or implied.
+
+Subject to the user having a separate commercial agreement with the Company, the user is granted a non-exclusive, revocable, non-transferable, limited license to use the Software for its intended purpose. This license does not extend the right to sublicense, modify, distribute, or create derivative works based upon the Software. Reverse engineering, or any attempt thereof, to discover the Software's source code is strictly prohibited.
+
+Unauthorized use, reproduction, or distribution of the Software is strictly prohibited and may result in legal action.
+
+Unless the Company gives a specific prior permission in writing, the user shall not disclose to any third party any technical or proprietary, financial or commercial information or trade secrets which may be or may have been entrusted in whatever form in connection with the Software. The above shall not apply to information or material, which is legitimately and publicly available to the user from other sources.
+
+For inquiries regarding licensing, usage, or any other matters, please contact us at support@optofidelity.com.
+
+THIS SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+IN NO EVENT SHALL THE COMPANY BE LIABLE FOR ANY INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL LOSSES OR DAMAGES, OR FOR ANY LOSS OF BUSINESS, PROFITS OR GOODWILL, WHATEVER THE CAUSE THEREOF, EVEN IF THE COMPANY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH LOSSES OR DAMAGES. IN NO EVENT SHALL COMPANY’S TOTAL AGGREGATE LIABILITY ARISING OUT OF THE SOFTWARE EXCEED ONE HUNDRED EUROS (EUR 100.00).
+
+Copyright © 2023 OptoFidelity Ltd. All rights reserved.

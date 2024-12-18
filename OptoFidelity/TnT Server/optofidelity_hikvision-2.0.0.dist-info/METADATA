@@ -1,0 +1,26 @@
+Metadata-Version: 2.1
+Name: optofidelity-hikvision
+Version: 2.0.0
+Summary: HikVision C-bindings
+Home-page: https://www.optofidelity.com
+Download-URL: https://gitlab-ci-token:64_vP8b_jyXqKvg1uegSx5U@git.optofidelity.net/optofidelity/hikvision.gita8da96729b0a37e8e4ca7340e2a26159cccd7dc8
+Author: OptoFidelity Ltd.
+Author-email: support@optofidelity.com
+Maintainer: RnD Team
+License: BSD-3-Clause
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Operating System :: Linux
+Classifier: Operating System :: MacOS
+Classifier: Operating System :: Microsoft :: Windows
+License-File: LICENSE
+Provides-Extra: bundle
+Requires-Dist: pyinstaller ; extra == 'bundle'
+Requires-Dist: optofidelity-setuptools ; extra == 'bundle'
+Provides-Extra: test
+Requires-Dist: pyinstaller ; extra == 'test'
+Requires-Dist: pytest ; extra == 'test'
+

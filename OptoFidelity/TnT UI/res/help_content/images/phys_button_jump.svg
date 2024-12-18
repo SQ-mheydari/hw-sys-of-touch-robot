@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="446.52826"
+   height="224.75912"
+   overflow="hidden"
+   version="1.1"
+   id="svg91"
+   sodipodi:docname="phys_button_jump.svg"
+   style="overflow:hidden"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)">
+  <metadata
+     id="metadata95">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="3360"
+     inkscape:window-height="1990"
+     id="namedview93"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="3.7083822"
+     inkscape:cx="193.48657"
+     inkscape:cy="92.887919"
+     inkscape:window-x="4468"
+     inkscape:window-y="-12"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg91" />
+  <defs
+     id="defs5">
+    <clipPath
+       id="clip0">
+      <path
+         d="M 0,0 H 1280 V 720 H 0 Z"
+         id="path2"
+         inkscape:connector-curvature="0"
+         style="clip-rule:evenodd;fill-rule:evenodd" />
+    </clipPath>
+  </defs>
+  <rect
+     style="fill:#c5e0b4;stroke:#507e32;stroke-width:1.33333337;stroke-miterlimit:8;stroke-dasharray:none"
+     id="rect9"
+     stroke-miterlimit="8"
+     height="27.46398"
+     width="445.19492"
+     y="196.62848"
+     x="0.66666669" />
+  <rect
+     style="fill:#5b9bd5;stroke:#41719c;stroke-width:1.33333337;stroke-miterlimit:8;stroke-dasharray:none"
+     id="rect11"
+     stroke-miterlimit="8"
+     height="31.391949"
+     width="71.345337"
+     y="165.23653"
+     x="86.756706" />
+  <rect
+     style="fill:#5b9bd5;stroke:#41719c;stroke-width:1.33333337;stroke-miterlimit:8;stroke-dasharray:none"
+     id="rect13"
+     stroke-miterlimit="8"
+     height="31.391949"
+     width="70.869705"
+     y="165.23653"
+     x="302.69525" />
+  <path
+     style="stroke-width:1"
+     inkscape:connector-curvature="0"
+     id="path15"
+     d="m 121.24029,178.82749 5e-5,-57.03265 h -0.47564 l -5e-5,57.03265 z m -2.14036,-0.63416 1.90254,3.80508 1.90255,-3.80508 z m 3.80513,-55.764 -1.90254,-3.80508 -1.90254,3.80508 z" />
+  <path
+     style="stroke-width:1.33333337;stroke-miterlimit:8;stroke-dasharray:none"
+     inkscape:connector-curvature="0"
+     id="path17"
+     d="m 121.24029,115.43717 4e-5,-41.681007 h -0.47563 l -4e-5,41.681007 z m -2.14036,-0.63418 1.90254,3.80508 1.90255,-3.80508 z m 3.80513,-40.412667 -1.90254,-3.80527 -1.90254,3.80527 z" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.10244989;stroke-miterlimit:8;stroke-dasharray:3.99999998, 2.99999998"
+     inkscape:connector-curvature="0"
+     id="path19"
+     stroke-miterlimit="8"
+     d="m 102.45269,118.62424 h 18.50079" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.33333337;stroke-miterlimit:8;stroke-dasharray:4.00000012, 4.00000012;stroke-dashoffset:0"
+     inkscape:connector-curvature="0"
+     id="path21"
+     stroke-miterlimit="8"
+     d="M 74.865815,182.83505 H 121.22222" />
+  <text
+     style="font-weight:400;font-size:7.61016941px;font-family:Calibri, Calibri_MSFontService, sans-serif;stroke-width:2.10244989"
+     id="text29"
+     font-size="16"
+     font-weight="400"
+     x="43.725956"
+     y="120.76461">Approach<tspan
+   style="stroke-width:1"
+   id="tspan23"
+   y="120.76461"
+   x="75.232048">position</tspan>
+<tspan
+   style="stroke-width:1"
+   id="tspan25"
+   y="184.9754"
+   x="18.520647">Pressed</tspan>
+<tspan
+   style="stroke-width:1"
+   id="tspan27"
+   y="184.9754"
+   x="44.341335">position</tspan>
+</text>
+  <path
+     style="stroke-width:1"
+     inkscape:connector-curvature="0"
+     id="path31"
+     d="m 336.70322,178.82749 5e-5,-57.03265 h -0.47564 l -5e-5,57.03265 z m -2.14036,-0.63416 1.90254,3.80508 1.90255,-3.80508 z m 3.80513,-55.764 -1.90254,-3.80508 -1.90254,3.80508 z" />
+  <path
+     style="stroke-width:1"
+     inkscape:connector-curvature="0"
+     id="path33"
+     d="m 336.70322,115.43717 4e-5,-41.681007 h -0.47563 l -4e-5,41.681007 z m -2.14036,-0.63418 1.90254,3.80508 1.90255,-3.80508 z m 3.80513,-40.412667 -1.90254,-3.80527 -1.90254,3.80527 z" />
+  <text
+     style="font-weight:400;font-size:7.61016941px;font-family:Calibri, Calibri_MSFontService, sans-serif;stroke-width:2.10244989"
+     id="text37"
+     font-size="16"
+     font-weight="400"
+     x="89.250465"
+     y="192.10994">Button 1<tspan
+   style="stroke-width:1"
+   id="tspan35"
+   y="192.10994"
+   x="306.79379">Button 2</tspan>
+</text>
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.33333337;stroke-miterlimit:8;stroke-dasharray:4.00000012, 4.00000012;stroke-dashoffset:0"
+     inkscape:connector-curvature="0"
+     id="path39"
+     stroke-miterlimit="8"
+     d="m 121.00247,70.484213 214.1007,-0.37492" />
+  <text
+     style="font-weight:400;font-size:7.61016941px;font-family:Calibri, Calibri_MSFontService, sans-serif;stroke-width:2.10244989"
+     id="text55"
+     font-size="16"
+     font-weight="400"
+     x="147.98338"
+     y="78.433044">Path<tspan
+   style="stroke-width:1"
+   id="tspan41"
+   y="78.433044"
+   x="163.60326">that</tspan>
+<tspan
+   style="stroke-width:1"
+   id="tspan43"
+   y="78.433044"
+   x="177.96112">robot</tspan>
+<tspan
+   style="stroke-width:1"
+   id="tspan45"
+   y="78.433044"
+   x="196.78358">moves</tspan>
+<tspan
+   style="stroke-width:1"
+   id="tspan47"
+   y="78.433044"
+   x="218.79268">from</tspan>
+<tspan
+   style="stroke-width:1"
+   id="tspan49"
+   y="78.433044"
+   x="235.47511">button</tspan>
+<tspan
+   style="stroke-width:1"
+   id="tspan51"
+   y="78.433044"
+   x="258.04544">to</tspan>
+<tspan
+   style="stroke-width:1"
+   id="tspan53"
+   y="78.433044"
+   x="266.2963">button</tspan>
+</text>
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#4472c4;stroke-width:1.33333337;stroke-miterlimit:8;stroke-dasharray:none"
+     inkscape:connector-curvature="0"
+     id="path57"
+     stroke-miterlimit="8"
+     d="m 115.77048,118.62424 c -2.62693,0 -4.75635,-0.35482 -4.75635,-0.79288 V 95.397533 c 0,-0.43806 -2.12942,-0.79288 -4.75636,-0.79288 2.62694,0 4.75636,-0.35483 4.75636,-0.79289 v -22.43383 c 0,-0.43806 2.12942,-0.79288 4.75635,-0.79288" />
+  <text
+     style="font-weight:400;font-size:7.61016941px;font-family:Calibri, Calibri_MSFontService, sans-serif;stroke-width:2.10244989"
+     id="text69"
+     font-size="16"
+     font-weight="400"
+     x="59.511349"
+     y="96.982826">Jump<tspan
+   style="stroke-width:1"
+   id="tspan59"
+   y="96.982826"
+   x="77.744026">height</tspan>
+<tspan
+   style="stroke-width:1"
+   id="tspan61"
+   y="120.28896"
+   x="360.52542">Approach</tspan>
+<tspan
+   style="stroke-width:1"
+   id="tspan63"
+   y="120.28896"
+   x="392.03149">position</tspan>
+<tspan
+   style="stroke-width:1"
+   id="tspan65"
+   y="183.54849"
+   x="389.78937">Pressed</tspan>
+<tspan
+   style="stroke-width:1"
+   id="tspan67"
+   y="183.54849"
+   x="415.60971">position</tspan>
+</text>
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#4472c4;stroke-width:1.33333337;stroke-miterlimit:8;stroke-dasharray:none"
+     inkscape:connector-curvature="0"
+     id="path71"
+     stroke-miterlimit="8"
+     d="m 337.8923,118.62424 c 4.07163,0 7.3724,-0.55007 7.3724,-1.22866 l -9e-5,-21.562267 c 0,-0.67859 3.30075,-1.22866 7.3724,-1.22866 -4.07165,0 -7.3724,-0.55008 -7.3724,-1.22867 v -21.56226 c 0,-0.67858 -3.30072,-1.22867 -7.37235,-1.22867" />
+  <text
+     style="font-weight:400;font-size:7.61016941px;font-family:Calibri, Calibri_MSFontService, sans-serif;stroke-width:2.10244989"
+     id="text75"
+     font-size="16"
+     font-weight="400"
+     x="359.11801"
+     y="96.982826">Jump<tspan
+   style="stroke-width:1"
+   id="tspan73"
+   y="96.982826"
+   x="377.35068">height</tspan>
+</text>
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.10244989;stroke-miterlimit:8;stroke-dasharray:3.99999998, 2.99999998"
+     inkscape:connector-curvature="0"
+     id="path77"
+     stroke-miterlimit="8"
+     d="m 336.4654,118.14861 h 18.50079" />
+  <rect
+     style="fill:#ffc000;stroke:#bc8c00;stroke-width:1.33333337;stroke-miterlimit:8;stroke-dasharray:none"
+     id="rect79"
+     stroke-miterlimit="8"
+     height="53.746822"
+     width="14.269068"
+     y="16.362597"
+     x="179.03001" />
+  <rect
+     style="fill:#a5a5a5;stroke:#787878;stroke-width:1.33333337;stroke-miterlimit:8;stroke-dasharray:none"
+     id="rect81"
+     stroke-miterlimit="8"
+     height="16.17161"
+     width="44.709747"
+     y="0.66666669"
+     x="163.33405" />
+  <rect
+     style="fill:#c5e0b4;stroke:#507e32;stroke-width:1.33333337;stroke-miterlimit:8;stroke-dasharray:none"
+     id="rect83"
+     stroke-miterlimit="8"
+     height="97.980934"
+     width="46.136654"
+     y="98.64756"
+     x="212.80016" />
+  <text
+     style="font-weight:400;font-size:7.61016941px;font-family:Calibri, Calibri_MSFontService, sans-serif;stroke-width:2.10244989"
+     id="text85"
+     font-size="16"
+     font-weight="400"
+     x="222.24388"
+     y="131.70422">Obstacle</text>
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.33333337;stroke-miterlimit:8;stroke-dasharray:4.00000012, 4.00000012;stroke-dashoffset:0"
+     inkscape:connector-curvature="0"
+     id="path87"
+     stroke-miterlimit="8"
+     d="m 337.8923,181.88378 h 46.3564" />
+</svg>

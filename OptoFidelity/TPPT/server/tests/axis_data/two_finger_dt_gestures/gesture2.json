@@ -1,0 +1,107 @@
+{
+"args": {
+"radius": 10,
+"azimuth2": 0,
+"x2": 50,
+"y2": 60,
+"tilt2": 0,
+"y1": 4,
+"tilt1": 0,
+"clearance": -1,
+"azimuth1": 0,
+"x1": 3
+},
+"gesture": "put_swipe",
+"executed_commands": [
+[
+"Robot_SaveLocation",
+[
+20.0
+]
+],
+[
+"Robot_ChangeSpeed",
+[
+[
+200.0
+]
+]
+],
+[
+"Robot_ChangeAcceleration",
+[
+[
+71.42857142857143,
+71.42857142857143
+]
+]
+],
+[
+"Robot_SaveLocation",
+[
+20.0
+]
+],
+[
+"Robot_SaveLocation",
+[
+20.0
+]
+],
+[
+"TwoFinger_RotateJumpTo",
+[
+[
+-90.0
+]
+]
+],
+[
+"Robot_MoveToPosition",
+[
+[
+303.4287124875017,
+96.34025746170015,
+49.0
+]
+]
+],
+[
+"Robot_ChangeSpeed",
+[
+[
+200.0
+]
+]
+],
+[
+"Robot_ChangeAcceleration",
+[
+[
+71.42857142857143,
+71.42857142857143
+]
+]
+],
+[
+"Robot_Gesture",
+[
+[
+3.0,
+[
+303.4287124875017,
+96.34025746170015,
+49.0,
+-180.0,
+243.57128751249834,
+167.65974253829984,
+49.0,
+-180.0,
+10.0,
+59.0
+]
+]
+]
+]
+]
+}

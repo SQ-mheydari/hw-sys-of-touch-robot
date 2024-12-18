@@ -1,0 +1,6 @@
+Build: 465449
+Version: 5.19.1
+Commit: 364fa98b673530633a8144c9f0918b79364ce038
+Branch: TOUCH7825-349_improve_halcon_ocr
+Platform: win
+Architecture: amd64

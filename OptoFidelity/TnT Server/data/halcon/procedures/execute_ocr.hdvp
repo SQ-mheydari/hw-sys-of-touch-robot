@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="22.11.2.0">
+<procedure name="execute_ocr">
+<interface>
+<io>
+<par name="image" base_type="iconic" dimension="0"/>
+</io>
+<ic>
+<par name="deep_ocr_handle" base_type="ctrl" dimension="0"/>
+<par name="language" base_type="ctrl" dimension="0"/>
+<par name="pattern" base_type="ctrl" dimension="0"/>
+<par name="regexp" base_type="ctrl" dimension="0"/>
+<par name="case_sensitive" base_type="ctrl" dimension="0"/>
+<par name="detection_tiling" base_type="ctrl" dimension="0"/>
+<par name="detection_tiling_overlap" base_type="ctrl" dimension="0"/>
+<par name="detection_orientation" base_type="ctrl" dimension="0"/>
+<par name="detection_min_character_score" base_type="ctrl" dimension="0"/>
+<par name="detection_min_link_score" base_type="ctrl" dimension="0"/>
+<par name="detection_min_word_area" base_type="ctrl" dimension="0"/>
+<par name="detection_min_word_score" base_type="ctrl" dimension="0"/>
+<par name="recognition_image_width" base_type="ctrl" dimension="0"/>
+<par name="image_ratio_divider" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="result_dict" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<c>* This software and its accompanying documentation are protected by copyright owned by </c>
+<c>* OptoFidelity Ltd and/or its affiliates or licensors, as applicable.</c>
+<c>* For more information check the LICENSE.txt file.</c>
+<c></c>
+<c>* Adapt detection params</c>
+<l>set_deep_ocr_param (deep_ocr_handle, 'detection_tiling_overlap', detection_tiling_overlap)</l>
+<l>set_deep_ocr_param (deep_ocr_handle, 'detection_min_link_score', detection_min_link_score)</l>
+<l>set_deep_ocr_param (deep_ocr_handle, 'detection_min_word_area', detection_min_word_area)</l>
+<c>*</c>
+<l>set_deep_ocr_param (deep_ocr_handle, 'detection_orientation', detection_orientation)</l>
+<l>set_deep_ocr_param (deep_ocr_handle, 'detection_min_word_score', detection_min_word_score)</l>
+<l>set_deep_ocr_param (deep_ocr_handle, 'detection_tiling', detection_tiling)</l>
+<c>*</c>
+<c>* Keep the following parameters in the same ration as the original image</c>
+<c>** Get image size</c>
+<l>get_image_size (image, ImageWidth, ImageHeight)</l>
+<l>set_deep_ocr_param (deep_ocr_handle, 'detection_image_height', ImageHeight / image_ratio_divider)</l>
+<l>set_deep_ocr_param (deep_ocr_handle, 'detection_image_width', ImageWidth / image_ratio_divider)</l>
+<c>*</c>
+<c>* This parameter influences the size of the word boxes. Even if the boxes overlap a little the recognition can work correctly</c>
+<l>set_deep_ocr_param (deep_ocr_handle, 'detection_min_character_score', detection_min_character_score)</l>
+<c>*</c>
+<c>*</c>
+<c>* Adapt recognition params</c>
+<l>set_deep_ocr_param (deep_ocr_handle, 'recognition_image_width', recognition_image_width)</l>
+<c>*</c>
+<c>*</c>
+<c>* Apply Deep OCR</c>
+<c>*</c>
+<l>apply_deep_ocr (image, deep_ocr_handle, 'auto', DeepOcrResult)</l>
+<c></c>
+<c>* Parse Deep OCR result data</c>
+<l>get_dict_tuple (DeepOcrResult, 'words', WordData)</l>
+<l>get_dict_tuple (WordData, 'row', Row)</l>
+<l>get_dict_tuple (WordData, 'col', Col)</l>
+<l>get_dict_tuple (WordData, 'phi', Phi)</l>
+<l>get_dict_tuple (WordData, 'length1', Length1)</l>
+<l>get_dict_tuple (WordData, 'length2', Length2)</l>
+<l>get_dict_tuple (WordData, 'line_index', LineIndex)</l>
+<l>get_dict_tuple (WordData, 'word', Word)</l>
+<l>get_dict_tuple (WordData, 'char_candidates', CharCandidates)</l>
+<c></c>
+<c>* Calculate score for each word by taking the average of the score values of its characters</c>
+<l>WordScores := []</l>
+<l>get_dict_param (CharCandidates, 'keys', [], AllKeys)</l>
+<l>for Index1 := 0 to |AllKeys|-1 by 1</l>
+<l>    NextKey := AllKeys[Index1]</l>
+<l>    NextTupleCopy := CharCandidates.[NextKey]</l>
+<l>    if (|NextTupleCopy| == 1)</l>
+<c>        * Only one character in the word</c>
+<l>        get_dict_tuple (NextTupleCopy, 'confidence', WordConfidence)</l>
+<l>        WordScores := [WordScores, WordConfidence[0]]</l>
+<l>    else</l>
+<c>        * Multiple characters in the word</c>
+<c>        * Calculate average for the character scores  </c>
+<l>        CharacterConfidences := []</l>
+<l>        for Index2 := 0 to |NextTupleCopy|-1 by 1</l>
+<l>            get_dict_tuple (NextTupleCopy[Index2], 'confidence', CharacterConfidence)</l>
+<l>            CharacterConfidences := [CharacterConfidences, CharacterConfidence[0]]</l>
+<l>        endfor</l>
+<l>        WordConfidence := sum(CharacterConfidences) / |CharacterConfidences|</l>
+<l>        WordScores := [WordScores, WordConfidence]   </l>
+<l>    endif      </l>
+<l>endfor</l>
+<c></c>
+<c></c>
+<c>* Initialize result strings</c>
+<c>* Return empty strings if no words are found or if more than one search pattern strings are requested (|Row| == 0 or |PatternString| &gt; 1)</c>
+<l>topLeftX_px := []</l>
+<l>topLeftY_px := []</l>
+<l>bottomRightX_px := []</l>
+<l>bottomRightY_px := []</l>
+<l>centerX_px := []</l>
+<l>centerY_px := []</l>
+<l>text := [] // Search pattern of searched word or sentence when pattern found, all read words from the image when empty search pattern used</l>
+<l>score := [] // Score for each found instance</l>
+<l>info := [] // Actually read words and sentences when pattern search is used, possible additional information</l>
+<c></c>
+<l>if (|Row| != 0 and |pattern| == 1)</l>
+<c></c>
+<c>    * Generate word box regions</c>
+<l>    gen_rectangle2 (WordBoxes, Row, Col, Phi, Length1, Length2)</l>
+<c>    *</c>
+<c>    * Find coordinates for surrounding rectangles parallel to the coordinate axes</c>
+<l>    smallest_rectangle1 (WordBoxes, tmp_topLeftY_px, tmp_topLeftX_px, tmp_bottomRightY_px, tmp_bottomRightX_px)</l>
+<c>    *</c>
+<c>    * Find center points of the surrounding rectangles parallel to the coordinate axes</c>
+<l>    area_center (WordBoxes, _, tmp_centerY_px, tmp_centerX_px)</l>
+<c>    *</c>
+<c>    * Check if PatternString exist</c>
+<l>    if (|pattern| == 1)</l>
+<c>        * Extract single words from the pattern string</c>
+<l>        Substrings := split(pattern, ' ')</l>
+<l>        if (|Substrings| == 1)</l>
+<c>            * Pattern string consists of one word only</c>
+<c>            * Word can have additional characters in front of or after it</c>
+<c>            *            </c>
+<c>            * Find all word matches among the read words</c>
+<l>            ForwardSearchPosition := strstr(Word, Substrings)</l>
+<l>            WordCandidateIndices := ForwardSearchPosition+1</l>
+<c></c>
+<c>            * Process word candidates</c>
+<l>            WordCandidates := select_mask(Word, WordCandidateIndices)</l>
+<l>            WordCandidatesIndex := select_mask([0:|Word|-1], WordCandidateIndices) // Index within complete word list</l>
+<l>            WordCandidatesLineIndex := select_mask(LineIndex, WordCandidateIndices) // Line index </l>
+<c>            * Calculate score for the word candidates</c>
+<l>            SubstringsLength := strlen(Substrings)</l>
+<l>            WordCandidatesLength := strlen(WordCandidates)</l>
+<l>            WordCandidatesScore := real(SubstringsLength) / real(WordCandidatesLength)</l>
+<c>            *</c>
+<l>            if (|WordCandidates| &gt;= 1)</l>
+<c>                * At least one word found</c>
+<c>                * Fill result strings</c>
+<l>                topLeftX_px := [topLeftX_px, tmp_topLeftX_px[WordCandidatesIndex]]</l>
+<l>                topLeftY_px := [topLeftY_px, tmp_topLeftY_px[WordCandidatesIndex]]</l>
+<l>                bottomRightX_px := [bottomRightX_px, tmp_bottomRightX_px[WordCandidatesIndex]]</l>
+<l>                bottomRightY_px := [bottomRightY_px, tmp_bottomRightY_px[WordCandidatesIndex]]</l>
+<l>                centerX_px := [centerX_px, tmp_centerX_px[WordCandidatesIndex]]</l>
+<l>                centerY_px := [centerY_px, tmp_centerY_px[WordCandidatesIndex]]</l>
+<l>                text := gen_tuple_const(|WordCandidatesIndex|, Substrings) // Return only searched word in 'text'</l>
+<l>                score := [score, WordCandidatesScore] </l>
+<l>                info := [info, Word[WordCandidatesIndex]] // Return actually read word in 'info'</l>
+<l>            endif           </l>
+<l>        elseif (|Substrings| &gt; 1)</l>
+<c>            * Pattern string consists of multiple words</c>
+<c>            * Sentence can have misread words</c>
+<l>            WordCandidateIndices := gen_tuple_const(|Word|, 0)</l>
+<c>            * Find all exact word matches among the read words</c>
+<c>            * Misread words will be handled later</c>
+<l>            for Index := 0 to |Substrings|-1 by 1</l>
+<l>                WordCandidate := Word [==] Substrings[Index]</l>
+<l>                WordCandidateIndices := WordCandidateIndices bor WordCandidate</l>
+<l>            endfor</l>
+<c>            * Process word candidates</c>
+<l>            WordCandidates := select_mask(Word, WordCandidateIndices)</l>
+<l>            WordCandidatesIndex := select_mask([0:|Word|-1], WordCandidateIndices) // Index within complete word list</l>
+<l>            WordCandidatesLineIndex := select_mask(LineIndex, WordCandidateIndices) // Line index</l>
+<c>            * Look for a sentence starting from the first word in the search string</c>
+<c>            * Check if there are multiples of the first word and multiples of the sentence</c>
+<l>            FirstWordIndices := find(WordCandidates, Substrings[0])</l>
+<c>            *</c>
+<c>            * The words are in an ordered list line by line, from left to right and from top to bottom </c>
+<l>            LastAcceptedWordIndex := []</l>
+<l>            for Index1 := 0 to |FirstWordIndices|-1 by 1               </l>
+<l>                sentence_acceptance := [1]</l>
+<l>                sentence_score_calculation := [1]</l>
+<c>                * Check if the following words form the searched sentence</c>
+<c>                * Stop when the sentence word count is full</c>
+<l>                Index3 := 0</l>
+<l>                SelectedWordCandidatesIndex := WordCandidatesIndex[FirstWordIndices[Index1]]</l>
+<l>                for Index2 := 0 to |Substrings|-1 by 1   </l>
+<l>                    RoundIndex := Index2+FirstWordIndices[Index1]</l>
+<l>                    if (LastAcceptedWordIndex &gt;= SelectedWordCandidatesIndex or |WordCandidates|-1 &lt; RoundIndex+1)</l>
+<c>                        * Break search for this round if the selected first word is already adopted as part of the previous sentence</c>
+<c>                        * or if there are too few word candidates</c>
+<l>                        break</l>
+<l>                    endif</l>
+<l>                    Index3 := Index3+1</l>
+<l>                    if (Index3 &gt; |Substrings|-1)</l>
+<l>                        Index3 := 1</l>
+<l>                    endif</l>
+<c>                    </c>
+<l>                    string_content_rule := WordCandidates[RoundIndex+1] == Substrings[Index3]</l>
+<l>                    serial_number_rule := WordCandidatesIndex[RoundIndex+1] - WordCandidatesIndex[RoundIndex] == 1</l>
+<l>                    line_number_rule := WordCandidatesLineIndex[RoundIndex+1] - WordCandidatesLineIndex[RoundIndex] == 1</l>
+<c>                    </c>
+<l>                    evaluate_rules := string_content_rule and (serial_number_rule or line_number_rule)</l>
+<c>                                         </c>
+<l>                    if (evaluate_rules == 0 and |WordCandidates| != |Substrings|)</l>
+<c>                        * Look for misread word, i.e. previous word that was not found                           </c>
+<l>                        if (WordCandidatesIndex[RoundIndex+1] - WordCandidatesIndex[RoundIndex] == 2)</l>
+<l>                            WordPreviousIndex := WordCandidatesIndex[RoundIndex]+1</l>
+<l>                            WordPreviousLineIndex := LineIndex[WordPreviousIndex]</l>
+<l>                            WordPrevious := Word[WordPreviousIndex]</l>
+<c>                            * Add misread word to word candidate list</c>
+<l>                            WordCandidates := insert(WordCandidates, RoundIndex+1, WordPrevious)</l>
+<l>                            WordCandidatesIndex := insert(WordCandidatesIndex, RoundIndex+1, WordPreviousIndex)</l>
+<l>                            WordCandidatesLineIndex := insert(WordCandidatesLineIndex, RoundIndex+1, WordPreviousLineIndex)</l>
+<c>                            * Collect misread results</c>
+<l>                            sentence_acceptance := [sentence_acceptance, 1]</l>
+<l>                            sentence_score_calculation := [sentence_score_calculation, 0]</l>
+<l>                            SelectedWordCandidatesIndex := [SelectedWordCandidatesIndex, WordPreviousIndex]                                 </l>
+<l>                        else</l>
+<c>                            * Check words beside and below the last found word candidate </c>
+<c>                            * Check next word to the right from the previous word candidate</c>
+<l>                            WordPreviousIndex := WordCandidatesIndex[RoundIndex]+1                         </l>
+<l>                            WordToRight := Word[WordPreviousIndex]</l>
+<c>                            * Check word below the previous word candidate</c>
+<l>                            WordLastFoundLeftX := tmp_topLeftX_px[WordPreviousIndex-1]</l>
+<l>                            WordLastFoundLineIndex := LineIndex[WordPreviousIndex-1]</l>
+<l>                            WordBelowMask := tmp_topLeftX_px [&gt;] WordLastFoundLeftX-10 band tmp_topLeftX_px [&lt;] WordLastFoundLeftX+10 band LineIndex [==] WordLastFoundLineIndex+1</l>
+<l>                            WordBelow := select_mask(Word, WordBelowMask)</l>
+<c>                            * Check if the expected word is a substring of either of the candidates </c>
+<l>                            WordExpected := Substrings[Index2+1]</l>
+<l>                            WordToRightIndex := strstr(WordToRight, WordExpected)</l>
+<l>                            WordBelowIndex := strstr(WordBelow, WordExpected)</l>
+<l>                            if (WordToRightIndex != -1 and WordToRightIndex != [])</l>
+<c>                                * Add misread word to word candidate list</c>
+<l>                                WordCandidates := insert(WordCandidates, RoundIndex+1, WordToRight)</l>
+<l>                                WordCandidatesIndex := insert(WordCandidatesIndex, RoundIndex+1, WordPreviousIndex)</l>
+<l>                                WordCandidatesLineIndex := insert(WordCandidatesLineIndex, RoundIndex+1, LineIndex[WordPreviousIndex])</l>
+<c>                                * Collect misread results</c>
+<l>                                sentence_acceptance := [sentence_acceptance, 1]</l>
+<l>                                sentence_score_calculation := [sentence_score_calculation, 0]</l>
+<l>                                SelectedWordCandidatesIndex := [SelectedWordCandidatesIndex, WordPreviousIndex]                                        </l>
+<l>                            elseif (WordBelowIndex != -1 and WordBelowIndex != [])</l>
+<c>                                * Add misread word to word candidate list</c>
+<l>                                WordCandidates := insert(WordCandidates, RoundIndex+1, WordBelow)</l>
+<l>                                WordCandidatesIndex := insert(WordCandidatesIndex, RoundIndex+1, select_mask([0:|Word|-1], WordBelowMask))</l>
+<l>                                WordCandidatesLineIndex := insert(WordCandidatesLineIndex, RoundIndex+1, LineIndex[select_mask([0:|Word|-1], WordBelowMask)])</l>
+<c>                                * Collect misread results</c>
+<l>                                sentence_acceptance := [sentence_acceptance, 1]</l>
+<l>                                sentence_score_calculation := [sentence_score_calculation, 0]</l>
+<l>                                SelectedWordCandidatesIndex := [SelectedWordCandidatesIndex, select_mask([0:|Word|-1], WordBelowMask)]                                  </l>
+<l>                            else</l>
+<c>                                * No word found</c>
+<c>                                * Write evaluate_rules = 0 only</c>
+<l>                                sentence_acceptance := [sentence_acceptance, evaluate_rules]  </l>
+<c>                                * Break search for this round</c>
+<l>                                break</l>
+<l>                            endif                              </l>
+<l>                        endif                                                                                                             </l>
+<l>                    else</l>
+<c>                        * Collect correctly read results</c>
+<l>                        sentence_acceptance := [sentence_acceptance, evaluate_rules]</l>
+<l>                        sentence_score_calculation := [sentence_score_calculation, 1]</l>
+<l>                        SelectedWordCandidatesIndex := [SelectedWordCandidatesIndex, WordCandidatesIndex[RoundIndex+1]]</l>
+<l>                    endif</l>
+<c>                                         </c>
+<l>                    if (Index3 == |Substrings|-1 and sentence_acceptance == gen_tuple_const(|sentence_acceptance|, 1))</l>
+<c>                        * The sentence word count is full                          </c>
+<c>                        * All words found</c>
+<c>                        *</c>
+<c>                        * Set index of the last accepted word of the sentence</c>
+<l>                        LastAcceptedWordIndex := SelectedWordCandidatesIndex[|SelectedWordCandidatesIndex|-1]</l>
+<c>                        *</c>
+<c>                        * Calculate word box for the sentence </c>
+<c>                        * Generate word box regions for the selected words</c>
+<l>                        gen_rectangle1 (WordBoxes, tmp_topLeftY_px[SelectedWordCandidatesIndex], tmp_topLeftX_px[SelectedWordCandidatesIndex], tmp_bottomRightY_px[SelectedWordCandidatesIndex], tmp_bottomRightX_px[SelectedWordCandidatesIndex]) </l>
+<c>                        * Generate smallest possible axis parallel rectangle enclosing all the word boxes</c>
+<c>                        * Find coordinates of the sentence box</c>
+<l>                        union1 (WordBoxes, SentenceBox)</l>
+<l>                        smallest_rectangle1 (SentenceBox, Row1, Column1, Row2, Column2)                              </l>
+<l>                        gen_rectangle1 (SentenceBox, Row1, Column1, Row2, Column2)</l>
+<c>                        * Find center point of the sentence box</c>
+<l>                        area_center (SentenceBox, _, RowCenter, ColumnCenter)</l>
+<c>                        * Calculate score for the sentence candidate</c>
+<c>                        * (Correct words - misread words) / correct words</c>
+<l>                        SentenceCandidateScore := real(sum(sentence_score_calculation)) / real(|sentence_score_calculation|)</l>
+<c>                        * Fill result strings</c>
+<l>                        topLeftX_px := [topLeftX_px, Column1]</l>
+<l>                        topLeftY_px := [topLeftY_px, Row1]</l>
+<l>                        bottomRightX_px := [bottomRightX_px, Column2]</l>
+<l>                        bottomRightY_px := [bottomRightY_px, Row2]</l>
+<l>                        centerX_px := [centerX_px, ColumnCenter]</l>
+<l>                        centerY_px := [centerY_px, RowCenter]</l>
+<l>                        text := [text, pattern] // Return only searched word in 'text'</l>
+<l>                        score := [score, SentenceCandidateScore] </l>
+<l>                        info := [info, join(Word[SelectedWordCandidatesIndex], ' ')] // Return actually read word in 'info'</l>
+<l>                    endif</l>
+<l>                endfor</l>
+<l>            endfor</l>
+<l>        else</l>
+<c>            * No pattern string</c>
+<c>            * Return all found words</c>
+<c>            *</c>
+<c>            * Score for each word is calculated by taking the average of the score values of its characters</c>
+<c>            *</c>
+<c>            * Fill result strings</c>
+<l>            topLeftX_px := [topLeftX_px, tmp_topLeftX_px]</l>
+<l>            topLeftY_px := [topLeftY_px, tmp_topLeftY_px]</l>
+<l>            bottomRightX_px := [bottomRightX_px, tmp_bottomRightX_px]</l>
+<l>            bottomRightY_px := [bottomRightY_px, tmp_bottomRightY_px]</l>
+<l>            centerX_px := [centerX_px, tmp_centerX_px]</l>
+<l>            centerY_px := [centerY_px, tmp_centerY_px]</l>
+<l>            text := [text, Word]</l>
+<l>            score := [score, WordScores] </l>
+<l>            info := []</l>
+<l>        endif</l>
+<l>    endif</l>
+<l>endif</l>
+<c>    </c>
+<c>* Create new result dictionary</c>
+<l>create_dict (result_dict)</l>
+<l>set_dict_tuple (result_dict, 'topLeftX_px', topLeftX_px)</l>
+<l>set_dict_tuple (result_dict, 'topLeftY_px', topLeftY_px)</l>
+<l>set_dict_tuple (result_dict, 'bottomRightX_px', bottomRightX_px)</l>
+<l>set_dict_tuple (result_dict, 'bottomRightY_px', bottomRightY_px)</l>
+<l>set_dict_tuple (result_dict, 'centerX_px', centerX_px)</l>
+<l>set_dict_tuple (result_dict, 'centerY_px', centerY_px)</l>
+<l>set_dict_tuple (result_dict, 'text', text)</l>
+<l>set_dict_tuple (result_dict, 'score', score)</l>
+<l>set_dict_tuple (result_dict, 'info', info)</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="execute_ocr">
+<parameters>
+<parameter id="case_sensitive">
+<default_type>integer</default_type>
+<type_list>
+<item>integer</item>
+</type_list>
+</parameter>
+<parameter id="deep_ocr_handle">
+<default_type>integer</default_type>
+<mixed_type>false</mixed_type>
+<sem_type>handle</sem_type>
+<type_list>
+<item>integer</item>
+</type_list>
+</parameter>
+<parameter id="detection_min_character_score">
+<default_value>0.5</default_value>
+</parameter>
+<parameter id="detection_min_link_score">
+<default_value>0.3</default_value>
+</parameter>
+<parameter id="detection_min_word_area">
+<default_value>10</default_value>
+</parameter>
+<parameter id="detection_min_word_score">
+<default_value>0.7</default_value>
+</parameter>
+<parameter id="detection_orientation">
+<default_value>'auto'</default_value>
+<values>
+<item>'auto'</item>
+<item>0</item>
+<item>45</item>
+<item>90</item>
+</values>
+</parameter>
+<parameter id="detection_tiling">
+<default_type>string</default_type>
+<default_value>'false'</default_value>
+<type_list>
+<item>string</item>
+</type_list>
+<values>
+<item>'true'</item>
+<item>'false'</item>
+</values>
+</parameter>
+<parameter id="detection_tiling_overlap">
+<default_value>64</default_value>
+</parameter>
+<parameter id="image">
+<sem_type>image</sem_type>
+</parameter>
+<parameter id="image_ratio_divider"/>
+<parameter id="language">
+<default_type>string</default_type>
+<type_list>
+<item>string</item>
+</type_list>
+</parameter>
+<parameter id="pattern">
+<default_type>string</default_type>
+<default_value>''</default_value>
+<type_list>
+<item>string</item>
+</type_list>
+</parameter>
+<parameter id="recognition_image_width">
+<default_value>120</default_value>
+</parameter>
+<parameter id="regexp">
+<default_type>integer</default_type>
+<type_list>
+<item>integer</item>
+</type_list>
+</parameter>
+<parameter id="result_dict"/>
+</parameters>
+</docu>
+</procedure>
+</hdevelop>

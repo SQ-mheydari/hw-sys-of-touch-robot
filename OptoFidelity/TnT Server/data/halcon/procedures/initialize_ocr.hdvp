@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="22.11.2.0">
+<procedure name="initialize_ocr">
+<interface>
+<oc>
+<par name="deep_ocr_handle" base_type="ctrl" dimension="0"/>
+<par name="detection_device" base_type="ctrl" dimension="0"/>
+<par name="recognition_device" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<c>* This software and its accompanying documentation are protected by copyright owned by </c>
+<c>* OptoFidelity Ltd and/or its affiliates or licensors, as applicable.</c>
+<c>* For more information check the LICENSE.txt file.</c>
+<c></c>
+<c>* Create a Deep OCR model</c>
+<l>create_deep_ocr ([], [], deep_ocr_handle)</l>
+<c>*</c>
+<c>* Get parameters</c>
+<l>query_available_dl_devices (['runtime'], ['cpu'], dl_device_handles)</l>
+<c></c>
+<c>* Use cpu</c>
+<l>set_deep_ocr_param (deep_ocr_handle, 'device', dl_device_handles[0])</l>
+<c></c>
+<c>* Check selected dl_device</c>
+<l>get_deep_ocr_param (deep_ocr_handle, 'detection_device', detection_device)</l>
+<l>get_deep_ocr_param (deep_ocr_handle, 'recognition_device', recognition_device)</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="initialize_ocr">
+<parameters>
+<parameter id="deep_ocr_handle">
+<default_type>integer</default_type>
+<mixed_type>false</mixed_type>
+<sem_type>handle</sem_type>
+<type_list>
+<item>integer</item>
+</type_list>
+</parameter>
+<parameter id="detection_device">
+<default_type>integer</default_type>
+<mixed_type>false</mixed_type>
+<sem_type>handle</sem_type>
+<type_list>
+<item>integer</item>
+</type_list>
+</parameter>
+<parameter id="recognition_device">
+<default_type>integer</default_type>
+<mixed_type>false</mixed_type>
+<sem_type>handle</sem_type>
+<type_list>
+<item>integer</item>
+</type_list>
+</parameter>
+</parameters>
+</docu>
+</procedure>
+</hdevelop>

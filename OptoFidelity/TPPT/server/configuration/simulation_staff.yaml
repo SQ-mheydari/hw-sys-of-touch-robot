@@ -1,0 +1,734 @@
+# TnT Server configuration for standard 3-axis robot (without voicecoil) simulator.
+# See doc/configuration.md for general information on how to use config files.
+port: 8000
+
+# Configuration consists of a list of node.
+nodes:
+
+# Root node of the node hierarchy.
+- name: tnt
+  cls: TnT.TnT
+  parent:
+  connection:
+
+
+# ================ Simulator ================
+
+# Required for running robot and camera simulators.
+# This section should be removed for real robot delivery.
+# See also "Simulator content" section below.
+
+
+- name: fileserver
+  cls: NodeFileServer
+  parent: tnt
+  arguments:
+    path: web
+    port: 8010
+  connection: tnt
+
+# Handles robot and camera simulation.
+- name: simulator
+  cls: NodeSimulator
+  parent: tnt
+  connection: tnt
+
+
+# ================ DUT server ================
+
+# DUT server manages communication with DUT application (Android and TnT Server).
+# Required for automatic DUT xy-positioning, sending image to DUT and other DUT communication.
+# Must be initialized at this point in config file.
+- name: dutserver
+  cls: DutServer
+  parent: tnt
+  arguments:
+    #host: 127.0.0.1
+    #host: 10.118.240.140
+    host: 0.0.0.0
+    port: 50008
+  connection: tnt
+
+
+# ================ Boilerplate config ================
+
+
+- name: workspaces
+  cls: TnT.Workspaces
+  parent: tnt
+  connection: tnt
+
+- name: ws
+  cls: TnT.Workspace
+  parent: tnt.workspaces
+  properties: {}
+  connection: tnt.workspaces
+
+# API Document parser.
+- name: doc
+  cls: NodeDoc
+  parent: tnt
+  connection: tnt
+
+
+# ================ Surface probe ================
+
+
+# Surface probe is needed for general surface probing when robot has voicecoil or similar trigger.
+# Required for automatic DUT and tip z-positioning.
+# ================ Surface probe ================
+
+- name: surfaceprobe
+  cls: NodeSurfaceProbe
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+  arguments:
+    robot: Robot1
+  properties:
+    surface_probe_settings:
+      robot_probing_step: 0.5
+      voicecoil_probe_position: 2.3
+      surface_detection_threshold: 0.2
+      voicecoil_probing_current: 100
+- name: dutpositioning
+  cls: NodeDutPositioning
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+  arguments:
+    robot: Robot1
+    camera: Camera1
+    # Surface probe must be specified if automatic z-positioning is used.
+    surfaceprobe: surfaceprobe
+
+
+# ================ Containers ================
+
+
+- name: robots
+  cls: TnT.Robots
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+
+- name: cameras
+  cls: TnT.Cameras
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+
+- name: tools
+  cls: TnT.Tools
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+
+- name: duts
+  cls: TnT.Duts
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+  arguments:
+    # Choose this according to robot (TnT.Gestures, Synchro.Gestures or Voicecoil.Gestures)
+    gestures_cls: Voicecoil.Gestures
+
+- name: tips
+  cls: TnT.Tips
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+
+- name: icons
+  cls: NodeIcons
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+  properties:
+    icon_folder_path: data/icons
+
+- name: images
+  cls: TnT.Images
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+  properties:
+    image_folder_path: data/images
+    # Number of most recent images to keep.
+    max_images: 10
+
+- name: detectors
+  cls: TnT.Detectors
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+
+- name: analyzers
+  cls: TnT.Analyzers
+  parent: tnt.workspaces.ws
+
+  connection:
+- name: physical_buttons
+  cls: TnT.PhysicalButtons
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+
+- name: motherboards
+  cls: TnT.Motherboards
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+
+- name: speakers
+  cls: NodeSpeakers
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+
+
+# ================ Detectors ================
+
+
+# Fiducial detector is needed for automatic tip slot XY positioning.
+- name: tip_fiducial
+  cls: TnT.Detector
+  parent: tnt.workspaces.ws.detectors
+  arguments:
+    driver: TipFiducial
+  connection:
+
+
+# ================ Force calibration ================
+
+
+# Futek sensor is used to measure force readings.
+- name: futek
+  cls: NodeFutek
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+  arguments:
+    serial_number: 765339
+    number_of_averages: 4
+    sample_rate: 25
+    invert_polarity: true
+
+# Force calibration procedure.
+# This is required if force calibration is done via UI or client.
+# Requires Futek sensor (or similar force sensor) configuration.
+- name: forcecalibrator
+  path: forcecalibrator
+  # NodeCalibratorForceVoiceCoil - Open loop force with voicecoil (synchro tool).
+  # NodeCalibratorOptoStdForce - Closed loop force (voicecoil tool with loadcell).
+  cls: NodeCalibratorForceVoiceCoil
+  #cls: NodeCalibratorOptoStdForce
+  parent: tnt.workspaces.ws
+  arguments:
+    robot: Robot1
+    sensor: futek
+
+
+# ================ Robot ================
+
+
+# Robot base frame.
+# Not strictly required but exists for legacy.
+  connection:
+- name: Robot1_base
+  cls: Node
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+
+
+# Robot node controls a physical robot or a simulation.
+# This robot node is configured for standard 3-axis robot (without voicecoil) simulator.
+# See configuration/robots for other robot configurations that can be used here instead.
+# Make sure that duts node's gestures_cls is appropriate for this robot. For 3-axis it should be TnT.Gestures.
+- name: Robot1
+  # Robot class depends on the type of robot (TnT.Robot, Synchro.Robot, TwoFingerDt.Robot, Voicecoil.Robot).
+  cls: Voicecoil.Robot
+  parent: tnt.workspaces.ws.robots
+  connection: tnt.workspaces.ws.Robot1_base
+  arguments:
+    driver: golden
+    # Run as simulator? Simulator is ran at host 127.0.0.1. Change to correct host for real robot.
+    simulator: true
+    host: 127.0.0.1
+    #host: 192.168.127.254
+    port: 4001
+    # Model determines the robot kinematics (see drivers/robots/goldenmov/kinematics).
+    model: staff
+    # Speed and acceleration after TnT Server has initialized.
+    speed: 30
+    acceleration: 50
+    # Home axes during init? Should be true in delivery.
+    # Setting to false makes init faster but axes must have been homed properly at some point.
+    home_axes: true
+    # Restore axis configs before homing? Should be true in delivery.
+    # Set to false only when testing custom axis settings.
+    restore_axis_configs: true
+    # Maximum speed to use when attaching or detaching tips.
+    max_tip_change_speed: 100
+    # Maximum acceleration to use when attaching or detaching tips.
+    max_tip_change_acceleration: 300
+    kinematic_parameters:
+      rotation_error_limit: 0.0001
+      position_error_limit: 0.0001
+      itol: 1e-8
+    # Define capture position for camera to move robot away from e.g. static camera view.
+    # The z-coordinate is optional. If not given, maximum z is used.
+    #camera_capture_positions:
+    #  Camera1:
+    #    x: 100
+    #    y: 50
+    #    z: 0
+    # If robot supports smart tips, uncomment lines below and set correct tool addresses.
+    #smart_tip:
+    #  # Mode can be simulator, normal or external.
+    #  mode: normal
+    #  addresses:
+    #    tool1: 8
+    #  # Define IP address of motherboard when using external mode.
+    #  ip_address: 192.168.127.254
+    #  id_chip_address: 7
+    #  # If true, SW tip status automatically updates according to HW status.
+    #  hot_changing: false
+  properties:
+    force_calibration_table:
+      y:
+      - 0
+      - 500
+      x:
+      - 0
+      - 500
+    robot_acceleration: 200
+    robot_velocity: 50.0
+    kinematic_name: tool1
+
+# Tool 1 mount is the last point (robot head) in the forward kinematics transform.
+    calibration_data: {}
+    default_kinematic_name: tool1
+    max_robot_acceleration: 100000
+    max_robot_velocity: 250
+    maximum_dut_tilt_angle: 15.0
+    voicecoil_cont_current: 800
+    voicecoil_kinematic_name: voicecoil1
+    voicecoil_nominal_cont_current: 250
+    voicecoil_nominal_peak_current: 300
+    voicecoil_peak_current: 900
+- name: tool1_mount
+  cls: Mount
+  parent: tnt.workspaces.ws.robots.Robot1
+  connection: tnt.workspaces.ws.Robot1_base.Robot1
+  properties:
+    mount_point: tool1
+
+# Camera mount is the point in the FK chain where camera is attached to.
+- name: camera_mount
+  cls: Mount
+  parent: tnt.workspaces.ws.robots.Robot1
+  connection: tnt.workspaces.ws.Robot1_base.Robot1
+  properties:
+    mount_point: camera
+
+# Tool 1 is the robot head where a tip can be attached (as child node).
+- name: tool1
+  cls: TnT.Tool
+  parent: tnt.workspaces.ws.tools
+  connection: tnt.workspaces.ws.Robot1_base.Robot1.tool1_mount
+  properties:
+    can_attach_tip: true
+    can_attach_tool: true
+    can_attach_multifinger_tip: false
+
+- name: tool2
+  cls: TnT.Tool
+  parent: tnt.workspaces.ws.tools
+  properties:
+    can_attach_tip: true
+    can_attach_tool: true
+    can_attach_multifinger_tip: false
+  frame:
+  - [1.0, 0.0, 0.0, -60.04]
+  - [0.0, 1.0, 0.0, 40.8188]
+  - [0.0, 0.0, 1.0, 63.453]
+  - [0.0, 0.0, 0.0, 1.0]
+  connection:
+- name: Camera1
+  cls: TnT.Camera
+  parent: tnt.workspaces.ws.cameras
+  connection: tnt.workspaces.ws.Robot1_base.Robot1.camera_mount
+  arguments:
+    # Set flips and rotation so that in camera image workspace x point right and y points down.
+    flipx: true
+    flipy: true
+    rotate: false
+    # driver can be one of yasler, ximea, simulator
+    driver: simulator
+    # camtype can be gige or usb (applicable to yasler)
+    camtype: gige
+    # Gige (ethernet) camera settings:
+    ip_address: 192.168.127.23
+    inter_packet_delay: 12000
+    packet_size: 1500
+    # Number of times to retry image capture in case of camera error.
+    retry_count: 10
+
+    # ximea serial number:
+    #serial_number: '23599259'
+
+    focal_length: 8
+    gain: 5.0
+    exposure: 0.005
+
+    # If using stream set max queue size to 1 to avoid memory filling up with images.
+    max_queue_size: 1
+  properties:
+    calibration:
+      intrinsic:
+      - - 6504.063593020617
+        - 0.0
+        - 960.0
+      - - 0.0
+        - 6541.532133153921
+        - 720.0
+      - - 0.0
+        - 0.0
+        - 1.0
+      dist_coeffs:
+      - - -1.5884128951658925
+        - -174.91736593070868
+        - -0.0015015204410029487
+        - 0.00010806502541439734
+        - 5339.9349201876485
+      ppmm: 17.1875
+    max_stream_fps: 30
+  frame:
+  - [1.0, 0.0, 0.0, -61.44159346271698]
+  - [0.0, 1.0, 0.0, -32.044600510725296]
+  - [0.0, 0.0, 1.0, 166.97700000000017]
+  - [0.0, 0.0, 0.0, 1.0]
+
+# Stylus calibration cameras
+- name: StylusCalibCameraX
+  cls: TnT.Camera
+  parent: tnt.workspaces.ws.cameras
+  connection: tnt.workspaces.ws.cameras
+  arguments:
+    flipx: false
+    flipy: true
+    rotate: true
+    driver: simulator
+    camtype: gige
+    ip_address: 192.168.127.30
+    inter_packet_delay: 500
+    packet_size: 1500
+    retry_count: 10
+    gain: 10.0
+    exposure: 0.005
+    max_queue_size: 1
+  properties:
+    calibration:
+      ppmm: 175
+    max_stream_fps: 30
+
+- name: StylusCalibCameraY
+  cls: TnT.Camera
+  parent: tnt.workspaces.ws.cameras
+  connection: tnt.workspaces.ws.cameras
+  arguments:
+    flipx: false
+    flipy: false
+    rotate: true
+    driver: simulator
+    camtype: gige
+    ip_address: 192.168.127.31
+    inter_packet_delay: 500
+    packet_size: 1500
+    retry_count: 10
+    gain: 10.0
+    exposure: 0.005
+    max_queue_size: 1
+  properties:
+    calibration:
+      ppmm: 175
+    max_stream_fps: 30
+
+- name: test_dut_image
+  cls: NodeSimulatorObject
+  parent: tnt.workspaces.ws
+  arguments:
+    enabled: true
+    type: texture
+    ppmm: 20
+    position: [ -140, 125, 0.1, 0, 180, 0 ]
+    image: tntserver/web/img/test_dut.png
+    #draw: color black; rect 0 0 100 100; color red; rect 10 10 90 90;
+    width: 70
+    height: 118
+    simulator_parent_object: table
+  connection: tnt.workspaces.ws
+
+# Visualization of index blob target that can be used to test e.g. camera distortion calibration.
+# To enable this first disable chess_target below as it is spatially overlapping.
+- name: index_blob_target
+  cls: NodeSimulatorObject
+  parent: tnt.workspaces.ws
+  arguments:
+    enabled: false
+    type: blobs
+    ppmm: 8
+    #position: [50, 430, 0, 0, 0, 0]
+    position: [0, 0, 1, 0, 0, 0]
+    width: 200
+    height: 200
+    margin: 20
+    radius: 3
+    simulator_parent_object: table
+  connection: tnt.workspaces.ws
+
+# Visualization of chess target that can be used to test e.g. camera distortion calibration.
+- name: chess_target
+  cls: NodeSimulatorObject
+  parent: tnt.workspaces.ws
+  arguments:
+    enabled: true
+    type: chessboard
+    ppmm: 4
+    #position: [50, 430, 0, 0, 0, 0]
+    position: [-70, 295, 0.1, 0, 180, 0]
+    width: 200
+    height: 160
+    bs: 8
+    bw: 14
+    bh: 9
+    simulator_parent_object: table
+  connection: tnt.workspaces.ws
+
+# Visualization of blob target that can be used to test e.g. camera offset calibration.
+- name: single_blob_target
+  cls: NodeSimulatorObject
+  parent: tnt.workspaces.ws
+  arguments:
+    enabled: true
+    type: texture
+    ppmm: 2
+    position: [-290, 325, 0.1, 0, 180, 0]
+    width: 100
+    height: 100
+    simulator_parent_object: table
+    draw: color black; rect 0 0 100 100 0; color white; circle 50 50 5 0;
+  connection: tnt.workspaces.ws
+
+# Visualization of circle target that can be used to test e.g. camera offset calibration.
+- name: camera_offset_target
+  cls: NodeSimulatorObject
+  parent: tnt.workspaces.ws
+  arguments:
+    enabled: true
+    type: texture
+    ppmm: 8
+    position: [-310, 235, 0.1, 0, 180, 0]
+    width: 50
+    height: 50
+    simulator_parent_object: table
+    draw: color black; circle 25 25 6 4; line 10 25 40 25 2; line 25 10 25 40 2;
+  connection: tnt.workspaces.ws
+
+# This is a special DUT that responds to DUT communication. Can be used to test automatic DUT positioning.
+- name: simu_dut
+  cls: DutSimulation
+  parent: tnt.workspaces.ws.duts
+  arguments:
+    screen:
+      width: 100
+      height: 150
+      ppmm: 10
+      position: [-430, 305, 0.1, 0, 180, -10]
+    host: 127.0.0.1
+    port: 50008
+
+  properties:
+    tl:
+      x: 430.186
+      y: 304.987
+      z: -187.977
+    tr:
+      x: 528.583
+      y: 287.619
+      z: -187.977
+    server_host: 127.0.0.1
+    base_distance: 10.0
+    width: 99.91805158728826
+    bl:
+      x: 456.239
+      y: 452.637
+      z: -187.977
+    height: 149.93092179066994
+    touch_distance: 0.0
+    server_port: 50008
+    data:
+      screen_width:
+        value: '0'
+      image_height:
+        value: '0'
+      screen_height:
+        value: '0'
+      image_width:
+        value: '0'
+    surface:
+    surface_data:
+    svg_scale:
+    - 1
+    - 1
+  connection: tnt.workspaces.ws.duts
+  frame:
+  - [0.984781929332055, 0.17379456740944238, 0.0, 430.186]
+  - [-0.17379456740944244, 0.984781929332055, 0.0, 304.987]
+  - [0.0, 0.0, 0.9999999999999998, -187.977]
+  - [0.0, 0.0, 0.0, 1.0]
+- cls: NodeSimulatorObject
+  name: simu_dut_object
+  properties:
+    transient: true
+  arguments:
+    draw: color orange; rect 0 0 62.0 134.347 0;
+    position:
+    - 0
+    - 0
+    - 0
+    - 0.0
+    - 0.0
+    - 0.0
+    width: 62.0
+    type: texture
+    height: 134.347
+    ppmm: 10.0
+    simulator_parent_object: table
+  parent: tnt.workspaces.ws.duts.simu_dut
+  connection: tnt.workspaces.ws.duts.simu_dut
+
+
+# ================ Resources created at runtime (DUTs, tips, physical buttons etc.) ================
+
+
+- name: dut1
+  cls: TnT.Dut
+  parent: tnt.workspaces.ws.duts
+  frame:
+  - [0.999999814517786, -0.0006090684640530641, 0.0, 143.35]
+  - [0.0006090684640531197, 0.9999998145177857, 0.0, 128.185]
+  - [0.0, 0.0, 1.0000000000000002, -188.977]
+  - [0.0, 0.0, 0.0, 1.0]
+  properties:
+    base_distance: 10.0
+    tl:
+      x: 143.35
+      y: 128.185
+      z: -188.977
+    height: 105.52700057331298
+    data:
+      screen_width:
+        value: '0'
+      image_height:
+        value: '0'
+      screen_height:
+        value: '0'
+      image_width:
+        value: '0'
+    bl:
+      x: 143.361
+      y: 233.712
+      z: -188.977
+    tr:
+      x: 206.872
+      y: 128.269
+      z: -188.977
+    touch_distance: 0.0
+    surface_data:
+    width: 63.52205553978872
+    svg_scale:
+    - 1
+    - 1
+  connection: tnt.workspaces.ws.duts
+
+- name: stylus
+  cls: TnT.Tip
+  parent: tnt.workspaces.ws.tips
+  frame:
+  - [1.0, 0.0, 0.0, -60.04]
+  - [0.0, 1.0, 0.0, 46.2459]
+  - [0.0, 0.0, 1.0, 86.977]
+  - [0.0, 0.0, 0.0, 1.0]
+  arguments: {}
+  properties:
+    data:
+      unit: 0
+    diameter: 9
+    first_finger_offset:
+    grippable: false
+    length: 86.977
+    model: Stylus
+    num_tips:
+    offset_x: -60.04
+    offset_y: 46.2459
+    separation:
+    slot_in:
+    slot_out:
+    smart: false
+    tip_distance:
+    type: Universal
+    voice_coil_position:
+  connection: tnt.workspaces.ws.Robot1_base.Robot1.tool1_mount.tool1
+- name: finger
+  cls: TnT.Tip
+  parent: tnt.workspaces.ws.tips
+  frame:
+  - [1.0, 0.0, 0.0, -60.04]
+  - [0.0, 1.0, 0.0, 40.8188]
+  - [0.0, 0.0, 1.0, 63.453]
+  - [0.0, 0.0, 0.0, 1.0]
+  arguments: {}
+  properties:
+    data:
+      unit: 1
+    diameter: 9
+    first_finger_offset:
+    grippable: false
+    length: 63.453
+    model: Stylus
+    num_tips:
+    offset_x: -60.04
+    offset_y: 40.8188
+    separation:
+    slot_in:
+    slot_out:
+    smart: false
+    tip_distance:
+    type: Universal
+    voice_coil_position:
+  connection:
+- name: tip9
+  cls: TnT.Tip
+  parent: tnt.workspaces.ws.tips
+  arguments:
+    model: Standard
+    diameter: 0
+    length: 0
+  properties:
+    diameter: 9
+    first_finger_offset:
+    grippable: false
+    length: 12
+    model: Stylus
+    num_tips:
+    offset_x: 0
+    offset_y: 0
+    separation:
+    slot_in:
+    - [1.0, 0.0, -0.0, 76.065]
+    - [-0.0, 1.0, 0.0, 110.636]
+    - [0.0, 0.0, 1.0, -161.161]
+    - [0.0, 0.0, 0.0, 1.0]
+    slot_out:
+    - [1.0, 0.0, -0.0, 96.065]
+    - [-0.0, 1.0, 0.0, 110.636]
+    - [0.0, 0.0, 1.0, -161.161]
+    - [0.0, 0.0, 0.0, 1.0]
+    smart: false
+    tip_distance:
+    type: Tip
+    voice_coil_position:
+  connection:
+  frame:
+  - [1.0, 0.0, 0.0, 0.0]
+  - [0.0, 1.0, 0.0, 0.0]
+  - [0.0, 0.0, 1.0, 12.0]
+  - [0.0, 0.0, 0.0, 1.0]

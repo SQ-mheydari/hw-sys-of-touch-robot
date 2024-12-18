@@ -1,0 +1,204 @@
+def notifySlack(String buildStatus = 'STARTED') {
+    def color
+
+    if (buildStatus == 'STARTED') {
+        color = '#D4DADF'
+    } else if (buildStatus == 'SUCCESS') {
+        color = '#BDFFC3'
+    } else if (buildStatus == 'UNSTABLE') {
+        color = '#FFFE89'
+    } else {
+        color = '#FF9FA1'
+    }
+    def status = buildStatus[0].toUpperCase() + buildStatus.substring(1).toLowerCase();
+
+    def msg = "${status}: `${env.JOB_NAME}` #${env.BUILD_NUMBER}:\n${env.BUILD_URL}"
+
+    slackSend(color: color, message: msg, channel: '#tnt_mini')
+}
+
+pipeline {
+    agent {
+        label 'windows'
+    }
+
+    options {
+        timeout(time: 60, unit: 'MINUTES')
+    }
+
+    parameters {
+        string(name: 'Project_number', description: 'Project number: for example 0, 4555, 4665 ...', defaultValue: '0')
+        string(name: 'Project_version', description: 'Project version number: for example 0, 1 ...', defaultValue: '0')
+    }
+
+    stages {
+        stage('Prepare virtualenv') {
+            steps {
+                notifySlack('STARTED')
+
+                deleteDir()
+                checkout scm
+                bat """
+
+SET PATH=%PATH:"=%
+
+
+py -3.7-64 -m venv venv
+@IF NOT %ERRORLEVEL% == 0 EXIT /b %ERRORLEVEL%
+call venv\\Scripts\\activate.bat
+
+python -m pip install --upgrade pip==21.2.4
+
+cd installer
+pip install --extra-index-url http://jenkins-master.optofidelity.net:8081 --trusted-host jenkins-master.optofidelity.net -r requirements.txt
+cd ..
+
+pip install --extra-index-url http://jenkins-master.optofidelity.net:8081 --trusted-host jenkins-master.optofidelity.net -r requirements.txt
+
+python customize_project.py --configuration-file="simulation_3axis.yaml"
+@EXIT /b %ERRORLEVEL%
+                """
+            }
+        }
+        stage('Unit tests') {
+          steps {
+                bat """
+SET PATH=%PATH:"=%
+call venv\\Scripts\\activate.bat
+
+SET PYTHONPATH=%cd%
+
+pytest -Wdefault --ignore=test_scripts
+            """
+           }
+        }
+        stage('Installer') {
+            steps {
+                bat """
+SET PATH="C:\\Program Files\\MVTec\\HALCON-13.0\\bin\\x64-win64";%PATH%
+SET PATH=%PATH:"=%
+call venv\\Scripts\\activate.bat
+
+SET PYTHONPATH=%cd%
+
+python create_tntserver_json.py
+cd installer
+
+python package_parser.py
+@IF NOT %ERRORLEVEL% == 0 EXIT /b %ERRORLEVEL%
+
+python setup_installer.py setup-generic.in.iss ..\\tntserver.json %BUILD_NUMBER%
+python -m PyInstaller --clean -y tnt-generic.spec ..\\tntserver.json
+python encrypt_packages.py ..\\tntserver.json
+
+iscc setup-generic.iss
+cd ..
+@EXIT /b %ERRORLEVEL%
+                """
+                archive 'installer\\Output\\*.exe'
+                archive 'third_party_packages.txt'
+                archive 'CHANGELOG.md'
+            }
+        }
+        stage('Test - Installer') {
+            steps {
+                bat """
+for /r %%x in (installer\\Output\\*.exe) do set INSTALLER="%%x"
+
+%INSTALLER% /VERYSILENT /LOG=install.log /DIR=installation
+                """
+                archive 'install.log'
+            }
+        }
+        stage('Test - License key') {
+            steps {
+                bat """
+set OF_LICENSE_PATH=installer/licenses/license_expired
+installation\\"TnT Server.exe" > output.txt
+
+REM Make sure that the application is unable to run the code. findstr returns error code that makes build fail.
+findstr "bad marshal data" output.txt
+                """
+            }
+        }
+        stage('Test - Uninstaller') {
+            steps {
+                bat """
+"installation\\unins000.exe" /VERYSILENT
+                """
+            }
+        }
+
+        stage('TnT Client') {
+          steps {
+                bat """
+SET PATH=%PATH:"=%
+call venv\\Scripts\\activate.bat
+
+SET PYTHONPATH=%cd%
+
+python main.py --generate-client=configuration/client_config.yaml
+copy installer\\version.txt .
+cd client
+python setup.py sdist bdist_wheel
+REM for test client APIs, to avoid import problem
+copy tntclient tests\\
+REM install tntclient to venv in jenkins
+cd dist
+REM 'pip install tntclient*.whl' not working in windows
+FOR %%I IN (*.whl) DO python -m pip install "%%I"
+
+
+            """
+            archive 'client/dist/*.whl'
+            archive 'client/tntclient/doc/*.pdf'
+           }
+        }
+
+        stage('Test - Server start') {
+            steps {
+                bat """
+                SET PATH=%PATH:"=%
+                call venv\\Scripts\\activate.bat
+                set OF_LICENSE_PATH=installer\\licenses\\license_indefinite
+
+                REM start tnt server in subprocess with timeout
+                python server_subprocess.py windows
+
+                REM check from server log, if server starts without error
+                findstr /c:"Server ready at port 8000" srv_output.txt
+                if %errorlevel% neq 0 exit /b %errorlevel%
+                """
+
+            }
+        }
+
+        stage('Client API tests') {
+            steps {
+                bat """
+                SET PATH=%PATH:"=%
+                call venv\\Scripts\\activate.bat
+                set OF_LICENSE_PATH=%cd%\\installer\\licenses\\license_indefinite
+                REM SET PYTHONPATH=%cd%
+
+                REM start tnt server and run tests
+                python run_client_test.py windows
+                """
+                archive 'srv_output_client.txt'
+            }
+        }
+        
+       }
+
+    post {
+        success {
+            notifySlack('SUCCESS')
+        }
+        failure {
+            notifySlack('FAILURE')
+        }
+        unstable {
+            notifySlack('UNSTABLE')
+        }
+    }
+}

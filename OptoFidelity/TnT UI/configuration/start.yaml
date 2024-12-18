@@ -1,0 +1,59 @@
+# TnT UI configuration file.
+
+# Normally host and port are not defined and default values are used.
+# If user wants to use UI via browser from remote machine, host must be set to the IP address of
+# the machine that runs UI application in the network.
+# Username and password can also be required when attempting to connect remotely.
+
+#host: "192.168.1.79"
+#port: 8088
+#username: default
+#password: default
+
+# Pages are selectable from the top menu.
+# Some pages require a license feature in order to be shown.
+
+pages:
+  config: # Config page is used for calibrations and moving the robot. Should be shown in standard delivery.
+  script:
+
+views:
+#- tools:
+- camera:  # Camera calibration view. Should be shown in standard delivery.
+    # Which offset calibration methods to show? Show only the ones that apply to the delivery.
+    calib_offset_methods:
+      auditgauge: # Audit gauge is the standard method that supports semi-automatic calibration.
+    # Which distortion calibration methods to show.
+    calib_distortion_methods:
+      chessboard: # Chessboard method is a standard method that uses printed chessboard target.
+        # Choose default parameters that match the delivered target.
+        grid_x: 39
+        grid_y: 24
+        grid_mm: 3
+- dut:  # DUT positioning view. Should be shown in standard delivery.
+- tips:  # Tip positioning view. Should be shown in standard delivery.
+    edit_smart_tip: false  # Show controls for editing smart tip data in PCB. Should be removed in delivery.
+    smart_tip_properties: ["length", "diameter"]  # Properties to write to smart tip.
+  rack_z: -139.96803250258384
+- robot:  # Robot view that allows homing and resetting robot errors. Should be shown in standard delivery.
+- force_voice_coil:  # Force calibration view for voicecoil force. Should be shown in force delivery.
+    # Force control input. Should be 'g' for Optostandard closed loop force and 'mA' for open loop force.
+    #control_input: 'g'
+    control_input: 'mA'
+- synchro:  # View for calibrating synchro finger and camera offset. Needed in internal testing but should be removed from delivery.
+#- joints:
+ui:  # Global UI configuration.
+  # Which axes to show in robot controls.
+  # Choose from 'x', 'y', 'z', 'separation', 'azimuth', 'tilt', 'voicecoil1', 'voicecoil2' according to delivery.
+  axis: ['x', 'y', 'z', 'separation', 'azimuth', 'voicecoil1', 'voicecoil2']
+  tool_tips: true  # Show tooltips for UI widgets? Should be true in standard delivery.
+  help: true  # Show help buttons in UI? Should be true in standard delivery.
+  kinematic_selector: true  # Show kinematics selector (i.e. active finger) in robot controls? Should be false unless required by delivery.
+  # Show DB controls in TPPT page? Should be false in standard delivery. This feature is not currently in TPPT script platform.
+  # Only 4555 based projects currently use this.
+  script_db_load_enabled: false
+  camera_utils: false  # Show camera utilities such as "to focus height" button in camera control tab. Should be false in standard delivery.
+  # If user moves z to negative direction more than this amount (in mm), a confirmation is required.
+  z_step_confirm_threshold: 20
+  # Show surface probe tab in robot controls. This should be shown if robot supports surface probing (standard robots).
+  surface_probe: true

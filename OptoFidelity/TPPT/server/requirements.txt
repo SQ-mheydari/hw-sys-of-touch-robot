@@ -1,0 +1,90 @@
+# Later version has some issue with license info.
+kiwisolver==1.4.0
+
+# Core dependencies
+numpy==1.16.4
+sympy==1.1
+opencv-python==3.4.3.18
+scipy==1.2
+
+fik==0.4.1
+
+# Configuration management
+ruamel.yaml==0.16.12
+colorlog==2.10.0
+
+# Optomotion dependency
+optomotion==1.8.3.1 ; sys.platform == 'win32'
+optomotion==1.8.3.28 ; sys.platform == 'darwin'
+optomotion==1.8.1.21 ; sys.platform == 'linux'
+
+# Futek force sensor dependency
+pythonnet==2.5.1 ; sys.platform == 'win32'
+
+# Camera dependencies
+# Yasler not working in mac build with python 3.7. Use optocamera instead.
+yasler==0.4.0 ; sys.platform == 'win32'
+
+# SPA/Watchdog/P2I library
+hsup
+diskcache==5.2.1
+
+# Image detection
+Pillow==7.2.0
+pyhalcon==0.7+halcon13 ; sys.platform == 'win32'
+
+# OCR
+pyfre==0.3 ; sys.platform == 'win32'
+tesserocr==2.4.0 ; sys.platform == 'win32'
+
+# serial connection (Kern / DT)
+pyserial==3.4
+
+# simulator
+websockets==7.0
+
+# Testing
+more-itertools==8.10.0  # Need to fix this version before pytest for Python 3.5.
+pytest==5.2.1
+
+# Use the latest toolbox version
+toolbox==0.2.19
+
+# logging
+socket_logger==2.6
+
+# audio recording
+# macos: requires that xcode and portaudio are installed.
+pyaudio==0.2.11 ; sys.platform == 'win32'
+
+# Optovision tries to install newest version, force older version here.
+matplotlib==3.4.3
+
+# More recent versions require opencv-python-headless which clashes with opencv-python.
+optovision==0.1.2.164
+
+# build environment
+setuptools==44.0.0
+
+# Needed by client.
+requests==2.9.1
+fpdf==1.7.2
+
+# pytest and some others try to install the latest version 20.4 of packaging. This new version caused license problem
+# in Jenkins windows builds.
+# now install 20.3 to overwrite 20.4
+packaging==20.3
+
+# Optocamera basler
+optocamera==1.2.0
+optocamera-basler==1.2.0
+optocamera-hikvision==1.3.1
+optocamera-allied==1.0.4
+pypylon==1.7.2 ; sys.platform == 'win32'
+pypylon==1.6.0.10 ; sys.platform == 'darwin'
+
+# Optocamera
+optofidelity-camera==2.0.0
+optofidelity-camera-basler==2.0.1
+optofidelity-camera-hikvision==2.1.0
+optofidelity-camera-allied==2.1.0

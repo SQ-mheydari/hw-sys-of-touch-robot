@@ -1,0 +1,2 @@
+[pyinstaller40]
+hook-dirs = optofidelity.camera.core.pyinstaller_hooks:get_hook_dirs

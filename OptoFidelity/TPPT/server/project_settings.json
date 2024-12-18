@@ -1,0 +1,114 @@
+{
+    "Project": {
+        "name": "Server_candidate",
+		"prefix": "TnT_GT"
+        },
+    "Repository" : {
+        "url": "git@git.optofidelity.net:robotics/tnt_server_gt.git",
+        "credentials_name": "git-ssh"
+    },
+    "Credentials" :  [ {
+        "credential_name": "localpypi"
+    }],
+    "Environments": [
+        {
+            "env": "Windows2019",
+            "python": "3.5.4",
+            "python_architecture": "32bit",
+            "generic_version_attribute": "azure",
+            "pre_install": [
+                {
+                    "install_command": "c:\\temp\\sehutnmanager-win-3.2beta-2.22.exe /A /K /M /S",
+                    "download_url": "http://10.100.100.5:8000/sehutnmanager-win-3.2beta-2.22.exe",
+                    "file_name": "sehutnmanager-win-3.2beta-2.22.exe"
+                },
+                {
+                    "install_command": "c:\\temp\\innosetup-6.0.5.exe /SP- /NORESTART /VERYSILENT /SUPPRESSMESGBOXES /ALLUSERS",
+                    "download_url": "http://10.100.100.5:8000/innosetup-6.0.5.exe",
+                    "file_name": "innosetup-6.0.5.exe"
+                },
+                {
+                    "install_command": "mkdir c:\\hasp_runtime && copy c:\\temp\\haspdinst.exe c:\\hasp_runtime && c:\\temp\\haspdinst.exe -install -nomsg",
+                    "download_url": "http://10.100.100.5:8000/haspdinst.exe",
+                    "file_name": "haspdinst.exe"
+                },
+                {
+                    "install_command": "mkdir c:\\OptoFidelity && copy c:\\temp\\SocketLogger_2.6_Setup.exe c:\\OptoFidelity",
+                    "download_url": "http://10.100.100.5:8000/SocketLogger_2.6_Setup.exe",
+                    "file_name": "SocketLogger_2.6_Setup.exe"
+                },
+                {
+                    "install_command": "mkdir \"c:\\Program Files\\Basler\\pylon 5\\Development\\Redist\\Drivers\" && copy c:\\temp\\pylon_GigE_Filter_Driver.msi \"c:\\Program Files\\Basler\\pylon 5\\Development\\Redist\\Drivers\"",
+                    "download_url": "http://10.100.100.5:8000/pylon_GigE_Filter_Driver.msi",
+                    "file_name": "pylon_GigE_Filter_Driver.msi"
+                },
+                {
+                    "install_command": "copy c:\\temp\\pylon_GigE_Performance_Driver.msi \"c:\\Program Files\\Basler\\pylon 5\\Development\\Redist\\Drivers\"",
+                    "download_url": "http://10.100.100.5:8000/pylon_GigE_Performance_Driver.msi",
+                    "file_name": "pylon_GigE_Performance_Driver.msi"
+                }
+            ],
+            "working_directory": ".",
+            "build_commands": [
+                "call build.bat"
+                ],
+            "test_command": "",
+            "deploy_command": "",
+            "artifacts": [
+                "installer/Output/*.exe",
+                "*install.log"
+            ]
+        },
+        {
+            "env": "Windows2019",
+            "python": "3.5.4",
+            "python_architecture": "64bit",
+            "generic_version_attribute": "azure",
+            "pre_install": [
+                {
+                    "install_command": "c:\\temp\\sehutnmanager-win-3.2beta-2.22.exe /A /K /M /S",
+                    "download_url": "http://10.100.100.5:8000/sehutnmanager-win-3.2beta-2.22.exe",
+                    "file_name": "sehutnmanager-win-3.2beta-2.22.exe"
+                },
+                {
+                    "install_command": "c:\\temp\\innosetup-6.0.5.exe /SP- /NORESTART /VERYSILENT /SUPPRESSMESGBOXES /ALLUSERS",
+                    "download_url": "http://10.100.100.5:8000/innosetup-6.0.5.exe",
+                    "file_name": "innosetup-6.0.5.exe"
+                },
+                {
+                    "install_command": "mkdir c:\\hasp_runtime && copy c:\\temp\\haspdinst.exe c:\\hasp_runtime && c:\\temp\\haspdinst.exe -install -nomsg",
+                    "download_url": "http://10.100.100.5:8000/haspdinst.exe",
+                    "file_name": "haspdinst.exe"
+                },
+                {
+                    "install_command": "mkdir c:\\OptoFidelity && copy c:\\temp\\SocketLogger_2.6_Setup.exe c:\\OptoFidelity",
+                    "download_url": "http://10.100.100.5:8000/SocketLogger_2.6_Setup.exe",
+                    "file_name": "SocketLogger_2.6_Setup.exe"
+                },
+                {
+                    "install_command": "mkdir \"c:\\Program Files\\Basler\\pylon 5\\Development\\Redist\\Drivers\" && copy c:\\temp\\pylon_GigE_Filter_Driver.msi \"c:\\Program Files\\Basler\\pylon 5\\Development\\Redist\\Drivers\"",
+                    "download_url": "http://10.100.100.5:8000/pylon_GigE_Filter_Driver.msi",
+                    "file_name": "pylon_GigE_Filter_Driver.msi"
+                },
+                {
+                    "install_command": "copy c:\\temp\\pylon_GigE_Performance_Driver.msi \"c:\\Program Files\\Basler\\pylon 5\\Development\\Redist\\Drivers\"",
+                    "download_url": "http://10.100.100.5:8000/pylon_GigE_Performance_Driver.msi",
+                    "file_name": "pylon_GigE_Performance_Driver.msi"
+                }
+            ],
+            "working_directory": ".",
+            "build_commands": [
+                "call build.bat"
+                ],
+            "test_command": "",
+            "deploy_command": "",
+            "artifacts": [
+                "installer/Output/*.exe",
+                "third_party_packages.txt",
+                "*install.log",
+                "client/dist/*.whl",
+                "client/tntclient/doc/*.pdf"
+            ]
+        }
+    ]
+}

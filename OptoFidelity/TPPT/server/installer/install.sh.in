@@ -1,0 +1,157 @@
+#!/bin/bash
+# to install SW, run: sh install.sh ~/(xxx)/optofidelity
+# arguement is the location where TnT SW is installed. If omit, the default location (~/optofidelity/) will be used
+# this script can be run at any location
+
+
+# for following variables, addpayload.sh search and replace with correct values when
+# generate the final installation file (e.g. TnT_Server_5.2.0.0.384_Setup.sh)
+uuencode=1
+binary=0
+COMPONENT=
+NEW_FILE=
+
+function untar_payload()
+{
+	match=$(grep --text --line-number '^PAYLOAD:$' $0 | cut -d ':' -f 1)
+	payload_start=$((match + 1))
+	if [[ $binary -ne 0 ]]; then
+		tail -n +$payload_start $0 | tar -tzvf -
+	fi
+	if [[ $uuencode -ne 0 ]]; then
+		tail -n +$payload_start $0 | uudecode | tar -tzvf -
+	fi
+}
+
+read -p "Install files? (y/n) " ans
+if [ "${ans:0:1}"  = "y" ]; then
+  #########################################
+  # doing backup
+  #########################################
+  # check if any argument. If not, use default
+  echo "Installing TnT" "$COMPONENT" "..."
+  echo "Doing backup ..."
+  if [[ ! "$1" ]]; then
+    OPTO_FOLDER=~/optofidelity
+  else
+    OPTO_FOLDER=$1
+  fi
+  # check if backup folder exists. If not, create it.
+  BACKUP_FOLDER="$OPTO_FOLDER"/backups
+
+  if [ ! -d "$OPTO_FOLDER" ]; then
+    mkdir "$OPTO_FOLDER"
+  fi
+  if [ ! -d "$BACKUP_FOLDER" ]; then
+    mkdir "$BACKUP_FOLDER"
+  fi
+
+  # find existing builds folders
+  ALL_BUILDS=$(mdfind kind:folders -onlyin "$OPTO_FOLDER" TnT_"$COMPONENT"_)
+  for i in $ALL_BUILDS; do
+    # skip these folders already in backups/
+    if ! (echo "$i" | grep backups > /dev/null); then
+      POS_SPLIT="$(expr "$i" : ".*/TnT")"
+      POS="$(expr "$POS_SPLIT" '-' '3')"
+      LENGTH=${#i}
+      # parse existing builds name
+      EXIST_BUILDS=${i:POS:LENGTH}
+
+      # backup existing files
+      # create folder ('TnT_Server_5.2.0.0.371_'+date+running number), where existing sw will be moved to
+      NOW=$(date '+%Y%m%d')
+      BACKUP_NEW="$BACKUP_FOLDER"/"$EXIST_BUILDS"_"$NOW"
+      if [ ! -d "$BACKUP_NEW" ]; then
+        # create folder without running number
+        mkdir "$BACKUP_NEW"
+        BACKUP_FINAL="$BACKUP_NEW"
+      else
+        # create folder with running number
+        COUNT=1
+        while [ -d "$BACKUP_NEW"_"$COUNT" ]; do
+          COUNT="$(expr "$COUNT" '+' '1')"
+        done
+        mkdir "$BACKUP_NEW"_"$COUNT"
+        BACKUP_FINAL="$BACKUP_NEW"_"$COUNT"
+      fi
+
+      # move existing files to backup folder
+      mv "$OPTO_FOLDER"/"$EXIST_BUILDS"/* "$BACKUP_FINAL"
+      rm -r "$OPTO_FOLDER"/"$EXIST_BUILDS"
+    fi
+  done
+
+  #########################################
+  # generate zip file from payload
+  #########################################
+  echo "Extracting files ..."
+  untar_payload
+
+  #########################################
+  # unzip new builds, copy existing configuration file to new builds
+  #########################################
+  FOLDER_DESTINATION="$OPTO_FOLDER"/$NEW_FILE
+  FOLDER_DATA="$BACKUP_FINAL"/data
+
+  # check if destination folder exist, in order to avoid overwrite existing builds
+  if [ ! -d "$FOLDER_DESTINATION" ]; then
+    unzip -qq "$NEW_FILE".zip -d "$FOLDER_DESTINATION"/
+    # copy configuration file from existing builds to new builds
+    cp "$BACKUP_FINAL"/configuration/*.yaml "$FOLDER_DESTINATION"/configuration/
+    # if there is /data/ folder exist, copy it to new builds
+    if [ -d "$FOLDER_DATA" ]; then
+      cp -R "$FOLDER_DATA" "$FOLDER_DESTINATION"
+    fi
+  else
+    read -p "Destination folder exists. Do you want to overwrite it? (y/n) " ans2
+    if [ "${ans2:0:1}"  = "y" ]; then
+      # keep existing configuration file at a while
+      mv "$FOLDER_DESTINATION" "$FOLDER_DESTINATION"_BK
+      unzip -qq "$NEW_FILE".zip -d "$FOLDER_DESTINATION"/
+      # copy configuration file from existing builds to new builds
+      cp "$FOLDER_DESTINATION"_BK/configuration/*.yaml "$FOLDER_DESTINATION"/configuration/
+      # if there is /data/ folder exist, copy it to new builds
+      if [ -d "$FOLDER_DATA" ]; then
+        cp -R "$FOLDER_DATA" "$FOLDER_DESTINATION"
+      fi
+      # remove existing builds
+      rm -r "$FOLDER_DESTINATION"_BK
+    fi
+  fi
+  F_NAME="$NEW_FILE".zip
+  if [ "$F_NAME" ]; then
+    rm "$F_NAME"
+  fi
+  #########################################
+  # only for server
+  # generate tnt client and install it to global python environment
+  #########################################
+  # try to generate client. If error, e.g. no python3, catch error
+  if [ "$COMPONENT" = "Server" ]; then
+    echo "Generating tnt client ... "
+    (
+      set -Ee
+      function _catch {
+        echo "Fail to generate and/or install tnt client, check if python3.5 is installed"
+        exit 1
+      }
+      trap _catch ERR
+      cd "$FOLDER_DESTINATION"
+      pwd
+      ./'TnT Server' --generate-client=configuration/client_config.yaml
+      cd client
+      python3 setup.py sdist bdist_wheel
+      echo "Installing client ... "
+      # remove tntclient.egg-info file, otherwise tntclient would not be installed to global python
+      if [ -d "tntclient.egg-info" ]; then
+        rm -r "tntclient.egg-info"
+      fi
+      python3 -m pip install dist/tntclient*.whl
+      echo "Client is generated successfully "
+      echo "TnT" "$COMPONENT" "is successfully installed ! "
+    )
+  else
+    echo "TnT" "$COMPONENT" "is successfully installed ! "
+  fi
+fi
+exit 0

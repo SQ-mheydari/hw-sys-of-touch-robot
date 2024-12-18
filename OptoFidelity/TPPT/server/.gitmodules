@@ -1,0 +1,4 @@
+[submodule "installer"]
+	path = installer
+	url = ../../tnt/tnt-server-installer.git
+	branch = cwheel

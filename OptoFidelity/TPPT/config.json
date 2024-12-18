@@ -1,0 +1,12 @@
+{
+    "separate_xy_parameters": true,
+    "grid_offsets": true,
+    "lastDB": "C:/OptoFidelity/TPPT\\database_pinch.sqlite",
+    "enable_dummy": true,
+    "enable_force": true,
+    "enable_pit_system_latency_calibration": false,
+    "tap_measurement_timeout": 6.0,
+    "continuous_measurement_timeout": 0.5,
+    "tilt_angles": false,
+    "azimuth_angles": true
+}

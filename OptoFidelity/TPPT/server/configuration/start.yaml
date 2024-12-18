@@ -1,0 +1,11 @@
+# TnT Server configuration for trivial case where no specific content is initialized.
+# See doc/configuration.md for general information on how to use config files.
+port: 8000
+
+# Configuration consists of a list of node.
+nodes:
+
+# Root node of the node hierarchy.
+- name: tnt
+  cls: TnT.TnT
+  parent:

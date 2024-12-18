@@ -1,0 +1,84 @@
+<html>
+
+<head>
+	<title>Optofidelity Golden Simulator</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<style>
+		body
+			{
+			margin: 0px;
+			background-color: #000000;
+			overflow: hidden;
+			}
+		.menubar
+			{
+			position: fixed;
+			width: 100%;
+			height: 62px;
+			background-color: white;
+			border-bottom: 2px solid black;
+			overflow: hidden;
+			}
+		.logoimage
+			{
+			padding: 15px;
+			height: 33px;
+			}
+		.title
+			{
+			float:right;
+			font-family: sans-serif;
+			font-size:25px;
+			font-weight: 100;
+			padding:18px;
+			}
+		.canvas_base
+			{
+			position: fixed;
+			top:62px;
+			bottom:0px;
+			width: 100%;
+			}
+		.footer
+			{
+			position: fixed;
+			height: 61px;
+			bottom: 0px;
+			width: 100%;
+			background-color:green;
+			}
+	</style>
+</head>
+
+
+<script src="js/three.js"></script>
+<script src="js/OrbitControls.js"></script>
+<script src="js/EffectComposer.js"></script>
+<script src="js/RenderPass.js"></script>
+<script src="js/ShaderPass.js"></script>
+<script src="js/MaskPass.js"></script>
+<script src="js/CopyShader.js"></script>
+<script src="js/ColorCorrectionShader.js"></script>
+<script src="js/VignetteShader.js"></script>
+<script src="js/STLLoader.js"></script>
+<script src="js/OutlineEffect.js"></script>
+<script src="js/Simulator.js"></script>
+
+
+<body onload="Begin()">
+	<div class="menubar">
+		<img class="logoimage" src="img/optofidelity-logo-web.png" > </img>
+		<div class="title" id="title_div">title_placeholder</div>
+	</div>
+	<div class="canvas_base" id="canvas_base"></div>
+	<!--div class="footer">
+		<input type="checkbox" onclick="console.log(this); engine.flags['antialias'] = this.checked; engine.render();"></input>
+		<input type="checkbox" onclick="console.log(this); engine.flags['transparent'] = this.checked; engine.render();"></input>
+		<input type="checkbox" onclick="console.log(this); engine.flags['outline'] = this.checked; engine.render();"></input>
+	</div-->
+
+</body>
+
+</html>
+

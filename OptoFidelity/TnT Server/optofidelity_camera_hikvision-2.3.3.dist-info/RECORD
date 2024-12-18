@@ -1,0 +1,17 @@
+optofidelity/camera/hikvision/__init__.py,sha256=vzeGeJDMcE6U-TQ4MJDhazmNrlYApPMWQ3c_yEkQx8Y,12855
+optofidelity/camera/hikvision/__pycache__/__init__.cpython-37.pyc,,
+optofidelity/camera/hikvision/__pycache__/_build.cpython-37.pyc,,
+optofidelity/camera/hikvision/__pycache__/_meta.cpython-37.pyc,,
+optofidelity/camera/hikvision/_build.py,sha256=vEJpX2N6_0BGhleK14XYHKdTBvXpQcgf-_bW8leY65s,241
+optofidelity/camera/hikvision/_meta.py,sha256=KxWW8bpZHm7or1jMjzZB-s_p_NCSymsAgN9qna_jAek,369
+optofidelity/camera/hikvision/pyinstaller_hooks/__init__.py,sha256=3Lobw4avIqF5Bz8FADUPr0r7xrUx9kgMkeATAsaNTJE,270
+optofidelity/camera/hikvision/pyinstaller_hooks/__pycache__/__init__.cpython-37.pyc,,
+optofidelity/camera/hikvision/pyinstaller_hooks/__pycache__/hook-optofidelity.camera.hikvision.cpython-37.pyc,,
+optofidelity/camera/hikvision/pyinstaller_hooks/hook-optofidelity.camera.hikvision.py,sha256=M5eLXRYFjSb6sHHvCwdtY-5Yze6j5gtldm-auMcZvPU,238
+optofidelity_camera_hikvision-2.3.3.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
+optofidelity_camera_hikvision-2.3.3.dist-info/METADATA,sha256=FVsM5jA5JN3FfEA47reweC8dNHAuZ6eRJPRKTeVrwOo,1112
+optofidelity_camera_hikvision-2.3.3.dist-info/RECORD,,
+optofidelity_camera_hikvision-2.3.3.dist-info/REQUESTED,sha256=47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU,0
+optofidelity_camera_hikvision-2.3.3.dist-info/WHEEL,sha256=5sUXSg9e4bi7lTLOHcm6QEYwO5TIF1TNbTSVFVjcJcc,92
+optofidelity_camera_hikvision-2.3.3.dist-info/entry_points.txt,sha256=oWfbd7ZIicBu8zgew4QFPpWfHqhAStofjdEohosnrZ4,180
+optofidelity_camera_hikvision-2.3.3.dist-info/top_level.txt,sha256=UTAk55QcqsLNz97uJcnzuWVMJ_kTQGlENCmpWOXfnTk,13

@@ -1,0 +1,186 @@
+def notifySlack(String buildStatus = 'STARTED') {
+    def color
+
+    if (buildStatus == 'STARTED') {
+        color = '#D4DADF'
+    } else if (buildStatus == 'SUCCESS') {
+        color = '#BDFFC3'
+    } else if (buildStatus == 'UNSTABLE') {
+        color = '#FFFE89'
+    } else {
+        color = '#FF9FA1'
+    }
+    def status = buildStatus[0].toUpperCase() + buildStatus.substring(1).toLowerCase();
+
+    def msg = "${status}: `${env.JOB_NAME}` #${env.BUILD_NUMBER}:\n${env.BUILD_URL}"
+
+    slackSend(color: color, message: msg, channel: '#tnt_mini')
+}
+
+pipeline {
+    agent {
+        label 'elcapitan'
+    }
+
+    options {
+        timeout(time: 60, unit: 'MINUTES')
+    }
+
+    parameters {
+        string(name: 'Project_number', description: 'Project number: for example 0, 4555, 4665 ...', defaultValue: '0')
+        string(name: 'Project_version', description: 'Project version number: for example 0, 1 ...', defaultValue: '0')
+    }
+
+    stages {
+        stage('Prepare virtualenv') {
+            steps {
+                notifySlack('STARTED')
+                deleteDir()
+                checkout scm
+                sh """
+                eval "\$(pyenv init -)"
+                pyenv versions
+                pyenv local 3.7.12
+                pyenv exec python -m venv venv
+
+                source venv/bin/activate
+
+                python --version
+
+                pip install --upgrade pip
+
+                cd installer
+                pip install --extra-index-url http://jenkins-master.optofidelity.net:8081 --trusted-host jenkins-master.optofidelity.net -r requirements.txt
+                #pip install pyinstaller==4.3
+                cd ..
+
+                pip install --extra-index-url http://jenkins-master.optofidelity.net:8081 --trusted-host jenkins-master.optofidelity.net -r requirements.txt
+
+                python customize_project.py --configuration-file="simulation_3axis.yaml"
+                """
+            }
+        }
+        stage('Unit tests') {
+          steps {
+                sh """
+                source venv/bin/activate
+                cwd=\$(pwd) && export PYTHONPATH=\$(pwd):\$PYTHONPATH
+                pytest -Wdefault --ignore=test_scripts
+            """
+           }
+        }
+        stage('Installer') {
+            steps {
+                sh """
+                source venv/bin/activate
+                cwd=\$(pwd) && export PYTHONPATH=\$(pwd):\$PYTHONPATH
+
+                python create_tntserver_json_macos.py
+                cd installer
+                python setup_installer.py setup-generic.in.iss ../tntserver.json "${BUILD_NUMBER}"
+                python -m PyInstaller --onefile --clean -y tnt-generic-macos-onedir.spec ../tntserver.json
+
+                # TODO: find why hidden imports won't work for optomotion
+                # this is a workaround because for some reason the library is not found from the main directory
+                # on some macos versions, e.g. High Sierra, Catalina
+                cp dist/start/liboptomotion.dylib dist/start/optomotion/
+
+                python encrypt_packages.py ../tntserver.json
+
+                mv dist/start dist/tnt_server
+
+                # Sign files
+                codesign --keychain /Library/Keychains/System.keychain --deep --force --verify --verbose --sign "Developer ID Application: OptoFidelity Oy" dist/tnt_server/*.dylib
+                codesign --keychain /Library/Keychains/System.keychain --deep --force --verify --verbose --sign "Developer ID Application: OptoFidelity Oy" dist/tnt_server/*.so
+                codesign --keychain /Library/Keychains/System.keychain --deep --force --verify --verbose --sign "Developer ID Application: OptoFidelity Oy" dist/tnt_server/pylon
+
+                cd ..
+                # copy client config file to the builds, for client generation during installation
+                cp configuration/client_config.yaml installer/dist/tnt_server/configuration/
+                # fetch version numbers from version.txt, them make a zip file
+                cp installer/version.txt version.txt
+                python makezip_macos.py TnT_Server tnt_server
+                cd installer
+                sh addpayload.sh --uuencode dist/TnT_Server*.zip Server
+                cd ..
+                """
+                archive 'installer/dist/TnT_Server*.zip'
+                archive 'installer/dist/TnT_Server_*_Setup.sh'
+                archive 'CHANGELOG.md'
+            }
+        }
+        stage('Test - License key') {
+            steps {
+                sh """
+                source venv/bin/activate
+
+                # Make sure that encrypted code can't be run with bad license. grep returns error code that makes build fail.
+                cwd=\$(pwd) && export OF_LICENSE_PATH=\$(pwd)/installer/licenses/license_expired
+                cd installer/dist/tnt_server
+                python -c "import tntserver; print(tntserver)" &> cmd_output.txt || true
+                grep "bad marshal data" cmd_output.txt
+                cd ../../..
+                """
+            }
+        }
+        stage('TnT Client') {
+            steps {
+                sh """
+                source venv/bin/activate
+                cwd=\$(pwd) && export OF_LICENSE_PATH=\$(pwd)/installer/licenses/license_indefinite
+                python main.py --generate-client=configuration/client_config.yaml
+                cd client
+                python setup.py sdist bdist_wheel
+                pip install wheel
+                cd dist
+                python -m pip install tntclient*.whl
+                # for test client APIs, to avoid import problem
+                cd ..
+                cp -R tntclient ../
+                cd ..
+                """
+                archive 'client/dist/*.whl'
+                archive 'client/tntclient/doc/*.pdf'
+           }
+        }
+        stage('Test - Server start') {
+            steps {
+                sh """
+                source venv/bin/activate
+                cwd=\$(pwd) && export OF_LICENSE_PATH=\$(pwd)/installer/licenses/license_indefinite
+
+                # start tnt server in subprocess with timeout
+                python server_subprocess.py macos
+
+                # check from server log, if server starts without error
+                grep "Server ready at port 8000" srv_output.txt
+                """
+            }
+        }
+        stage('Client API tests') {
+            steps {
+                sh """
+                source venv/bin/activate
+                cwd=\$(pwd) && export OF_LICENSE_PATH=\$(pwd)/installer/licenses/license_indefinite
+
+                # start tnt server and run tests
+                python run_client_test.py macos
+
+                """
+                archive 'srv_output_client.txt'
+            }
+        }
+    }
+
+    post {
+        success {
+            notifySlack('SUCCESS')
+        }
+        failure {
+            notifySlack('FAILURE')
+        }
+        unstable {
+            notifySlack('UNSTABLE')
+        }
+    }
+}

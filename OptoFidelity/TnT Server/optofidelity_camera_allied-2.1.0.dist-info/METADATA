@@ -1,0 +1,18 @@
+Metadata-Version: 2.1
+Name: optofidelity-camera-allied
+Version: 2.1.0
+Summary: Camera backend for Allied cameras using Vimba.
+Home-page: https://www.optofidelity.com
+Download-URL: https://gitlab-ci-token:3ZDemmC_AT8nX9UPEhMp@git.optofidelity.net/optofidelity/camera/allied.git0f14bd108d0d65fdaaddcde9853f2c9e225135e1
+Author: OptoFidelity Ltd.
+Author-email: support@optofidelity.com
+Maintainer: Tuomo Ojaluoma
+License: BSD-3-Clause
+Requires-Dist: optofidelity-camera
+Requires-Dist: optovimbapython
+Provides-Extra: bundle
+Requires-Dist: pyinstaller ; extra == 'bundle'
+Requires-Dist: optofidelity-setuptools ; extra == 'bundle'
+Provides-Extra: test
+Requires-Dist: pytest ; extra == 'test'
+

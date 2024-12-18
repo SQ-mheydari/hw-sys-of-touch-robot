@@ -1,0 +1,143 @@
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  COVERAGE_FLAGS:
+    value: "--source=tntserver"
+
+
+stages:
+  - Parallel
+  - Unit Test
+  - metrics
+  - upload metrics
+  - Installer
+  - Server
+
+
+Pytest:
+  image: artifactory.optofidelity.net/gitlab-runner-images/optowin10cpp:3.7.5
+  tags:
+    - efi-windows
+  stage: Unit Test
+  before_script: 
+    - echo ${time}
+    - echo "started by ${GITLAB_USER_NAME}"
+    - python -m pip install --user --upgrade virtualenv==20.13.4
+    - python -m virtualenv venv
+    - copy ${PIP_REPOSITORY_CONFIG} venv/pip.ini
+    - .\venv\Scripts\activate
+    - python -V
+    - |
+      # Need to use pip version 18 as newer version lead to an error when installing Pyinstaller on build slave.
+      python -m pip install --upgrade pip==18
+      python -m pip install --upgrade setuptools<=60.10.0
+      cd installer
+      pip install  -r requirements.txt
+      cd ..
+      pip install  -r requirements.txt
+    - python customize_project.py --configuration-file="simulation_3axis.yaml"
+  script:
+    - python -m pip install pytest pytest-cov
+    - $env:PYTHONPATH = $pwd.Path
+    - coverage run $COVERAGE_FLAGS -m pytest -Wdefault --ignore=test_scripts --junitxml=${CI_PROJECT_DIR}/report.xml
+    - coverage report -i
+    - coverage xml -o cov.xml -i
+  coverage: '/TOTAL.*\s([.\d]+)%/'
+  artifacts:
+    when: always
+    reports:
+      junit: ${CI_PROJECT_DIR}/*.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: cov.xml
+
+
+Installer:
+  tags:
+    - hasp
+  stage: Installer
+  needs: []
+  before_script: #INSTALLING OptoVimbaPython dependencies (VIMBA SDK)
+    - Invoke-WebRequest -Uri "https://artifactory.optofidelity.net/artifactory/Files_for_modules/OptoVimbaPython/VimbaGigETL_Win64.msi" -OutFile VimbaGigETL_Win64.msi
+    - Invoke-WebRequest -Uri "https://artifactory.optofidelity.net/artifactory/Files_for_modules/OptoVimbaPython/VimbaUSBTL_Win64.msi" -OutFile VimbaUSBTL_Win64.msi
+    - Invoke-WebRequest -Uri "https://artifactory.optofidelity.net/artifactory/Files_for_modules/OptoVimbaPython/VimbaCLConfigTL_Win64.msi" -OutFile VimbaCLConfigTL_Win64.msi
+    - Invoke-WebRequest -Uri "https://artifactory.optofidelity.net/artifactory/Files_for_modules/OptoVimbaPython/Vimba_Win64.msi" -OutFile Vimba_Win64.msi
+    - Start-Process msiexec.exe -Wait -ArgumentList '/I VimbaGigETL_Win64.msi ADDLOCAL=ALL /qn'
+    - Start-Process msiexec.exe -Wait -ArgumentList '/I VimbaUSBTL_Win64.msi ADDLOCAL=ALL /qn'
+    - Start-Process msiexec.exe -Wait -ArgumentList '/I VimbaCLConfigTL_Win64.msi ADDLOCAL=ALL /qn'
+    - Start-Process msiexec.exe -Wait -ArgumentList '/I Vimba_Win64.msi ADDLOCAL=ALL /qn'  
+  script:
+    - .\connect_hasp.bat
+    - choco install -y innosetup
+    - .\pipeline\prepare_env.bat
+    - .\pipeline\installer.bat
+    - |
+      Get-ChildItem -path ".\installer\Output" -recurse -Include *.exe | ForEach {
+        Start-Process $_.Fullname -ArgumentList "/VERYSILENT", "/LOG=install.log", "/DIR=installation"
+      }    
+    - sleep 20
+    - $env:OF_LICENSE_PATH = "installer\\licenses\\license_expired"
+    - $app = Start-Process .\installation\\"TnT Server.exe" -ReDirectStandardOutput output.txt -passthru
+    - sleep 20
+    - if (!$app.HasExited) { Stop-Process $app.id }
+    - |
+      # Make sure that the application is unable to run the code. findstr returns error code that makes build fail.
+      findstr "bad marshal data" output.txt
+    - .\installation\\unins000.exe /VERYSILENT
+    - sleep 20
+    - .\pipeline\creating_wheel.bat
+    - .\pipeline\server_start.bat
+    - .\pipeline\client_api_test.bat
+  after_script:
+    - .\disconnect_hasp.bat
+  artifacts:
+    paths:
+      - srv_output.txt
+      - client/dist/*.whl
+      - installer/Output/*.exe
+      - third_party_packages.txt
+      - CHANGELOG.md
+      - install.log      
+
+
+RnD metrics:
+  stage: metrics	
+  image: artifactory.optofidelity.net/gitlab-runner-images/optowin10cpp:3.7.5
+  tags:
+    - opto-windows
+  only:
+    - master
+    - RnD-metrics
+  needs: []
+  before_script:
+    - Invoke-WebRequest -Uri "https://artifactory.optofidelity.net/artifactory/RnD/metrics/metrics-test.xlsx" -OutFile metrics-test.xlsx
+    - curl -O https://artifactory.optofidelity.net/artifactory/RnD/metrics/metrics-test.xlsx
+  script:
+    - python -m pip install --user --upgrade virtualenv
+    - python -m virtualenv venv
+    - .\venv\Scripts\activate
+    - copy ${PIP_REPOSITORY_CONFIG} venv/pip.ini
+    - python -m pip install --upgrade pip
+    - python -m pip install -r requirements.txt
+    - pip install optofidelity-module-metrics --extra-index-url https://artifactory.optofidelity.net/artifactory/api/pypi/optofidelity-experimental/simple
+    - python -m optofidelity.module-metrics metrics-test.xlsx
+  artifacts:
+    paths:
+      -  ${CI_PROJECT_DIR}/*.xlsx
+    expire_in: 10 min
+
+upload metrics:
+  image: artifactory.optofidelity.net/gitlab-runner-images/ubuntu:20.04
+  stage: upload metrics
+  only:
+    - master
+  needs:
+    - RnD metrics
+  before_script:
+    - apt-get update
+    - apt-get install -y curl
+  script:
+    - curl -fL https://getcli.jfrog.io | sh
+    - ./jfrog config add optofidelity --artifactory-url=$ARTIFACTORY_URL --user=$ARTIFACTORY_USER --password=$ARTIFACTORY_PASS 
+    - ./jfrog config show
+    - ./jfrog rt u "(*).xlsx" RnD/metrics/ --recursive=false
+

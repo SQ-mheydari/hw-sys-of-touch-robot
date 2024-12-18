@@ -1,0 +1,111 @@
+<html xmlns:py="http://genshi.edgewall.org/" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <head>
+    <title>${session.operator} ${session.starttime}, test session ID: ${session.id}</title>
+    <script type="text/javascript" src="/static/script/libs/jquery-2.1.0.min.js"/>
+    <script type="text/javascript" src="/static/script/testsession.js"></script>
+    <link rel="shortcut icon" href="/static/img/favicon.ico"/>
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/static/reportstyle.css" />
+    <link rel="stylesheet" type="text/css" href="/static/daddy.css" />
+    <link rel="stylesheet" type="text/css" href="/static/style.css" />
+  </head>
+
+  <body>
+    <div class="report">
+    <div id="Main" class="content" style="display: block; visibility: visible;">
+        <div class="no_summary"><a href="/"><img src="/static/img/logo.jpg"/></a><p class="version no_summary">Analysis software version ${version.simple}</p></div>
+        <span class="no_print no_summary"><br/>
+            <a href="/"><button class="btn btn-primary">Back</button></a>
+            <a href="/summary/${session.id}"><button class="btn btn-info">Summary</button></a>
+            <a href="/allresults/${session.id}"><button class="btn btn-info">Show all</button></a>
+            <a href="/allresults/${session.id}/json"><button class="btn btn-info">Export JSON</button></a>
+        </span>
+        <h2 class="no_summary">Test Overview</h2>
+        <table class="datatable setupinfo">
+            <tr py:if="session.operator != ''">
+                <td><b>Operator</b></td>
+                <td><div>${session.operator}</div></td>
+            </tr>
+            <tr py:if="session.starttime != ''">
+                <td><b>Start time</b></td>
+                <td><div>${session.starttime}</div></td>
+            </tr>
+            <tr py:if="session.starttime is not None and session.starttime != '' and
+                       session.endtime is not None and session.endtime != ''">
+                <?python
+                    from datetime import datetime
+                    total_time = datetime.strptime(session.endtime, '%Y-%m-%d %H:%M:%S') - \
+                            datetime.strptime(session.starttime, '%Y-%m-%d %H:%M:%S')
+                ?>
+                <td><b>Total execution time</b></td>
+                <td><div>${total_time}</div></td>
+            </tr>
+            <tr py:if="session.id != ''">
+                <td><b>Test session ID</b></td>
+                <td><div>${session.id}</div></td>
+            </tr>
+            <tr py:for="parameter_name, parameter_value in session.parameters.items()">
+                <td><b>${parameter_name}</b></td>
+                <td><div>${parameter_value}</div></td>
+            </tr>
+            <tr>
+                <td><b>Notes</b>
+                <span id="notes_edit" class="editnotes no_summary"><button class="btn btn-primary btn-xs">Edit</button></span>
+                <span id="notes_save" class="editnotes no_summary"><button class="btn btn-success btn-xs">Save</button></span>
+                </td>
+                <td>
+                    <div id="notes">${session.notes}</div>
+                    <textarea id="notes_editor" class="editor no_summary" placeholder="Session notes">${session.notes}</textarea>
+                </td>
+            </tr>
+        </table>
+        <br/>
+        <br/>
+        <div class="no_summary" py:for="dut in duts">
+            <table class="datatable setupinfo">
+                <tr py:if="dut[0].program != ''">
+                    <td><b>Program</b></td>
+                    <td><div>${dut[0].program}</div></td>
+                </tr>
+                <tr py:if="dut[0].manufacturer != ''">
+                    <td><b>Manufacturer</b></td>
+                    <td><div>${dut[0].manufacturer}</div></td>
+                </tr>
+                <tr py:if="dut[0].batch != ''">
+                    <td><b>Batch</b></td>
+                    <td><div>${dut[0].batch}</div></td>
+                </tr>
+                <tr py:if="dut[0].sample_id != ''">
+                    <td><b>Sample ID</b></td>
+                    <td><div>${dut[0].sample_id}</div></td>
+                </tr>
+            </table>
+            <div><a href="/testsessionsettings/${session.id}/${dut[0].id}"><button class="btn btn-primary btn-sm">Settings</button></a></div>
+            <br/>
+            <table class="datatable">
+                <tr>
+                    <th>Name</th>
+                    <th>Start time</th>
+                    <th>End time</th>
+                    <th class="narrow">Speed</th>
+                    <th class="narrow">Finger</th>
+                    <th class="narrow">Invalid</th>
+                    <th class="narrow">Pass/Fail</th>
+                </tr>
+                <tr class="${'' if result=='Error' else 'test_row'}" py:for="test,result in dut[1]" data-test-id="${test.id}">
+                    <td>${"%s #%s" % (test.type.name, test.id)}</td>
+                    <td>${test.starttime}</td>
+                    <td>${test.endtime}</td>
+                    <td>${test.speed}</td>
+                    <td>${test.finger_type}</td>
+                    <td>${test.invalid}</td>
+                    <td class="${'passed' if result=='Pass' else 'failed' if result=='Fail' or result=='Error' else ''}">${result if result!='Error' else 'Error in analysis!'}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <br/><br/>
+    </div>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+Build: 476689
+Version: 5.18.0
+Commit: 7765e0649875fdaa256b5ad863729db0ba246fde
+Branch: master
+Platform: win
+Architecture: amd64

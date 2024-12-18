@@ -1,0 +1,100 @@
+# Robot configuration for HBOT robot.
+# Replace the Robot section in simulation_3axis.yaml by the section listed below.
+
+
+# ================ Robot ================
+
+# Robot base frame.
+- name: Robot1_base
+  cls: Node
+  parent: ws
+  connection: ws
+
+# Make sure that duts node's gestures_cls is appropriate for this robot. For hbot it should be TnT.Gestures.
+- name: Robot1
+  cls: TnT.Robot
+  parent: robots
+  connection: Robot1_base
+  arguments:
+    driver: golden
+    host: 192.168.127.254
+    port: 4001
+    model: hbot
+    simulator: false
+    speed: 30
+    acceleration: 50
+    position_limits:
+      x_min: -200
+      x_max: 0
+      y_min: -800
+      y_max: 0
+      z_min: -20
+      z_max: 0
+    axis_specs:
+      1:
+        alias: x
+        homing_priority: 1
+        acceleration: 500
+        velocity: 500
+        homing_parameters:
+          position_tracking_error: 100000
+          velocity_tracking_error: 10000
+          acceleration: 5
+          velocity: 3000
+          continuous_current_limit: 1000
+          peak_current_limit: 3000
+          tracking_error_limit: 20
+          increment: 500
+      2:
+        alias: y
+        homing_priority: 2
+        acceleration: 500
+        velocity: 500
+        homing_parameters:
+          position_tracking_error: 100000
+          velocity_tracking_error: 10000
+          acceleration: 5
+          velocity: 3000
+          continuous_current_limit: 1000
+          peak_current_limit: 3000
+          tracking_error_limit: 20
+          increment: 500
+      11:
+        alias: z
+        homing_priority: 3
+        acceleration: 500
+        velocity: 500
+  properties:
+    force_calibration_table:
+      y:
+      - 0
+      - 500
+      x:
+      - 0
+      - 500
+    robot_acceleration: 200
+    robot_velocity: 110.0
+    kinematic_name: tool1
+
+- name: tool1_mount
+  cls: Mount
+  parent: Robot1
+  connection: Robot1
+  properties:
+    mount_point: tool1
+
+- name: camera_mount
+  cls: Mount
+  parent: Robot1
+  connection: Robot1
+  properties:
+    mount_point: camera
+
+- name: tool1
+  cls: TnT.Tool
+  parent: tools
+  connection: tool1_mount
+  properties:
+    can_attach_tip: true
+    can_attach_tool: false
+    can_attach_multifinger_tip: false

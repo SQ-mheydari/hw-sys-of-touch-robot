@@ -1,0 +1,7 @@
+Name: TPPT Analysis
+Version: 5.9.1
+Commit: e0834e70cb80cd058714b91e013c5621f92113c4
+Branch: TCFFTB8720-93_prepare_release
+Date: 2023-08-17 14:14:58
+Platform: win
+Architecture: amd64

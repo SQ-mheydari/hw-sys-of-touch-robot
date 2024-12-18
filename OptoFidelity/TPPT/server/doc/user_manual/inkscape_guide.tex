@@ -1,0 +1,22 @@
+\chapter{Quick guide to Inkscape}
+\label{app:inkscape_guide}
+Inkscape is a freely available tool for creating and modifying SVG images. In this tutorial, we'll show how to create an SVG shape for a DUT that has a round screen. For more detailed requirements of SVG shape, please refer to \ref{sec:svg_shape_requirements}. In case you encounter issues with the drawing, by googling one can usually find answers easily.
+
+In the instructions there are references to Inkscape UI window. Please see Figure \ref{fig:inkscape_ui} for reference.
+
+\begin{enumerate}
+	\item Before starting the drawing we need to make sure that the dimensions we see are the actual dimensions of the shape. This can be done by going to "Edit"->"Preferences"->"Tools" and choose the "Geometric bounding box".
+	\item Next we draw the screen shape. In this case it is a circle and can be easily drawn with a circle tool. It is important that the size is exactly correct. The dimensions can be adjusted in the upper tool panel. Name the screen shape \texttt{analysis\_region} in the lower right corner.
+	\item Then it is time to draw a rectangle around the screen. It should fit the whole screen shape and nothing extra. You can check and adjust dimensions in the upper tool panel. The rectangle should be named \texttt{bounding\_box}. (The rectangle can also be drawn next to the screen shape and then aligned separately by going to "Object"->"Align and Distribute")
+	\item In the end you should convert all the objects (e.g. circles, rectangles) to paths. This is done by selecting the object and the clicking "Path"->"Object to Path".
+\end{enumerate}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\linewidth]{inkscape_ui.jpg}
+	\caption{A snapshot of the Inkscape UI with some highlights for the panels needed for successful SVG shape creation}
+	\label{fig:inkscape_ui}
+\end{figure}
+
+
+% Kuva: screenshotti koko näytöstä, highlightaa dimensioitten säätöpaneeli ja paikka, jossa voi modata nimiä

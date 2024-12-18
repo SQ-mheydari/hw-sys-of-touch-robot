@@ -1,0 +1,376 @@
+# Configuration for generating TnT Client.
+# Remove items that are not needed in a project.
+language: Python
+output_path: client/tntclient
+merge:
+  TnTDUTClient: TnTGesturesClient
+clients:
+  TnTDUTClient:
+    cls: Nodes.TnT.Dut
+    resource_type: duts
+    node_path:
+    filename: tnt_dut_client
+    include:
+      - width
+      - height
+      - position
+      - top_left
+      - top_right
+      - bottom_left
+      - bottom_right
+      - tl
+      - tr
+      - bl
+      - br
+      - orientation
+      - base_distance
+      - get_robot_position
+      - get_list_buttons
+      - post_screenshot
+      - post_find_objects
+      - post_search_text
+      - put_show_image
+      - get_info
+      - get_touches
+      - put_filter_points
+      - put_filter_lines
+      - get_region_contour
+      - get_svg_data
+      - put_move
+      - put_svg_data
+    map:
+      get_robot_position:
+        client_name: get_robot_position
+        request_type: get
+      put_svg_data:
+        client_name: set_svg_data
+        request_type: put
+  TnTGesturesClient:
+    cls: Nodes.Synchro.Gestures
+    resource_type: duts
+    node_path: gestures
+    filename: tnt_dut_client
+    include:
+      - put_jump
+      - put_path
+      - put_swipe
+      - put_drag
+      - put_drag_force
+      - put_tap
+      - put_watchdog_tap
+      - put_double_tap
+      - put_multi_tap
+      - put_press
+      - put_circle
+      - put_pinch
+      - put_drumroll
+      - put_compass
+      - put_compass_tap
+      - put_touch_and_tap
+      - put_line_tap
+      - put_spin_tap
+      - put_rotate
+      - put_touch_and_drag
+      - put_fast_swipe
+  TnTCameraClient:
+    cls: Nodes.TnT.Camera
+    resource_type: cameras
+    node_path:
+    filename: tnt_camera_client
+    include:
+      - put_open
+      - put_close
+      - get_still
+      - get_detect_icon
+      - get_read_text
+      - put_move
+      - put_parameters
+      - get_parameters
+      - put_parameter
+      - get_parameter
+      - put_start_continuous
+      - put_stop_continuous
+      - get_focus_height
+      - post_screenshot
+    map:
+      get_still:
+        client_name: take_still
+        request_type: get
+      put_parameters:
+        client_name: set_parameters
+        request_type: put
+      get_parameters:
+        client_name: get_parameters
+        request_type: get
+      put_parameter:
+        client_name: set_parameter
+        request_type: put
+      get_parameter:
+        client_name: get_parameter
+        request_type: get
+  TnTMicrophoneClient:
+    cls: Nodes.NodeMicrophone
+    resource_type: detectors
+    node_path:
+    filename: tnt_microphone_client
+    include:
+      - get_list_recording_devices
+      - put_record_audio
+      - get_device_default_sample_rate
+      - get_latest_recording
+      - device_name
+      - margin
+      - rate
+      - chunk_size
+      - timeout_buffer
+    map:
+      get_latest_recording:
+        client_name: get_latest_recording
+        request_type: get
+  TnTRobotClient:
+    cls: Nodes.Synchro.Robot
+    resource_type: robots
+    node_path:
+    filename: tnt_robot_client
+    include:
+      - put_speed
+      - get_speed
+      - put_move
+      - put_move_relative
+      - put_move_joint_position
+      - put_change_tip
+      - put_detach_tip
+      - get_position
+      - put_home
+      - put_reset_error
+      - put_finger_separation
+      - get_finger_separation
+      - get_active_finger
+      - put_active_finger
+      - put_press_physical_button
+      - get_attached_tips
+    map:
+      put_speed:
+        client_name: set_speed
+        request_type: put
+      get_speed:
+        client_name: get_speed
+        request_type: get
+      get_position:
+        client_name: get_position
+        request_type: get
+      put_home:
+        client_name: go_home
+        request_type: put
+      put_reset_error:
+        client_name: reset_robot_error
+        request_type: put
+      put_finger_separation:
+        client_name: set_finger_separation
+        request_type: put
+      get_finger_separation:
+        client_name: get_finger_separation
+        request_type: get
+      put_active_finger:
+        client_name: set_active_finger
+        request_type: put
+      get_active_finger:
+        client_name: get_active_finger
+        request_type: get
+      get_attached_tips:
+        client_name: get_attached_tips
+        request_type: get
+  TnTSpeakerClient:
+    cls: Nodes.NodeSpeaker
+    resource_type: speakers
+    node_path:
+    filename: tnt_speaker_client
+    include:
+      - get_list_playback_devices
+      - put_play_wav_file
+      - device_name
+      - chunk_size
+  TnTTipClient:
+    cls: Nodes.TnT.Tip
+    resource_type: tips
+    node_path:
+    filename: tnt_tip_client
+    include:
+      - slot_in
+      - slot_out
+      - diameter
+      - length
+      - is_multifinger
+      - num_tips
+      - tip_distance
+      - separation
+      - first_finger_offset
+      - model
+  TnTAudioAnalyzerClient:
+    cls: drivers.analyzers.Audio
+    resource_type: analyzers
+    node_path:
+    filename: tnt_audio_analyzer_client
+    include:
+      - find_frequency_peaks
+    map:
+      find_frequency_peaks:
+        client_name: find_frequency_peaks
+        request_type: put
+        content: True
+        content_type: audio/x-wav
+  TnTDUTPositioningClient:
+    cls: Nodes.NodeDutPositioning
+    resource_type:
+    node_path:
+    filename: tnt_dut_positioning_client
+    include:
+      - get_dut_positioning_image
+      - get_positioning_image_parameters
+      - put_start
+      - put_start_xyz_positioning
+      - put_locate_next_blob
+      - put_center_to_blob_in_image
+      - put_calculate
+      - put_clear_plane_points
+      - put_add_robot_plane_point
+  TnTImageClient:
+    cls: Nodes.TnT.Image
+    resource_type: images
+    node_path:
+    filename: tnt_image_client
+    include:
+      - width
+      - height
+      - get_png
+      - get_jpeg
+      - put_jpeg
+      - put_png
+      - get_search_text
+      - get_find_objects
+      - post_filter
+      - post_crop
+      - get_transform_point
+      - post_invert
+      - post_convert_to_gray_scale
+      - post_save_image
+      - post_resize
+    map:
+      put_jpeg:
+        client_name: set_jpeg
+        request_type: put
+      put_png:
+        client_name: set_png
+        request_type: put
+  TnTIconClient:
+    cls: Nodes.NodeIcon
+    resource_type: icons
+    node_path:
+    filename: tnt_icon_client
+    include:
+      - get_png
+      - put_convert
+  TnTMotherboardClient:
+    cls: Nodes.TnT.Motherboard
+    resource_type: motherboards
+    node_path:
+    filename: tnt_motherboard_client
+    include:
+      - put_output_state
+    map:
+      put_output_state:
+        client_name: set_output_state
+        request_type: put
+  TnTPhysicalButtonClient:
+    cls: Nodes.TnT.PhysicalButton
+    resource_type: physical_buttons
+    node_path:
+    filename: tnt_physical_button_client
+    include:
+      - approach_position
+      - pressed_position
+      - jump_height
+  TnTSurfaceProbeClient:
+    cls: Nodes.NodeSurfaceProbe
+    resource_type:
+    node_path:
+    filename: tnt_surface_probe_client
+    include:
+      - put_probe_z_surface
+      - put_abort
+  TnTHsupWatchdogClient:
+    cls: drivers.analyzers.Hsup
+    resource_type: analyzers
+    node_path:
+    filename: tnt_hsup_client
+    name: watchdog
+    include:
+      - start_measurement
+      - results
+      - status
+    map:
+      start_measurement:
+        client_name: start
+        request_type: put
+      results:
+        client_name: get_results
+        request_type: get
+      status:
+        client_name: get_status
+        request_type: get
+  TnTHsupSpaClient:
+    cls: drivers.analyzers.Hsup
+    resource_type: analyzers
+    node_path:
+    filename: tnt_hsup_client
+    name: spa
+    include:
+      - start_measurement
+      - results
+      - status
+    map:
+      start_measurement:
+        client_name: start
+        request_type: put
+      results:
+        client_name: get_results
+        request_type: get
+      status:
+        client_name: get_status
+        request_type: get
+  TnTHsupP2IClient:
+    cls: drivers.analyzers.Hsup
+    resource_type: analyzers
+    node_path:
+    filename: tnt_hsup_client
+    name: p2i
+    include:
+      - start_measurement
+      - results
+      - status
+    map:
+      start_measurement:
+        client_name: start
+        request_type: put
+      results:
+        client_name: get_results
+        request_type: get
+      status:
+        client_name: get_status
+        request_type: get
+  TnTFutekClient:
+    cls: Nodes.NodeFutek
+    resource_type:
+    node_path:
+    filename: tnt_futek_client
+    include:
+      - get_forcevalue
+      - put_tare
+  TnTForceCalibratorClient:
+    cls: Nodes.NodeCalibratorOptoStdForce
+    resource_type:
+    node_path:
+    filename: tnt_force_calibrator_client
+    include:
+      - put_calibrate
+      - put_save_calibration

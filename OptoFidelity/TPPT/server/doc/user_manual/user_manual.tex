@@ -1,0 +1,51 @@
+% Created 2019-12-05 Thu 00:09
+% Intended LaTeX compiler: xelatex
+\documentclass[confidential]{optodoc}
+\author{OptoFidelity}
+\date{\today}
+\title{OptoFidelity TOUCH user manual}
+\graphicspath{{../images/}}
+
+% The pandoc conversion of md files from UI seems to sometimes use this command and we need to define it to avoid errors in compilation
+\providecommand{\tightlist}{}
+
+% These variables define paths etc. that are operating system specific and should be adjusted accordingly
+\newcommand{\tntRootPath}{C:/OptoFidelity/}  
+\newcommand{\tntRootPathMacos}{$\sim$/optofidelity/}  
+\newcommand{\tntServerFolder}{TnT Server}
+\newcommand{\tntServerExecutable}{TnT Server.exe}
+\newcommand{\tntUIFolder}{TnT UI}
+\newcommand{\tntUIExecutable}{TnT UI.exe}
+\newcommand{\tntTPPTAnalysisFolder}{TPPT Analysis}
+\newcommand{\tntTPPTAnalysisExecutable}{TPPT Analysis.exe}
+\newcommand{\tntLicensePath}{C:/OptoFidelity/Licenses/OF\_license.txt}
+\newcommand{\tntLicensePathMacos}{$\sim$/optofidelity/licenses/OF\_license.txt}
+\newcommand{\tntLogPath}{C:/OptoFidelity/Log/socket\_logger\_debug.txt}
+\newcommand{\svgFilePath}{TnT Server/data/dut\_svg}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+% This is purely a main file and all the text
+% should be included into this from different
+% files. This is done to have possibilities for
+% configurability
+\include{intro}
+\include{server}
+\include{ui}
+\include{dut_applications}
+\include{gestures}
+\include{robot_extra_functions}
+\include{hsup}
+\include{hsuf}
+\include{tppt}
+\include{scripting}
+\include{support}
+
+\begin{appendices}
+\include{inkscape_guide}
+\include{pit}
+\end{appendices}
+
+\end{document}

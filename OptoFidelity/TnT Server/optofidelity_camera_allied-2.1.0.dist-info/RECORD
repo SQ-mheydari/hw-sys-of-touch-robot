@@ -1,0 +1,15 @@
+optofidelity/camera/allied/__init__.py,sha256=nsrSCt-XtqUQmWqsJYdU-neqNl39g6bqYr5buSi-HIM,14051
+optofidelity/camera/allied/__pycache__/__init__.cpython-37.pyc,,
+optofidelity/camera/allied/__pycache__/_meta.cpython-37.pyc,,
+optofidelity/camera/allied/_meta.py,sha256=NT-j8F0wBA3Y7GP9iFT3QyIsOPuFiRmpWaJe7TXQIEw,371
+optofidelity/camera/allied/pyinstaller_hooks/__init__.py,sha256=-c4Zo8nQGKAm8wc_LDscxMtK7zr_YhZwRnC9CMruUBE,72
+optofidelity/camera/allied/pyinstaller_hooks/__pycache__/__init__.cpython-37.pyc,,
+optofidelity/camera/allied/pyinstaller_hooks/__pycache__/hook-optofidelity.camera.allied.cpython-37.pyc,,
+optofidelity/camera/allied/pyinstaller_hooks/hook-optofidelity.camera.allied.py,sha256=b2Ikb_un9WwPyXYFBvlpDMm96GdTN-EoAzSsvAIavPw,311
+optofidelity_camera_allied-2.1.0.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
+optofidelity_camera_allied-2.1.0.dist-info/METADATA,sha256=6wMV0m0C79Kv4AxrEujf8UpixRDmG5yNlr7w6N0RMtM,688
+optofidelity_camera_allied-2.1.0.dist-info/RECORD,,
+optofidelity_camera_allied-2.1.0.dist-info/REQUESTED,sha256=47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU,0
+optofidelity_camera_allied-2.1.0.dist-info/WHEEL,sha256=G16H4A3IeoQmnOrYV4ueZGKSjhipXx8zc8nu9FGlvMA,92
+optofidelity_camera_allied-2.1.0.dist-info/entry_points.txt,sha256=PViU9Q9hbX8Mc_GSEEoC3g4AS2u1csa7paYNDGZLmVQ,168
+optofidelity_camera_allied-2.1.0.dist-info/top_level.txt,sha256=UTAk55QcqsLNz97uJcnzuWVMJ_kTQGlENCmpWOXfnTk,13

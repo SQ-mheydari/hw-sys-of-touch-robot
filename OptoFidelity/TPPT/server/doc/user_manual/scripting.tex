@@ -1,0 +1,241 @@
+\chapter{Python scripting}
+
+One of the key features of the Touch testing solution is the API that allows users to create scripts that implement custom test cases. Scripting examples are given throughout this document in specific contexts but this chapter gives a more detailed overview of the scripting framework.
+
+\section{Python programming language}
+
+Python is nowadays one of the most popular programming languages in general due to its simple but powerful syntax and comprehensive package ecosystem. It especially thrives in data science and computing, hence OptoFidelity Touch primarily focuses on providing Python scripting support.
+
+To execute Python code, a Python interpreter must be installed. It can be freely downloaded from \texttt{www.python.org} for various platforms. Usually macOS and Linux distributions have some Python version already installed. Python is always installed on Touch delivery PC.
+
+A python script can be written in any text editor and saved to a file with extension \texttt{.py}. The script is then executed by running command \texttt{python myscript.py}.
+
+A basic "hello world" example is implemented by following script:
+
+\begin{lstlisting}[language=Python]
+# This is a comment line in file helloworld.py and is omitted by the interpreter.
+
+# Call built-in function print() to print a message to the standard output.
+print("Hello world!")
+\end{lstlisting}
+
+Running the script should produce following output:
+
+\begin{lstlisting}
+> python helloworld.py
+Hello world!
+>
+\end{lstlisting}
+
+Python has a comprehensive standard set of packages that can be imported using the \texttt{import} statement. Following example illustrates importing the \texttt{time} package and use of for loop to print elapsing time:
+
+\begin{lstlisting}[language=Python]
+import time
+
+# Call function time() from the time package.
+start_time = time.time()
+
+# Loop 5 times over and print elapsed time.
+for i in range(5):
+    elapsed_time = time.time() - start_time
+    print("Elapsed time: {} seconds.".format(elapsed_time))
+    
+    # Wait for one second.
+    time.sleep(1)
+\end{lstlisting}
+
+Notice that the block within the \texttt{for} loop is indented. Python uses indentation to designate code blocks. This is in contrast to many programming languages where white space has no meaning in code.
+
+To learn more about the Python language, see resources at \texttt{www.python.org}.
+
+\section{Installing TnT Client}
+
+TnT Client is installed on the delivered PC by OptoFidelity and when new version of TnT Server is installed by support, also the client is updated. So there is normally no need for user to install the client except for e.g. learning purposes. It is possible to install the client before system delivery to get familiar with TnT Client. Note also that TnT Client can be installed to other computers than the delivery PC to run Python scripts remotely via network. This remote PC can then even have different operating system than the PC that controls the robot system.
+
+\warningbox{Care must be taken if robot is operated remotely. Running commands remotely without visual contact to the robot and with no emergency stop at hand is inherently unsafe. It is always best to first test scripts locally.}
+
+TnT Client is a python package which can be imported to Python scripts with following statement:
+
+\begin{lstlisting}[language=Python]
+import tntclient
+\end{lstlisting}
+
+once it has been installed to the system.
+
+The package is compiled into a Python Wheel file \texttt{tntclient-5.3.0-py3-none-any.whl}. The version of the client matches the version of the TnT Server for which it was generated for. Generally when the server is updated to a new version, also the client should be updated.
+
+TnT Client is currently supported by following systems:
+
+\begin{itemize}
+\item Python 3.5.1 and later
+\item Windows, macOS, Linux
+\item Any architecture (x86, x64)
+\end{itemize}
+
+Other Python versions and platforms may also work but have not been tested. The client Python package only depends on \texttt{requests} package that is found in the Pypi repository.
+
+\section{Setting up and basic usage}
+
+In order to execute Python scripts that use TnT Client, following must be done:
+
+\begin{itemize}
+\item TnT Server has successfully initialized.
+\item Python interpreter has been installed to the system that executes the scripts.
+\item TnT Client Python package is installed to the Python environment.
+\item DUTs, tips and other resources have been created (with TnT UI) if required in scripting.
+\end{itemize}
+
+A simple script to test that the system is ready for executing scripts is to ask for the server version:
+
+\begin{lstlisting}[language=Python]
+import tntclient
+
+client = tntclient.tnt_client.TnTClient()
+
+version = client.version()
+
+print(version)
+\end{lstlisting}
+
+This should print something like "5.3.0". In case of error, see the troubleshooting section.
+
+By default the \texttt{TnTClient} object establishes connections to localhost which is appropriate when the scripts are run on the delivery PC. If the scripts are run on a remote PC that has network connection to the delivery PC, the client object must be given the IP address of the delivery PC. The port of TnT Server is by default 8000 but in case the network has port forwarding, the port must also be given. For example, if the IP address of the delivery PC is \texttt{192.168.1.1} then following client initialization should be used:
+
+\begin{lstlisting}[language=Python]
+import tntclient
+
+client = tntclient.tnt_client.TnTClient(host="192.168.1.1", port=8000)
+\end{lstlisting}
+
+Each resource such as DUTs and tips are accessed by using specific client objects. To access e.g. DUT properties and functions, there is \texttt{TnTDUTClient} class. Objects of such class can be created directly but they require the server host information as parameter. The \texttt{TnTClient} object implements factory methods such as \texttt{dut()} to create resource specific client objects so that the host information is only required to be given to \texttt{TnTClient}. Following script illustrates this workflow:
+
+\begin{lstlisting}[language=Python]
+from tntclient.tnt_client import TnTClient
+
+client = TnTClient(host="127.0.0.1", port=8000)
+
+# Create TnTDUTClient object for "MyDUT" resource.
+dut = client.dut("MyDUT")
+
+# Print DUT width in mm.
+print(dut.width)
+\end{lstlisting}
+
+The example also illustrates that it is normally only necessary to import the \texttt{TnTClient} class from the package.
+
+Following client objects are generally available but only exposed in the client if supported by the delivered system:
+
+\begin{lstlisting}[language=Python]
+TnTAudioAnalyzerClient
+TnTClient
+TnTCameraClient
+TnTDUTPositioningClient
+TnTForceCalibrationClient
+TnTHsupWatchdogClient
+TnTHsupSpaClient
+TnTHsupP2IClient
+TnTIconClient
+TnTImageClient
+TnTMicrophoneClient
+TnTMotherboardClient
+TnTPhysicalButtonClient
+TnTRobotClient
+TnTSpeakerClient
+TnTSurfaceProbeClient
+TnTTipClient
+\end{lstlisting}
+
+The available properties and methods of each client are detailed in the separate TnT Client API Reference document which is automatically generated from the comment strings in the Python code.
+
+\section{Examples}
+
+A practical example script is a functional test script where robot is used to test that a mobile phone application starts successfully.
+
+Following sequence is implemented:
+
+\begin{enumerate}
+\item Detect icon from DUT using the robot positioning camera.
+\item Tap the location of the detected icon.
+\item Detect text from DUT to verify that the application started.
+\end{enumerate}
+
+As prerequisite, there must be a DUT named "phone" and an icon named "appicon" in TnT Server resources. These can be created beforehand using TnT UI. It is also assumed than when the script starts, the icon is visible somewhere on the screen. Once the application has started, there should be text "Application" visible somewhere on the screen.
+
+\begin{lstlisting}[language=Python]
+from tntclient.tnt_client import TnTClient
+
+client = TnTClient()
+
+dut = client.dut("phone")
+
+# It is usually a good idea to use jump() to move the robot over the DUT from current position.
+dut.jump(x=0, y=0, z=10)
+
+# Find icon with given minimum score.
+response = dut.find_objects("appicon", min_score=0.9)
+results = response["results"]
+
+# At least one occurrence should be found.
+if len(results) == 0:
+    raise Exception("Did not find the icon.")
+	
+# Get the center x, y coordinates of the detected icon of highest score.
+# Coordinates are in mm in the DUT context.
+x, y = results[0]["centerX"], results[0]["centerY"]
+
+# Tap the location of the icon with the robot.
+dut.tap(x, y)
+
+# Make 5 attempts to find the text to validate application start.
+for _ in range(5):
+    # Search text with given minimum score.
+    response = dut.search_text("Application", min_score=0.9, language="English")
+  
+    results = response["results"]
+  
+    # If the text is found, print notification and break the loop.
+    if len(results) > 0:
+        print("Application started successfully.")
+        break
+    
+else:
+    raise Exception("Application did not start successfully.")
+\end{lstlisting}
+
+\tipbox{TnT Client Python package has more examples under the package's \texttt{examples} directory.}
+
+\section{Error handling}
+
+In Python, \textit{exceptions} are the standard way of handling errors. TnT Client defines a specific exception type \texttt{RequestError} that is raised whenever an error happens during a request by the client. Such error happens for example when the robot is attempted to be moved over workspace movement limits by any of the gestures or other robot motion commands.
+
+Exceptions are used to handle "exceptional" or "unexpected" errors. It may also be considered an error from the script execution point of view if for example an icon is not found. However, in this type of situation an exception is not raised. Rather the return value of the request has an empty result list which the script may choose interpret as an error. Note that it is a possible use case that the script makes sure that an icon is \emph{not} found. Considering this, it is appropriate that exception is not used in this case.
+
+Exceptions are handled in following way in Python:
+
+\begin{lstlisting}[language=Python]
+from tntclient.tnt_client import TnTClient
+
+client = TnTClient()
+
+robot = client.robot("Robot1")
+
+try:
+    # Move robot 200 mm along the workspace x-axis from current position.
+    robot.move_relative(x=200)
+except RequestError as e:
+    print("Movement failed: {}.".format(str(e))
+\end{lstlisting}
+
+This would only handle errors of type \texttt{RequestError}. If some Python code on client side is expected to fail, the statement \texttt{except Exception as e} can be used to handle all exceptions.
+
+Note that the script above only illustrates handling an error when trying to move over the known workspace limits. It should not be used to check if robot hit an obstacle in the workspace. Such movement can cause damage to the system so all movements ran from scripts must be known to be safe to perform regardless of exception handling.
+
+\section{Scripting troubleshooting}
+
+In this section we have collected the most common issues encountered by our customers. In case you cannot find solution from here, please contact OptoFidelity support. More information about support can be found from Chapter \ref{part:support}.
+
+\subsection{Exception ConnectionError}
+
+In case exception \texttt{requests.exceptions.ConnectionError} or \texttt{ConnectionRefusedError} is raised, make sure that TnT Server has initialized correctly and there are no errors in the server log.
+
+Also make sure that the TnTClient object is created with correct host and port that are accessible in the network or localhost.

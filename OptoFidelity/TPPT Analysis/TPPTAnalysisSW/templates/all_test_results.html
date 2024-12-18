@@ -1,0 +1,53 @@
+<html xmlns:py="http://genshi.edgewall.org/" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <head>
+
+	<script type="text/javascript" src="/static/script/libs/jquery-2.1.0.min.js"></script>
+    <script type="text/javascript" src="/static/script/test_page.js"></script>
+      <script type="text/javascript" src="/static/script/all_test_results.js"></script>
+    <link rel="shortcut icon" href="/static/img/favicon.ico"/>
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/static/reportstyle.css" />
+    <link rel="stylesheet" type="text/css" href="/static/daddy.css" />
+    <link rel="stylesheet" type="text/css" href="/static/style.css" />
+    <link rel="stylesheet" type="text/css" href="/static/graph.css" />
+    <link rel="stylesheet" type="text/css" media="print" href="/static/reportstyle_print.css" />
+  </head>
+  <body>
+    <div class="report">
+    <div id="Main" class="content" style="display: block; visibility: visible;">
+
+    <!--! Common header: logo, version, back & print buttons -->
+    <div class="no_summary">
+        <a href="/"><img src="/static/img/logo.jpg"/></a>
+        <p class="version">Analysis software version ${version.simple}</p>
+
+    <span class="no_print"><br/>
+        <a href="/testsessions/${session_id}">
+            <button class="btn btn-primary">Back</button>
+        </a>
+    </span>
+
+    <span class="no_print">
+        <a href="/">
+            <button class="btn btn-primary">Analysis Home</button>
+        </a>
+    </span>
+
+    <button class="no_print btn btn-info" id="print_button">
+        <span class="glyphicon glyphicon-print"></span> Print
+    </button>
+
+    <button class="no_print btn btn-info" id="csv_button">
+        <span class="glyphicon glyphicon-file"></span> Load CSV
+    </button>
+
+    </div>
+        <h1>All Test Results For Session ${session_id}<br/></h1>
+    <div>${content}</div>
+    </div>
+    </div>
+    <!--Put error_string to template tag that is not shown in the page. The string is used in all_test_results.js
+        to check if we need to show an alert that there were errors.-->
+    <template>${error_string}</template>
+  </body>
+</html>

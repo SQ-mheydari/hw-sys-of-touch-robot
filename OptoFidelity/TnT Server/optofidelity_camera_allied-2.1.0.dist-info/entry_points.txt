@@ -1,0 +1,5 @@
+[optofidelity.camera.backends]
+allied = optofidelity.camera.allied:AlliedCamera
+
+[pyinstaller40]
+hook-dirs = optofidelity.camera.allied.pyinstaller_hooks:get_hook_dirs

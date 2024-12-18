@@ -1,0 +1,110 @@
+# TnT Server Configuration.
+# Minimal configuration for HSUP.
+port: 8000
+nodes:
+
+# TnT Compatible subtree
+- name: tnt
+  cls: TnT.TnT
+  parent:
+
+- name: doc
+  cls: NodeDoc
+  parent: tnt
+
+- name: workspaces
+  cls: TnT.Workspaces
+  parent: tnt
+  connection: tnt
+
+- name: ws
+  cls: TnT.Workspace
+  parent: workspaces
+  properties: {}
+  connection: workspaces
+
+- name: robots
+  cls: TnT.Robots
+  parent: ws
+
+- name: Robot1_base
+  cls: Node
+  parent: ws
+  connection: ws
+
+- name: duts
+  cls: TnT.Duts
+  parent: ws
+  properties: {}
+  arguments:
+    gestures_cls: TnT.Gestures
+
+- name: tools
+  cls: TnT.Tools
+  parent: ws
+  properties: {}
+
+- name: Tool1
+  cls: TnT.Tool
+  parent: tools
+  properties: {}
+
+- name: tips
+  cls: TnT.Tips
+  parent: ws
+  properties: {}
+
+- name: cameras
+  cls: TnT.Cameras
+  parent: ws
+
+- name: analyzers
+  cls: TnT.Analyzers
+  parent: ws
+
+- name: hsup_camera
+  cls: TnT.Camera
+  parent: cameras
+  arguments:
+    driver : yasler
+    serial_number: 22843481
+    camtype: 'usb'
+    inter_packet_delay: 0
+    packet_size: 1500
+    exposure: 0.0001
+    binning_horizontal_mode: Sum
+    binning_vertical_mode: Sum
+
+- name: videosensor
+  cls: NodeVideoSensor
+  parent: ws
+  arguments:
+    port: COM12
+  connection:
+
+- name: watchdog
+  cls: TnT.Analyzer
+  parent: analyzers
+  arguments:
+    driver: Hsup
+    camera: hsup_camera
+    videosensor: videosensor
+    analysis: Watchdog
+
+- name: spa
+  cls: TnT.Analyzer
+  parent: analyzers
+  arguments:
+    driver: Hsup
+    camera: hsup_camera
+    videosensor: videosensor
+    analysis: SPA
+
+- name: p2i
+  cls: TnT.Analyzer
+  parent: analyzers
+  arguments:
+    driver: Hsup
+    camera: hsup_camera
+    videosensor: videosensor
+    analysis: P2I

@@ -1,0 +1,27 @@
+Metadata-Version: 2.1
+Name: optofidelity-camera
+Version: 2.0.0
+Summary: Generalized Camera Interface
+Home-page: https://www.optofidelity.com
+Download-URL: https://gitlab-ci-token:FrvX58Y4JJ9yAL9QP9Fr@git.optofidelity.net/optofidelity/camera/camera-core.gitf37f18add66322a6f30a959e7512f8cadc207b7f
+Author: OptoFidelity Ltd.
+Author-email: support@optofidelity.com
+Maintainer: Henrik Nyman
+License: BSD-3-Clause
+Requires-Dist: six
+Provides-Extra: allied
+Requires-Dist: optofidelity-camera-allied (==2.*) ; extra == 'allied'
+Provides-Extra: basler
+Requires-Dist: optofidelity-camera-basler (==2.*) ; extra == 'basler'
+Provides-Extra: bundle
+Requires-Dist: pyinstaller ; extra == 'bundle'
+Requires-Dist: optofidelity-setuptools ; extra == 'bundle'
+Provides-Extra: hikvision
+Requires-Dist: optofidelity-camera-hikvision (==2.*) ; extra == 'hikvision'
+Provides-Extra: jai
+Requires-Dist: pyjai ; extra == 'jai'
+Provides-Extra: opencv
+Requires-Dist: optofidelity-camera-opencv (==2.*) ; extra == 'opencv'
+Provides-Extra: test
+Requires-Dist: pytest ; extra == 'test'
+

@@ -1,0 +1,20 @@
+\chapter{Support}
+\label{part:support}
+In case you encounter issues, please check first the troubleshooting section of the given component. We have listed there the most common issues encountered by our customers. However, if you cannot find solution, you can always contact support@optofidelity.com. Our usual policy is to connect to the measurement PC remotely through TeamViewer and do all the installation etc. for you.
+
+To speed up the issue investigation, please include the following items in the request message:
+\begin{enumerate}
+	\item Error log from \tntLogPath
+	\item Description of how the error happened, so that we can try to reproduce it in our lab
+	\item Information about possibilities to connect through TeamViewer (is the software running and PC connected to internet, when is the suitable time for you to connect etc. If the permanent access is not enabled in TeamViewer, please included the TeamViewer ID and password also)
+\end{enumerate}
+
+There is a script you can use to collect relevant information, that we can use for troubleshooting. This information contains software versions, logs and configurations as well as firmware versions of various robot components. They will be stored in a zip-folder in "C:/OptoFidelity" on Windows and "$\sim$/optofidelity" on Mac. Please add this zip-folder to the support request as an attachment. The script can be run by executing TnT Server with a special flag or from "System Information"-desktop icon (Windows only).
+
+Examples of the script usage (1. default IPs, 2. non default IPs):
+\begin{enumerate}
+	\item \texttt{"Tnt Server.exe" --system-information}
+	\item \texttt{"TnT Server.exe" --system-information --robot-ip=<address> \newline--configuration-ip=<address>}
+\end{enumerate}
+
+If not agreed otherwise, OptoFidelity Touch delivery has 12 a month warranty, and includes a 12 month Support and Service agreement, starting for the acceptance of the delivered system."

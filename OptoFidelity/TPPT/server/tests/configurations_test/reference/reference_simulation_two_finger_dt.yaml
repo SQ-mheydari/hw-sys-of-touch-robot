@@ -1,0 +1,133 @@
+# TnT Server Configuration
+# Two-finger DT robot
+port: 8000
+nodes:
+
+# TnT Compatible subtree
+- name: tnt
+  cls: TnT.TnT
+  parent:
+  connection:
+
+- name: workspaces
+  cls: TnT.Workspaces
+  parent: tnt
+  connection: tnt
+
+- name: ws
+  cls: TnT.Workspace
+  parent: workspaces
+  properties: {}
+  connection: workspaces
+
+- name: dutserver
+  cls: DutServer
+  parent: tnt
+  arguments:
+    #host: 127.0.0.1
+    #host: 10.118.240.140
+    host: 0.0.0.0
+    port: 50008
+  connection: tnt
+
+- name: dutpositioning
+  cls: NodeDutPositioning
+  parent: ws
+  connection: ws
+  arguments:
+    robot: Robot1
+    camera: Camera1
+
+- name: robots
+  cls: TnT.Robots
+  parent: ws
+
+  connection:
+- name: Robot1
+  cls: TwoFingerDt.Robot
+  parent: robots
+  connection: Robot1_base
+  arguments:
+    driver: two_finger_dt
+    host: 10.10.12.4
+    port: 6842
+    simulator: true
+    speed: 30
+    acceleration: 50
+    separation_offset: 10.07
+    force_driver:
+  properties:
+    max_robot_velocity: 250
+    max_robot_acceleration: 100000
+    robot_acceleration: 50.0
+    robot_velocity: 30.0
+    force_calibration_table: {}
+    default_kinematic_name: tool1
+    kinematic_name: tool1
+    calibration_data: {}
+- name: Robot1_base
+  cls: Node
+  parent: ws
+  connection: ws
+
+- name: tool1_mount
+  cls: Mount
+  parent: Robot1
+  connection: Robot1
+  properties:
+    mount_point: tool1
+
+- name: tool2_mount
+  cls: Mount
+  parent: Robot1
+  connection: Robot1
+  properties:
+    mount_point: tool2
+
+- name: camera_mount
+  cls: Mount
+  parent: Robot1
+  connection: Robot1
+  properties:
+    mount_point: camera
+
+- name: duts
+  cls: TnT.Duts
+  parent: ws
+  properties: {}
+  connection:
+  arguments:
+    gestures_cls: TnT.Gestures
+
+- name: tools
+  cls: TnT.Tools
+  parent: ws
+  properties: {}
+  connection:
+
+- name: tool1
+  cls: TnT.Tool
+  parent: tools
+  connection: tool1_mount
+  properties:
+    can_attach_tip: true
+    can_attach_tool: true
+    can_attach_multifinger_tip: true
+- name: tool2
+  cls: TnT.Tool
+  parent: tools
+  connection: tool2_mount
+  properties:
+    can_attach_tip: true
+    can_attach_tool: true
+    can_attach_multifinger_tip: false
+- name: tips
+  cls: TnT.Tips
+  parent: ws
+  properties: {}
+  connection:
+
+- name: cameras
+  cls: TnT.Cameras
+  parent: ws
+  connection:

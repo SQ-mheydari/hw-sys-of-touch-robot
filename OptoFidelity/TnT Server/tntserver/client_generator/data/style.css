@@ -1,0 +1,98 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+    font-family: "Arial", Sans;
+}
+
+h1 {
+    padding-left: 1cm;
+}
+
+h2 {
+    padding-left: 2cm;
+}
+
+div {
+    width: 100%;
+}
+
+p {
+    margin: 0;
+    padding-left: 2mm;
+    padding-top: 4mm;
+    padding-bottom: 4mm;
+}
+.description {
+    padding-left: 4mm;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.code {
+    font-family: "Courier New", Monospace;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.codeblock {
+    font-family: "Courier New", Monospace;
+    padding-left: 4mm;
+}
+
+table, td, th {
+    border: 1px solid black;
+    text-align: left;
+}
+
+table {
+    border-collapse: collapse;
+    width: 50%;
+    margin-top: 4mm;
+    margin-bottom: 4mm;
+    margin-right: 4mm;
+    margin-left: 2mm;
+}
+
+th {
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 1mm;
+    width: 50%;
+}
+.function {
+    background-color: rgb(200,220,255);
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.property {
+    background-color: rgb(255,220,200);
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+td {
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 1mm;
+    padding-right: 1mm;
+}
+
+tr {
+    page-break-inside: avoid;
+    padding-left: 2mm;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+@media print
+{
+  table { page-break-after:auto }
+  tr    { page-break-inside:avoid; page-break-after:auto }
+  td    { page-break-inside:avoid; page-break-after:auto }
+  thead { display:table-header-group }
+  tfoot { display:table-footer-group }
+}
+
+br {
+            margin: 0; /* change this to whatever height you want it */
+}

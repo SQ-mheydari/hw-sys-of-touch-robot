@@ -1,0 +1,23 @@
+2024-08-08 10:56:28.947508 socket_logger - got sys.argv=['C:\\OptoFidelity\\SocketLogger\\SocketLogger.exe', '--startup', 'auto', 'install']
+2024-08-08 10:56:28.949253 socket_logger - Starting initial configuration
+2024-08-08 10:56:28.949752 socket_logger - handling command ['C:\\OptoFidelity\\SocketLogger\\SocketLogger.exe', '--startup', 'auto', 'install']
+2024-08-08 10:56:28.963637 socket_logger - windows_service finished
+2024-08-08 10:56:28.963637 socket_logger - outside of main
+2024-08-08 10:56:29.483193 socket_logger - got sys.argv=['C:\\OptoFidelity\\SocketLogger\\SocketLogger.exe']
+2024-08-08 10:56:29.483193 socket_logger - Start service - workaround
+2024-08-08 10:56:29.485186 socket_logger - service initializing
+2024-08-08 10:56:29.487186 socket_logger - service initialized
+2024-08-08 10:56:29.487186 socket_logger - service starting.
+2024-08-08 10:56:29.608797 socket_logger - service starting..
+2024-08-08 10:56:29.610815 socket_logger - service started
+2024-08-08 10:56:29.810835 socket_logger - SocketServerProcess starting
+2024-08-08 10:56:29.820824 socket_logger - SocketServerProcess started
+2024-10-18 14:14:08.078237 socket_logger - got sys.argv=['C:\\OptoFidelity\\SocketLogger\\SocketLogger.exe']
+2024-10-18 14:14:08.078237 socket_logger - Start service - workaround
+2024-10-18 14:14:08.078237 socket_logger - service initializing
+2024-10-18 14:14:08.084237 socket_logger - service initialized
+2024-10-18 14:14:08.084237 socket_logger - service starting.
+2024-10-18 14:14:08.086237 socket_logger - service starting..
+2024-10-18 14:14:08.088242 socket_logger - service started
+2024-10-18 14:14:08.434238 socket_logger - SocketServerProcess starting
+2024-10-18 14:14:08.452238 socket_logger - SocketServerProcess started

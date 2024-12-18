@@ -1,0 +1,52 @@
+    <div xmlns:py="http://genshi.edgewall.org/">
+    <h3>One Finger First Contact Latency Test Summary</h3>
+    <table class="datatable test_verdicts">
+        <tr>
+            <th class="wide">Sleep Mode</th>
+            <th>Value</th>
+            <th>Maximum allowed</th>
+            <th class="Narrow">Pass/Fail</th>
+        </tr>
+        <tr>
+            <td>Active</td>
+            <td>${"%s ms" % active_response_latency if active_response_latency is not None else "N/A"}</td>
+            <td>${get_setting('maxactiveresponselatency', dut.sample_id)} ms</td>
+            <td class="${'passed' if active_response_latency_verdict == 'Pass' else 'failed'}" >${active_response_latency_verdict}</td>
+        </tr>
+        <tr>
+            <td>Idle</td>
+            <td>${"%s ms" % idle_response_latency if idle_response_latency is not None else "N/A"}</td>
+            <td>${get_setting('maxidleresponselatency', dut.sample_id)} ms</td>
+            <td class="${'passed' if idle_response_latency_verdict == 'Pass' else 'failed'}" >${idle_response_latency_verdict}</td>
+        </tr>
+    </table>
+    
+    <!-- Report consists of one image -->
+    <div py:if="'noimages' not in kwargs" class="preview">
+    <a href="${detailed_figure}">
+        <img src="${figure}" width="800" height="600" alt="Preview image"/>
+    </a>
+    </div>
+
+		<table class="datatable">
+			<tr>
+				<th class="narrow">Point ID</th>
+				<th>Sleep Mode</th>
+				<th>Value</th>
+				<th>Maximum allowed</th>
+				<th class="narrow">Pass/Fail</th>
+			</tr>
+			<tr py:for="result in measurements">
+				<td>${result[0]}</td>
+				<td>${result[1]}</td>
+				<td> ${"%s ms" % result[2] if result[2] != None else "N/A"}</td>
+				<td> ${"%s ms" % result[3] if result[3] != None else "N/A"}</td>
+				<td class="${'passed' if result[4] == 'Pass' else 'failed'}"> ${result[4]}</td>
+			</tr>
+			
+		</table>
+
+		<div class="clear"></div>
+        <!--Split html from here for the page showing all test results-->
+        <!--split-->
+    </div>

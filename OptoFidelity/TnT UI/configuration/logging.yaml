@@ -1,0 +1,56 @@
+# Config for logging
+# ------------------
+# See http://docs.python.org/3/library/logging.config.html#configuration-dictionary-schema
+
+logging:
+    version: 1
+    disable_existing_loggers: true
+
+    root:
+        level: !!python/name:logging.DEBUG
+        handlers: [console, file, socket]
+
+    loggers:
+      tnttool:
+        level: !!python/name:logging.DEBUG
+        handlers: [console, file, socket]
+        propagate: false
+
+    handlers:
+        # Handler to write logs into file
+        file:
+            class: logging.handlers.RotatingFileHandler
+            filename: tnt_ui.log
+            maxBytes: 100000000
+            backupCount: 9
+            formatter: detailed
+
+        # Handler to write logs into console
+        console:
+            class: logging.StreamHandler
+            stream: ext://sys.stdout
+            formatter: basic
+
+        # Handler to send logs to the socket
+        socket:
+            class: logging.handlers.SocketHandler
+            host: !!python/name:socket_logger.socket_server.LOG_SERVER_ADDRESS
+            port: !!python/name:socket_logger.socket_server.LOG_SERVER_PORT
+
+    formatters:
+        # Log file formatter
+        detailed:
+            format: '%(asctime)s %(levelname)s %(message)s'
+            datefmt: '%d/%m/%Y %H:%M:%S'
+
+        # Console log formatter
+        basic:
+            (): colorlog.ColoredFormatter
+            log_colors:
+                DEBUG: cyan
+                INFO: green
+                WARNING: yellow
+                ERROR: red
+                CRITICAL: red, bg_white
+            format: '%(log_color)s %(asctime)s %(levelname)s %(name)-8s%(reset)s %(message)s'
+            datefmt: '%H:%M:%S'

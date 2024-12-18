@@ -1,0 +1,112 @@
+# TnT GT Configuration
+# Configuration for HMD IQ robot.
+port: 8000
+nodes:
+
+# TnT Compatible subtree
+- name: tnt
+  cls: TnT.TnT
+  parent:
+  connection:
+
+- name: doc
+  cls: NodeDoc
+  parent: tnt
+  connection: tnt
+
+- name: workspaces
+  cls: TnT.Workspaces
+  parent: tnt
+  connection: tnt
+
+- name: confocal_sensor
+  cls: Node
+  parent: ws
+  connection: ws
+  frame:
+  - [1.0, 0.0, 0.0, 137.1]
+  - [0.0, 1.0, 0.0, 189.0]
+  - [0.0, 0.0, 1.0, 82.457]
+  - [0.0, 0.0, 0.0, 1.0]
+
+- name: radiant_camera
+  cls: Node
+  parent: ws
+  connection: ws
+  frame:
+  - [1.0, 0.0, 0.0, 137.1]
+  - [0.0, 1.0, 0.0, 124.0]
+  - [0.0, 0.0, 1.0, 70.0]
+  - [0.0, 0.0, 0.0, 1.0]
+
+- name: ws
+  cls: TnT.Workspace
+  parent: workspaces
+  properties: {}
+  connection: workspaces
+
+- name: robots
+  cls: TnT.Robots
+  parent: ws
+  connection: ws
+
+- name: Robot1_base
+  cls: Node
+  parent: ws
+  connection: ws
+
+- name: Robot1
+  cls: HMDIQ.Robot
+  parent: robots
+  connection: Robot1_base
+  arguments:
+    driver: golden
+    host: 192.168.127.254
+    port: 4001
+    model: hmdiq
+    simulator: true
+    speed: 30
+    acceleration: 200
+    api_name: optomotion
+
+  properties:
+    robot_acceleration: 80
+    robot_velocity: 20
+    tip: Tip1
+    kinematic_name: tool1
+    calibration_data: {}
+    default_kinematic_name: tool1
+
+#
+# Mount points to robot
+#
+- name: tool1_mount
+  cls: Mount
+  parent: Robot1
+  connection: Robot1
+  properties:
+    mount_point: tool1
+
+- name: tools
+  cls: TnT.Tools
+  parent: ws
+  connection: ws
+
+- name: tool1
+  cls: TnT.Tool
+  parent: tools
+  connection: tool1_mount
+  properties:
+    can_attach_tip: false
+    can_attach_tool: true
+    can_attach_multifinger_tip: false
+
+  frame:
+  - [1.0, 0.0, 0.0, 0.0]
+  - [0.0, 1.0, 0.0, 0.0]
+  - [0.0, 0.0, 1.0, 0.0]
+  - [0.0, 0.0, 0.0, 1.0]
+- name: cameras
+  cls: TnT.Cameras
+  parent: ws
+  connection: ws

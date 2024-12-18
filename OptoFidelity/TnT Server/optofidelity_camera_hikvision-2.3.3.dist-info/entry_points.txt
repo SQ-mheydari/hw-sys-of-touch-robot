@@ -1,0 +1,5 @@
+[optofidelity.camera.backends]
+hikvision = optofidelity.camera.hikvision:HikVisionCamera
+
+[pyinstaller40]
+hook-dirs = optofidelity.camera.hikvision.pyinstaller_hooks:get_hook_dirs

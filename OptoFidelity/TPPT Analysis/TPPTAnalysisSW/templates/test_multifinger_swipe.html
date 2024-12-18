@@ -1,0 +1,112 @@
+    <div xmlns:py="http://genshi.edgewall.org/">
+    <?python from genshi.builder import tag ?>
+    <?python from genshi.util import flatten ?>
+      <h3>Multifinger Swipe Test Summary</h3>
+      <table class="datatable test_verdicts">
+        <tr>
+            <th></th>
+            <th>Value</th>
+            <th>Maximum allowed</th>
+            <th>Pass/Fail</th>
+        </tr>
+        <tr py:if="results.nondiagonal_swipes or not results.use_diagonal_offset">
+            <td class="vertical_header_th">Max offset:</td>
+            <td>${"%s mm" % results.max_offset if results.max_offset is not None else 'N/A'}</td>
+            <td>${"%s" % get_setting('maxoffset', dut.sample_id)} mm</td>
+            <td class="${'' if results.offset_verdict is None else 'passed' if results.offset_verdict else 'failed'}" >
+                 ${"N/A" if results.offset_verdict is None else "Pass" if results.offset_verdict else "Fail"}
+            </td>
+        </tr>
+        <tr py:if="results.diagonal_swipes and results.use_diagonal_offset">
+            <td class="vertical_header_th">Max offset (diagonal):</td>
+            <td>${"%s mm" % results.max_diagonal_offset if results.max_diagonal_offset is not None else 'N/A'}</td>
+            <td>${"%s" % get_setting('maxdiagoffset', dut.sample_id)} mm</td>
+            <td class="${'' if results.diagonal_offset_verdict is None else 'passed' if results.offset_verdict else 'failed'}" >
+                 ${"N/A" if results.diagonal_offset_verdict is None else "Pass" if results.diagonal_offset_verdict else "Fail"}
+            </td>
+        </tr>
+        <tr py:if="results.nondiagonal_swipes or not results.use_diagonal_jitter">
+            <td class="vertical_header_th">Max jitter:</td>
+            <td>${"%s mm" % results.max_jitter if results.max_jitter is not None else 'N/A'}</td>
+            <td>${"%s" % get_setting('maxjitter', dut.sample_id)} mm</td>
+            <td class="${'' if results.jitter_verdict is None else 'passed' if results.jitter_verdict else 'failed'}" >
+                 ${'N/A' if results.jitter_verdict is None else "Pass" if results.jitter_verdict else "Fail"}
+            </td>
+        </tr>
+        <tr py:if="results.diagonal_swipes and results.use_diagonal_jitter">
+            <td class="vertical_header_th">Max jitter (diagonal):</td>
+            <td>${"%s mm" % results.max_diagonal_jitter if results.max_diagonal_jitter is not None else 'N/A'}</td>
+            <td>${"%s" % get_setting('maxdiagjitter', dut.sample_id)} mm</td>
+            <td class="${'' if results.diagonal_jitter_verdict is None else 'passed' if results.diagonal_jitter_verdict else 'failed'}" >
+                 ${'N/A' if results.diagonal_jitter_verdict is None else "Pass" if results.diagonal_jitter_verdict else "Fail"}
+            </td>
+        </tr>
+        <tr>
+            <td class="vertical_header_th">Missing swipes:</td>
+            <td>${results.missing_swipes}/${results.total_swipes}</td>
+            <td>${int(get_setting('maxmissingswipes', dut.sample_id))}</td>
+            <td class="${'passed' if results.missing_swipes_verdict else 'failed'}">${"Pass" if results.missing_swipes_verdict else "Fail"}</td>
+        </tr>
+
+        <tr>
+            <td class="vertical_header_th">Incomplete swipes:</td>
+            <td>${results.incomplete_swipes}/${results.total_swipes}</td>
+            <td>${int(get_setting('maxincompleteswipes', dut.sample_id))}</td>
+            <td class="${'passed' if results.incomplete_swipes_verdict else 'failed'}">${"Pass" if results.incomplete_swipes_verdict else "Fail"}</td>
+        </tr>
+
+        <tr>
+            <td class="vertical_header_th">Errors:</td>
+            <td>${len(results.errors)}</td>
+            <td>0</td>
+            <td class="${'passed' if results.errors_verdict else 'failed'}">${"Pass" if results.errors_verdict else "Fail"}</td>
+        </tr>
+        <tr py:if="len(results.errors) > 0">
+            <td class="vertical_header_th">Error descriptions:</td>
+            <td colspan="2">${tag(flatten((e,tag.br) for e in sorted(results.errors)))}</td>
+            <td></td>
+        </tr>
+      </table>
+
+      <div py:if="'noimages' not in kwargs" py:for="img in results.images" class="preview">
+        <a href="${img[1]}">
+            <img src="${img[0]}" alt="Preview image"/>
+        </a>
+      </div>
+
+        <!--! Preview table -->
+        <div class="dtable no_print">
+	        <div class="dtable_row">
+		        <div class="dtable_header narrow_cell">Toggle:</div>
+		        <div class="dtable_header narrow_cell"><button class="all_lines_button">All</button></div>
+                <div class="dtable_header narrow_cell"><button class="failed_lines_button">Failed</button></div>
+		        <div class="dtable_header narrow_cell"><button class="passed_lines_button">Passed</button></div>
+            </div>
+        </div>
+
+	  <div class="dtable subplot_table">
+		<div class="dtable_row">
+			<div class="dtable_header narrow_cell">Swipe</div>
+			<div class="dtable_header narrow_cell"># of Fingers</div>
+			<div class="dtable_header narrow_cell">Errors</div>
+			<div class="dtable_header narrow_cell">Max offset</div>
+			<div class="dtable_header narrow_cell">Max jitter</div>
+            <div class="dtable_header narrow_cell">Swipe Gaps</div>
+			<div class="dtable_header narrow_cell">Pass/Fail</div>
+			<div class="dtable_header no_print">Detailed plot</div>
+		</div>
+		<div py:for="swipe in results.swipes" class="dtable_row plot_header">
+			<div class="dtable_cell narrow_cell">${swipe.id}</div>
+			<div class="dtable_cell narrow_cell">${swipe.num_fingers}</div>
+			<div class="dtable_cell narrow_cell">${len(swipe.errors)}</div>
+			<div class="dtable_cell narrow_cell">${swipe.max_offset}</div>
+			<div class="dtable_cell narrow_cell">${swipe.max_jitter}</div>
+            <div class="dtable_cell narrow_cell">${swipe.swipe_gaps}</div>
+			<div class="dtable_cell narrow_cell ${swipe.verdict_class}">${swipe.verdict_text}</div>
+			<div class="dtable_cell no_print"><button type="button" class="show_plot">Show/Hide</button></div>
+			<div class="plot" data-src="${swipe.image}"/>
+		</div>
+      </div>
+        <!--Split html from here for the page showing all test results-->
+        <!--split-->
+    </div>

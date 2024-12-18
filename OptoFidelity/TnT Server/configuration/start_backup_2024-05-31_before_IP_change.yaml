@@ -1,0 +1,859 @@
+# TnT Server configuration for standard synchro robot.
+# See doc/configuration.md for general information on how to use config files.
+port: 8000
+
+# Configuration consists of a list of node.
+nodes:
+
+# Root node of the node hierarchy.
+- name: tnt
+  cls: TnT.TnT
+  parent:
+  connection:
+
+# ================ DUT server ================
+
+# DUT server manages communication with DUT application (Android and TnT Server).
+# Required for automatic DUT xy-positioning, sending image to DUT and other DUT communication.
+# Must be initialized at this point in config file.
+- name: dutserver
+  cls: DutServer
+  parent: tnt
+  arguments:
+    #host: 127.0.0.1
+    #host: 10.118.240.140
+    host: 0.0.0.0
+    port: 50008
+  connection: tnt
+
+
+# ================ Boilerplate config ================
+
+
+- name: workspaces
+  cls: TnT.Workspaces
+  parent: tnt
+  connection: tnt
+
+- name: ws
+  cls: TnT.Workspace
+  parent: tnt.workspaces
+  properties: {}
+  connection: tnt.workspaces
+
+# API Document parser.
+- name: doc
+  cls: NodeDoc
+  parent: tnt
+  connection: tnt
+
+
+# ================ Surface probe ================
+
+
+# Surface probe is needed for general surface probing when robot has voicecoil or similar trigger.
+# Required for automatic DUT and tip z-positioning.
+- name: surfaceprobe
+  cls: NodeSurfaceProbe
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+  arguments:
+    robot: Robot1
+  properties:
+    surface_probe_settings:
+      voicecoil_probe_position: 6
+      surface_detection_threshold: 1.0
+      robot_probing_step: 4
+- name: dutpositioning
+  cls: NodeDutPositioning
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+  arguments:
+    robot: Robot1
+    camera: Camera1
+    # Surface probe must be specified if automatic z-positioning is used.
+    surfaceprobe: surfaceprobe
+
+
+# ================ Containers ================
+
+
+- name: robots
+  cls: TnT.Robots
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+
+- name: cameras
+  cls: TnT.Cameras
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+
+- name: tools
+  cls: TnT.Tools
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+
+- name: duts
+  cls: TnT.Duts
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+  arguments:
+    # Choose this according to robot (TnT.Gestures, Synchro.Gestures or Voicecoil.Gestures)
+    gestures_cls: Synchro.Gestures
+
+- name: tips
+  cls: TnT.Tips
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+
+- name: icons
+  cls: NodeIcons
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+  properties:
+    icon_folder_path: data/icons
+
+- name: images
+  cls: TnT.Images
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+  properties:
+    image_folder_path: data/images
+    # Number of most recent images to keep.
+    max_images: 10
+
+- name: detectors
+  cls: TnT.Detectors
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+
+- name: analyzers
+  cls: TnT.Analyzers
+  parent: tnt.workspaces.ws
+
+  connection:
+- name: physical_buttons
+  cls: TnT.PhysicalButtons
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+
+- name: motherboards
+  cls: TnT.Motherboards
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+
+- name: speakers
+  cls: NodeSpeakers
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+
+
+# ================ Detectors ================
+
+
+# Fiducial detector is needed for automatic tip slot XY positioning.
+- name: tip_fiducial
+  cls: TnT.Detector
+  parent: tnt.workspaces.ws.detectors
+  arguments:
+    driver: TipFiducial
+  connection:
+
+# ================ Force calibration ================
+
+
+# Futek sensor is used to measure force readings.
+# - name: futek
+  # cls: NodeFutek
+  # parent: tnt.workspaces.ws
+  # connection: tnt.workspaces.ws
+  # arguments:
+    # serial_number: 732644
+    # number_of_averages: 4
+    # sample_rate: 25
+    # invert_polarity: true
+
+# Force calibration procedure.
+# This is required if force calibration is done via UI or client.
+# Requires Futek sensor (or similar force sensor) configuration.
+- name: forcecalibrator
+  path: forcecalibrator
+  # NodeCalibratorForceVoiceCoil - Open loop force with voicecoil (synchro tool).
+  # NodeCalibratorOptoStdForce - Closed loop force (voicecoil tool with loadcell).
+  cls: NodeCalibratorForceVoiceCoil
+  #cls: NodeCalibratorOptoStdForce
+  parent: tnt.workspaces.ws
+  arguments:
+    robot: Robot1
+    sensor: futek
+
+
+# ================ Motherboard ================
+
+
+# Motherboard IO control. Required if motherboard IO is to be controlled via UI or client.
+  connection:
+- name: Motherboard1
+  cls: TnT.Motherboard
+  parent: tnt.workspaces.ws.motherboards
+  arguments:
+    bus_address: 8
+  properties:
+    robot_name: Robot1
+    io_spec_output:
+      1:
+        alias: light1
+      3:
+        alias: light2
+  connection: tnt.workspaces.ws
+
+
+# ================ Robot ================
+
+
+# Robot base frame.
+# Not strictly required but exists for legacy.
+- name: Robot1_base
+  cls: Node
+  parent: tnt.workspaces.ws
+  connection: tnt.workspaces.ws
+
+
+# Robot node controls a physical robot or a simulation.
+# This robot node is configured for standard synchro robot simulator.
+# See configuration/robots for other robot configurations that can be used here instead.
+# Make sure that duts node's gestures_cls is appropriate for this robot. For synchro it should be Synchro.Gestures.
+- name: Robot1
+  # Robot class depends on the type of robot (TnT.Robot, Synchro.Robot, TwoFingerDt.Robot, Voicecoil.Robot).
+  cls: Synchro.Robot
+  parent: tnt.workspaces.ws.robots
+  connection: tnt.workspaces.ws.Robot1_base
+  arguments:
+    driver: golden
+    # Run as simulator? Simulator is ran at host 127.0.0.1. Change to correct host for real robot.
+    simulator: false
+    host: 192.168.127.254
+    port: 4001
+    # Model determines the robot kinematics (see drivers/robots/goldenmov/kinematics).
+    model: synchro
+    # Speed and acceleration after TnT Server has initialized.
+    speed: 30
+    acceleration: 50
+    # Home axes during init? Should be true in delivery.
+    # Setting to false makes init faster but axes must have been homed properly at some point.
+    home_axes: true
+    # Restore axis configs before homing? Should be true in delivery.
+    # Set to false only when testing custom axis settings.
+    restore_axis_configs: true
+    # Voicecoil current in mA when picking and dropping multifinger tool. Should be lower than maximum current.
+    voicecoil_multifinger_pick_drop_current: 1250
+    # Default current for voicecoils in mA.
+    default_voicecoil_current: 500
+    # Voicecoil current in mA when doing drumroll etc.
+    max_voicecoil_current: 1360
+    # Mode of operation for gripping. Either "position" or "torque".
+    separation_gripping_mode: position
+    # Continuous gripping current in mA when using separation axis for gripping.
+    continuous_separation_gripping_current: 500
+    # Peak gripping current in mA when using separation axis for gripping.
+    peak_separation_gripping_current: 500
+    # Torque setpoint (unitless) for separation axis when mode is "torque". Proper value depends on drive settings but
+    # usually -3000 results in gentle inwards grip.
+    separation_gripping_torque_setpoint: 0
+    # Gripping distance in mm when using separation axis for gripping and mode is "position".
+    # Direction is the same as axis direction. 
+    separation_gripping_distance: -5
+    # Maximum speed to use when attaching or detaching tips.
+    max_tip_change_speed: 100
+    # Maximum acceleration to use when attaching or detaching tips.
+    max_tip_change_acceleration: 300
+    position_limits:
+      x_min: -20.0
+      x_max: 620
+      y_min: -20.0
+      y_max: 620
+      z_min: -215.0
+      z_max: 6.0
+
+    # Provides trigger functionality for watchdog_tap especially for First Contact Latency test done with PIT.
+    # Not needed for non-PIT configurations.
+    # triggersensor: triggersensor
+    #
+    # If robot supports smart tips, uncomment lines below and set correct tool addresses.
+    #smart_tip:
+    #  # Mode can be simulator, normal or external.
+    #  mode: normal
+    #  addresses:
+    #    tool1: 8
+    #  # Define IP address of motherboard when using external mode.
+    #  ip_address: 192.168.127.254
+    #  id_chip_address: 7
+    #  # If true, SW tip status automatically updates according to HW status.
+    #  hot_changing: false
+    #
+    # Axis specifications. Set dict keys to match drive addresses. Set max_velocity (mm/s) and max_acceleration (mm/s^2)
+    # to roughly 80% of measured maximum performance. This may vary between robots.
+    # To disable trajectory time scaling by particular axis, remove max_velocity and / or max_acceleration.
+    axis_specs:
+      1:
+        alias: y
+        homing_priority: 2
+        acceleration: 500
+        velocity: 250
+        max_velocity: 640
+        max_acceleration: 1400
+        #post_homing_move: 10
+      11:
+        alias: x
+        homing_priority: 1
+        acceleration: 500
+        velocity: 250
+        max_velocity: 655
+        max_acceleration: 3500
+        #post_homing_move: 10
+      22:
+        alias: z
+        homing_priority: 3
+        acceleration: 500
+        velocity: 100
+        max_velocity: 110
+        max_acceleration: 7248
+        #post_homing_move: 10
+      42:
+        alias: azimuth
+        homing_priority: 1
+        acceleration: 500
+        velocity: 100
+        max_velocity: 620
+        max_acceleration: 6400
+      41:
+        alias: separation
+        homing_priority: 2
+        acceleration: 500
+        velocity: 250
+        max_velocity: 1600
+        max_acceleration: 27000
+      31:
+        alias: voicecoil1
+        homing_priority: 2
+        acceleration: 500
+        velocity: 250
+        max_velocity: 380
+        max_acceleration: 29280
+        press_margin: 1
+      32:
+        alias: voicecoil2
+        homing_priority: 2
+        acceleration: 500
+        velocity: 250
+        max_velocity: 380
+        max_acceleration: 29280
+        press_margin: 1
+  properties:
+    robot_acceleration: 50.0
+    robot_velocity: 30.0
+    kinematic_name: tool1
+    default_kinematic_name: tool1
+    calibration_data:
+      ap_model:
+        coefficients:
+          x:
+            x:
+            - 0.19275493525231918
+            - -0.00022173094113547492
+            - 3.1850304096194156e-07
+            - -4.0845450700636626e-11
+            y:
+            - 0.01041690132998574
+            - 0.0004177612652488184
+            - -1.616442174865501e-07
+            - 2.7988557558608337e-11
+            z:
+            - -0.33798101276818787
+            - 0.00027003002144766557
+            - 2.6024235892321105e-07
+            - -7.708876683972836e-10
+          y:
+            x:
+            - 0.431095442400027
+            - 0.0007104161640837464
+            - -6.756609057766925e-07
+            - 2.9837391355533365e-10
+            y:
+            - -1.2438493766608514
+            - -4.409066344916557e-05
+            - 5.856503601498545e-07
+            - -2.3587612659397375e-10
+            z:
+            - 0.5097517438142402
+            - 0.0003809543507015184
+            - 3.919212179447918e-06
+            - -4.860003214327805e-09
+          z:
+            x:
+            - -0.22129082824303256
+            - -0.0002928954759348921
+            - 5.669575818567067e-07
+            - -2.337182424696535e-10
+            y:
+            - 0.15478348023205324
+            - -0.0004258643232055336
+            - 4.70761257519051e-07
+            - -1.0423546649089155e-11
+            z:
+            - 0.04387911793311721
+            - -0.00022594531209174743
+            - -9.40781447575784e-09
+            - -2.010116830035422e-10
+      tool2_offset:
+      - - 1.0
+        - 0.0
+        - 0.0
+        - 5.467855477048474
+      - - 0.0
+        - 1.0
+        - 0.0
+        - -0.3443313082400472
+      - - 0.0
+        - 0.0
+        - 1.0
+        - 0.0
+      - - 0.0
+        - 0.0
+        - 0.0
+        - 1.0
+      tool1_offset:
+      - - 1.0
+        - 0.0
+        - 0.0
+        - -5.169150161313269
+      - - 0.0
+        - 1.0
+        - 0.0
+        - -0.1339952948626113
+      - - 0.0
+        - 0.0
+        - 1.0
+        - 0.0
+      - - 0.0
+        - 0.0
+        - 0.0
+        - 1.0
+    force_calibration_table:
+      voicecoil1:
+        current:
+        - 100.0
+        - 205.0
+        - 310.0
+        - 415.0
+        - 520.0
+        - 625.0
+        - 730.0
+        - 835.0
+        - 940.0
+        - 1045.0
+        - 1150.0
+        - 1255.0
+        - 1360.0
+        force:
+        - 23.839620948681635
+        - 73.29372037249308
+        - 124.10166188985089
+        - 175.4988535602943
+        - 226.77516887439043
+        - 277.879330543117
+        - 328.6923112521841
+        - 379.58770583362787
+        - 430.60283040549604
+        - 480.73099499950445
+        - 531.1933503555578
+        - 581.8001578561025
+        - 632.0100697839824
+      voicecoil2:
+        current:
+        - 100.0
+        - 205.0
+        - 310.0
+        - 415.0
+        - 520.0
+        - 625.0
+        - 730.0
+        - 835.0
+        - 940.0
+        - 1045.0
+        - 1150.0
+        - 1255.0
+        - 1360.0
+        force:
+        - 18.737236570793883
+        - 64.68430349778033
+        - 116.13674558887674
+        - 167.29503339644066
+        - 217.97251807026535
+        - 269.0485987930008
+        - 319.44784379392235
+        - 370.6383161761042
+        - 421.23823343523605
+        - 472.1097852116044
+        - 523.6038036457712
+        - 574.5906204076394
+        - 625.6495899626705
+    max_robot_acceleration: 100000
+    max_robot_velocity: 250
+    max_voicecoil_current: 1360
+    maximum_dut_tilt_angle: 15.0
+    voicecoil_multifinger_pick_drop_current: 1250
+- name: tool1_mount
+  cls: Mount
+  parent: tnt.workspaces.ws.robots.Robot1
+  connection: tnt.workspaces.ws.Robot1_base.Robot1
+  properties:
+    mount_point: tool1
+
+# Position in FK chain that corresponds to the second finger head.
+- name: tool2_mount
+  cls: Mount
+  parent: tnt.workspaces.ws.robots.Robot1
+  connection: tnt.workspaces.ws.Robot1_base.Robot1
+  properties:
+    mount_point: tool2
+
+# Position in FK chain that corresponds to the middle point between the two heads.
+- name: mid_mount
+  cls: Mount
+  parent: tnt.workspaces.ws.robots.Robot1
+  connection: tnt.workspaces.ws.Robot1_base.Robot1
+  properties:
+    mount_point: mid
+
+# Position in FK chain that corresponds to the synchro mount point (azimuth axis).
+- name: synchro_mount
+  cls: Mount
+  parent: tnt.workspaces.ws.robots.Robot1
+  connection: tnt.workspaces.ws.Robot1_base.Robot1
+  properties:
+    mount_point: synchro
+
+# Position in FK chain that corresponds to the camera mount location.
+- name: camera_mount
+  cls: Mount
+  parent: tnt.workspaces.ws.robots.Robot1
+  connection: tnt.workspaces.ws.Robot1_base.Robot1
+  properties:
+    mount_point: camera
+
+# Tool 1 is the first head where a tip can be attached (as child node).
+- name: tool1
+  cls: TnT.Tool
+  parent: tnt.workspaces.ws.tools
+  connection: tnt.workspaces.ws.Robot1_base.Robot1.tool1_mount
+  properties:
+    can_attach_tip: true
+    can_attach_tool: true
+    can_attach_multifinger_tip: true
+
+# Tool 2 is the second head where a tip can be attached (as child node).
+    smart: false
+  frame:
+  - [1.0, 0.0, 0.0, 0.0]
+  - [0.0, 1.0, 0.0, 0.0]
+  - [0.0, 0.0, 1.0, 0.1]
+  - [0.0, 0.0, 0.0, 1.0]
+- name: tool2
+  cls: TnT.Tool
+  parent: tnt.workspaces.ws.tools
+  connection: tnt.workspaces.ws.Robot1_base.Robot1.tool2_mount
+  properties:
+    can_attach_tip: true
+    can_attach_tool: true
+    can_attach_multifinger_tip: false
+
+
+# ================ Cameras ================
+
+
+# Positioning camera that is attached to robot's camera mount.
+    smart: false
+  frame:
+  - [1.0, 0.0, 0.0, 5.25]
+  - [0.0, 1.0, 0.0, 0.0]
+  - [0.0, 0.0, 1.0, 0.1]
+  - [0.0, 0.0, 0.0, 1.0]
+- name: Camera1
+  cls: TnT.Camera
+  parent: tnt.workspaces.ws.cameras
+  connection: tnt.workspaces.ws.Robot1_base.Robot1.camera_mount
+  arguments:
+    output_format: bgr
+    # Set flips and rotation so that in camera image workspace x point right and y points down.
+    flipx: true
+    flipy: true
+    rotate: false
+    # driver can be one of yasler, ximea, simulator
+    driver: optocamera
+    # camtype can be gige or usb (applicable to yasler)
+    camtype: gige
+    # Gige (ethernet) camera settings:
+    ip_address: 10.10.10.20
+    inter_packet_delay: 4000
+    packet_size: 1500
+    # Number of times to retry image capture in case of camera error.
+    retry_count: 10
+
+    # ximea serial number:
+    #serial_number: '23599259'
+
+    focal_length: 8
+    gain: 5.0
+    exposure: 0.005
+
+    # If using stream set max queue size to 1 to avoid memory filling up with images.
+    max_queue_size: 1
+  properties:
+    calibration:
+      intrinsic:
+      - - 17308.801499311627
+        - 0.0
+        - 1295.0
+      - - 0.0
+        - 17295.846566344233
+        - 971.0
+      - - 0.0
+        - 0.0
+        - 1.0
+      dist_coeffs:
+      - - -9.280634493982635
+        - -65.45286991412614
+        - -0.00016943713182133264
+        - 0.03793699097999947
+        - 15444.832423043317
+      ppmm: 15.5
+    max_stream_fps: 30
+    camera_info:
+  frame:
+  - [1.0, 0.0, 0.0, -1.8002544171933084]
+  - [0.0, 1.0, 0.0, 56.571714442322545]
+  - [0.0, 0.0, 1.0, 37.16947713581541]
+  - [0.0, 0.0, 0.0, 1.0]
+- name: 6mm-1
+  cls: TnT.Tip
+  parent: tnt.workspaces.ws.tips
+  frame:
+  - [1.0, 0.0, 0.0, 0.0]
+  - [0.0, 1.0, 0.0, 0.0]
+  - [0.0, 0.0, 1.0, 12.8]
+  - [0.0, 0.0, 0.0, 1.0]
+  arguments:
+    model: Standard
+    diameter: 0
+    length: 0
+  properties:
+    diameter: 6
+    first_finger_offset:
+    grippable: false
+    length: 12.8
+    model: Standard
+    num_tips:
+    offset_x: 0.0
+    offset_y: 0.0
+    separation:
+    slot_in:
+    - [-0.9999999815706462, 0.00019198621653982633, -0.0, 580.399]
+    - [-0.00019198621653982633, -0.9999999815706462, 0.0, 6.862]
+    - [-0.0, 0.0, 1.0, -189.771]
+    - [0.0, 0.0, 0.0, 1.0]
+    slot_out:
+    - [-0.9999999876629945, 0.0001570796320334606, -0.0, 540.398]
+    - [-0.0001570796320334606, -0.9999999876629945, 0.0, 6.861]
+    - [-0.0, 0.0, 1.0, -189.771]
+    - [0.0, 0.0, 0.0, 1.0]
+    smart: false
+    tip_distance:
+    type: Tip
+    voice_coil_position:
+  connection:
+- name: 6mm-2
+  cls: TnT.Tip
+  parent: tnt.workspaces.ws.tips
+  frame:
+  - [1.0, 0.0, 0.0, 0.0]
+  - [0.0, 1.0, 0.0, 0.0]
+  - [0.0, 0.0, 1.0, 12.9]
+  - [0.0, 0.0, 0.0, 1.0]
+  arguments:
+    model: Standard
+    diameter: 0
+    length: 0
+  properties:
+    diameter: 6
+    first_finger_offset:
+    grippable: false
+    length: 12.9
+    model: Standard
+    num_tips:
+    offset_x: 0.0
+    offset_y: 0.0
+    separation:
+    slot_in:
+    - [-0.9999999945168865, 0.0001047197549281125, -0.0, 580.295]
+    - [-0.0001047197549281125, -0.9999999945168865, 0.0, 31.862]
+    - [-0.0, 0.0, 1.0, -189.769]
+    - [0.0, 0.0, 0.0, 1.0]
+    slot_out:
+    - [-0.9999999986292216, 5.235987753566922e-05, -0.0, 540.295]
+    - [-5.235987753566922e-05, -0.9999999986292216, 0.0, 31.861]
+    - [-0.0, 0.0, 1.0, -189.769]
+    - [0.0, 0.0, 0.0, 1.0]
+    smart: false
+    tip_distance:
+    type: Tip
+    voice_coil_position:
+  connection:
+- name: 9mm-1
+  cls: TnT.Tip
+  parent: tnt.workspaces.ws.tips
+  frame:
+  - [1.0, 0.0, 0.0, 0.0]
+  - [0.0, 1.0, 0.0, 0.0]
+  - [0.0, 0.0, 1.0, 12.7]
+  - [0.0, 0.0, 0.0, 1.0]
+  arguments:
+    model: Standard
+    diameter: 0
+    length: 0
+  properties:
+    diameter: 9
+    first_finger_offset:
+    grippable: false
+    length: 12.7
+    model: Standard
+    num_tips:
+    offset_x: 0.0
+    offset_y: 0.0
+    separation:
+    slot_in:
+    - [-1.0, -1.2246467991473532e-16, 0.0, 580.333]
+    - [1.2246467991473532e-16, -1.0, 0.0, 56.871]
+    - [-0.0, 0.0, 1.0, -189.664]
+    - [0.0, 0.0, 0.0, 1.0]
+    slot_out:
+    - [-0.9999999986292216, -5.235987753566922e-05, 0.0, 540.333]
+    - [5.235987753566922e-05, -0.9999999986292216, 0.0, 56.87]
+    - [-0.0, 0.0, 1.0, -189.664]
+    - [0.0, 0.0, 0.0, 1.0]
+    smart: false
+    tip_distance:
+    type: Tip
+    voice_coil_position:
+  connection:
+- name: 9mm-2
+  cls: TnT.Tip
+  parent: tnt.workspaces.ws.tips
+  frame:
+  - [1.0, 0.0, 0.0, 0.0]
+  - [0.0, 1.0, 0.0, 0.0]
+  - [0.0, 0.0, 1.0, 12.7]
+  - [0.0, 0.0, 0.0, 1.0]
+  arguments:
+    model: Standard
+    diameter: 0
+    length: 0
+  properties:
+    diameter: 9
+    first_finger_offset:
+    grippable: false
+    length: 12.7
+    model: Standard
+    num_tips:
+    offset_x: 0.0
+    offset_y: 0.0
+    separation:
+    slot_in:
+    - [-0.9999999986292216, 5.235987753566922e-05, -0.0, 580.409]
+    - [-5.235987753566922e-05, -0.9999999986292216, 0.0, 81.873]
+    - [-0.0, 0.0, 1.0, -189.608]
+    - [0.0, 0.0, 0.0, 1.0]
+    slot_out:
+    - [-0.9999999993907651, 3.49065850328293e-05, -0.0, 540.409]
+    - [-3.49065850328293e-05, -0.9999999993907651, 0.0, 81.873]
+    - [-0.0, 0.0, 1.0, -189.608]
+    - [0.0, 0.0, 0.0, 1.0]
+    smart: false
+    tip_distance:
+    type: Tip
+    voice_coil_position:
+  connection:
+- name: Soft 9mm-1
+  cls: TnT.Tip
+  parent: tnt.workspaces.ws.tips
+  frame:
+  - [1.0, 0.0, 0.0, 0.0]
+  - [0.0, 1.0, 0.0, 0.0]
+  - [0.0, 0.0, 1.0, 13.3]
+  - [0.0, 0.0, 0.0, 1.0]
+  arguments:
+    model: Standard
+    diameter: 0
+    length: 0
+  properties:
+    diameter: 9
+    first_finger_offset:
+    grippable: false
+    length: 13.3
+    model: Standard
+    num_tips:
+    offset_x: 0.0
+    offset_y: 0.0
+    separation:
+    slot_in:
+    - [-0.9999999925368732, 0.00012217304733569813, -0.0, 580.31]
+    - [-0.00012217304733569813, -0.9999999925368732, 0.0, 106.88]
+    - [-0.0, 0.0, 1.0, -189.547]
+    - [0.0, 0.0, 0.0, 1.0]
+    slot_out:
+    - [-0.9999999902522426, 0.00013962633970606773, -0.0, 540.309]
+    - [-0.00013962633970606773, -0.9999999902522426, 0.0, 106.881]
+    - [-0.0, 0.0, 1.0, -189.547]
+    - [0.0, 0.0, 0.0, 1.0]
+    smart: false
+    tip_distance:
+    type: Tip
+    voice_coil_position:
+  connection:
+- name: Soft 9mm-2
+  cls: TnT.Tip
+  parent: tnt.workspaces.ws.tips
+  frame:
+  - [1.0, 0.0, 0.0, 0.0]
+  - [0.0, 1.0, 0.0, 0.0]
+  - [0.0, 0.0, 1.0, 13.5]
+  - [0.0, 0.0, 0.0, 1.0]
+  arguments:
+    model: Standard
+    diameter: 0
+    length: 0
+  properties:
+    diameter: 9
+    first_finger_offset:
+    grippable: false
+    length: 13.5
+    model: Standard
+    num_tips:
+    offset_x: 0.0
+    offset_y: 0.0
+    separation:
+    slot_in:
+    - [-0.9999999194286936, 0.00040142571717775025, -0.0, 580.107]
+    - [-0.00040142571717775025, -0.9999999194286936, 0.0, 131.872]
+    - [-0.0, 0.0, 1.0, -189.787]
+    - [0.0, 0.0, 0.0, 1.0]
+    slot_out:
+    - [-0.9999999262825853, 0.0003839724260036105, -0.0, 540.106]
+    - [-0.0003839724260036105, -0.9999999262825853, 0.0, 131.873]
+    - [-0.0, 0.0, 1.0, -189.787]
+    - [0.0, 0.0, 0.0, 1.0]
+    smart: false
+    tip_distance:
+    type: Tip
+    voice_coil_position:
+  connection:

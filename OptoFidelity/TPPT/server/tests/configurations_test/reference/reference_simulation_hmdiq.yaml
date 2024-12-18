@@ -1,0 +1,213 @@
+# TnT GT Configuration
+# Configuration for standard 3-axis robot simulator.
+port: 8000
+nodes:
+
+# TnT Compatible subtree
+- name: tnt
+  cls: TnT.TnT
+  parent:
+  connection:
+
+- name: fileserver
+  cls: NodeFileServer
+  parent: tnt
+  arguments:
+    path: web
+    port: 8010
+  connection: tnt
+
+- name: simulator
+  cls: NodeSimulator
+  parent: tnt
+  connection: tnt
+
+- name: dutserver
+  cls: DutServer
+  parent: tnt
+  arguments:
+    host: 0.0.0.0
+    port: 50008
+  connection: tnt
+
+- name: doc
+  cls: NodeDoc
+  parent: tnt
+  connection: tnt
+
+- name: dutpositioning
+  cls: NodeDutPositioning
+  parent: ws
+  connection: ws
+  arguments:
+    robot: Robot1
+    camera: Camera1
+
+- name: workspaces
+  cls: TnT.Workspaces
+  parent: tnt
+  connection: tnt
+
+- name: ws
+  cls: TnT.Workspace
+  parent: workspaces
+  properties: {}
+  connection: workspaces
+
+- name: robots
+  cls: TnT.Robots
+  parent: ws
+  connection: ws
+
+- name: Robot1_base
+  cls: Node
+  parent: ws
+  connection: ws
+
+- name: Robot1
+  cls: HMDIQ.Robot
+  parent: robots
+  connection: Robot1_base
+  arguments:
+    driver: golden
+    host: 127.0.0.1
+    port: 4001
+    model: hmdiq
+    simulator: true
+    speed: 30
+    acceleration: 50
+    force_driver:
+    axis_specs:
+      1:
+        alias: x
+        homing_priority: 3
+        acceleration: 500
+        velocity: 500
+        move_tolerance: 0.005
+      2:
+        alias: y
+        homing_priority: 2
+        acceleration: 500
+        velocity: 500
+        move_tolerance: 0.005
+      3:
+        alias: z
+        homing_priority: 1
+        acceleration: 500
+        velocity: 500
+        move_tolerance: 0.005
+      4:
+        alias: yaw
+        homing_priority: 4
+        acceleration: 20000
+        velocity: 50
+        move_tolerance: 0.005
+      5:
+        alias: pitch
+        homing_priority: 4
+        acceleration: 20000
+        velocity: 50
+        move_tolerance: 0.005
+      6:
+        alias: roll
+        homing_priority: 4
+        acceleration: 20000
+        velocity: 50
+        move_tolerance: 0.005
+  properties:
+    force_calibration_table: {}
+    max_robot_velocity: 250
+    max_robot_acceleration: 100000
+    robot_acceleration: 50.0
+    robot_velocity: 30.0
+    tip: Tip1
+    calibration_data:
+    kinematic_name: tool1
+    default_kinematic_name: tool1
+    arc_length: 100
+    driver:
+#
+# Mount points to robot
+#
+- name: tool1_mount
+  cls: Mount
+  parent: Robot1
+  connection: Robot1
+  properties:
+    mount_point: tool1
+
+- name: camera_mount
+  cls: Mount
+  parent: Robot1
+  connection: Robot1
+  properties:
+    mount_point: camera
+
+- name: duts
+  cls: TnT.Duts
+  parent: ws
+  connection: ws
+  arguments:
+    gestures_cls: TnT.Gestures
+
+- name: tools
+  cls: TnT.Tools
+  parent: ws
+  connection: ws
+
+- name: tool1
+  cls: TnT.Tool
+  parent: tools
+  connection: tool1_mount
+
+  properties:
+    can_attach_tool: true
+    can_attach_multifinger_tip: false
+    can_attach_tip: true
+
+- name: tips
+  cls: TnT.Tips
+  parent: ws
+  connection: ws
+
+- name: cameras
+  cls: TnT.Cameras
+  parent: ws
+  connection: ws
+
+- name: Camera1
+  cls: TnT.Camera
+  parent: cameras
+  connection: camera_mount
+
+  arguments:
+    flipx: false
+    flipy: false
+    rotate: false
+    driver: simulator
+
+  properties:
+    calibration:
+      dist_coeffs:
+      - - -1.810908255526416
+      - - -271.82553691759125
+      - - -0.003216593906644989
+      - - -0.0029508830788391406
+      - - 9114.929380107575
+      ppmm: 11.140556869215825
+      intrinsic:
+      - - 7380.366868530238
+        - 0.0
+        - 960.0
+      - - 0.0
+        - 7441.618372631399
+        - 720.0
+      - - 0.0
+        - 0.0
+        - 1.0
+    max_stream_fps: 30
+  frame:
+  - [1.0, -0.0, -0.0, 1.0000000000000062]
+  - [-7.367665916336593e-65, 1.0, 0.0, 49.999999999999986]
+  - [6.016155777703619e-49, -0.0, 1.0, 20.0]
+  - [0.0, 0.0, 0.0, 1.0]

@@ -1,0 +1,6 @@
+[optofidelity.tests.entry_point_ping]
+hikvision = optofidelity._hikvision_pyinstaller_hooks:ping
+
+[pyinstaller40]
+hook-dirs = optofidelity._hikvision_pyinstaller_hooks:get_hook_dirs
+tests = optofidelity._hikvision_pyinstaller_hooks:get_PyInstaller_tests

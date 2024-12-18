@@ -1,0 +1,18 @@
+Metadata-Version: 2.1
+Name: optofidelity-camera-basler
+Version: 2.0.1
+Summary: OptoCamera backend for Basler cameras using pypylon.
+Home-page: https://www.optofidelity.com
+Download-URL: https://gitlab-ci-token:iPPhiRtwTsQDZxtpjAwQ@git.optofidelity.net/optofidelity/camera/basler.gitbcfb68b8b3b15ab538d192c3699df41b7c8c87ba
+Author: OptoFidelity Ltd.
+Author-email: support@optofidelity.com
+Maintainer: Joona Muje
+License: BSD-3-Clause
+Requires-Dist: optofidelity-camera
+Requires-Dist: pypylon (>=1.6)
+Provides-Extra: bundle
+Requires-Dist: pyinstaller ; extra == 'bundle'
+Requires-Dist: optofidelity-setuptools ; extra == 'bundle'
+Provides-Extra: test
+Requires-Dist: pytest ; extra == 'test'
+

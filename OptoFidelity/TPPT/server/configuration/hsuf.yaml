@@ -1,0 +1,67 @@
+port: 8000
+nodes:
+
+# TnT Compatible subtree
+- name: tnt
+  cls: TnT.TnT
+  parent:
+  connection:
+- name: workspaces
+  cls: TnT.Workspaces
+  parent: tnt
+  connection: tnt
+- name: ws
+  cls: TnT.Workspace
+  parent: workspaces
+  properties: {}
+  connection: workspaces
+
+- name: icons
+  cls: NodeIcons
+  parent: ws
+  connection: ws
+
+  properties:
+    icon_folder_path: data\icons
+- name: images
+  cls: TnT.Images
+  parent: ws
+  connection: ws
+  properties:
+    image_folder_path: data/images
+    max_images: 10
+- name: detectors
+  cls: TnT.Detectors
+  parent: ws
+  connections: ws
+
+  connection:
+- name: halcon
+  cls: TnT.Detector
+  parent: detectors
+  connection: detectors
+  arguments:
+    driver: Halcon
+    color_cmp_method: template
+    # Run Halcon in separate process to avoid possible crashes.
+    multiprocessing: true
+    # Time in seconds after which Halcon is considered stuck and process is closed.
+    process_timeout: 10.0
+
+- name: abbyy
+  cls: TnT.Detector
+  parent: detectors
+  connection: detectors
+  arguments:
+    driver: Abbyy
+    license: SWED-1000-0003-0684-9595-9238
+    # Version can be 10 or 12.
+    version: 10
+
+- name: tesseract
+  cls: TnT.Detector
+  parent: detectors
+  connection: detectors
+  arguments:
+    driver: Tesseract
+    tessdata_path: 'C:\OptoFidelity\Tesserocr dependencies\tessdata'

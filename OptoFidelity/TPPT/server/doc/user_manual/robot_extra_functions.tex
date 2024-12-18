@@ -1,0 +1,48 @@
+\chapter{Additional robot functions}
+This chapter describes additional model-dependent robot functionality that is not included in DUT gestures, for example.
+
+\section{Surface probing}
+
+The purpose of surface probing is to automatically detect the z-coordinate of any flat surface of interest within the robot workspace. It is particularly useful in DUT positioning. During the automatic sequence, the robot will move downwards towards the surface using the z-axis in discrete incremental steps. Surface contact is detected when the extended voice coil is pushed back sufficiently from the probing position. Once the surface has been found, the robot z-axis moves back up to the initial position and the voicecoil returns to its home position. Please see Figure~\ref{fig:surface_probing} for an illustration of the different phases.
+
+Surface probing uses three parameters to configure the detection sequence. Parameter \emph{robot\_probing\_step} sets the size of movement when moving down step-by-step. The amount that the voicecoil actuator is extended from the neutral resting position is set with the parameter \emph{voicecoil\_probe\_position}. Finally, the required compression of the voicecoil for surface contact detection is set with \emph{surface\_detection\_threshold}.
+
+Note, that the parameters must satisfy the conditions
+\[ x_{pp} > x_{th} \text{ and } x_{ps} < 0.9 \cdot x_{pp} \text{,}\]
+
+where $x_{pp}$ is \emph{voicecoil\_probe\_position}, $x_{th}$ is \emph{surface\_detection\_threshold} and $x_{ps}$ is \emph{robot\_probing\_step}. The detection criteria for surface contact is simply
+\[\Delta x_{pp} > x_{th} \text{,}\]
+
+where $\Delta x_{pp}$ is the change from the initial voicecoil probing position.
+
+\warningbox{During probing there is a risk of collision with other robot workspace items. Make sure the extended probing finger is the first one to make contact and no other rigid non-compliant part of the robot accidentally collides with e.g. a finger tip rack.}
+
+\notebox{Probing with a standard multifinger is not supported. However, custom tools that use similar dual-finger mounting as a multifinger can be used in probing, as long as the attached tool is completely rigid.}
+
+\begin{figure}[htb]
+	\centering
+	\begin{overpic}[percent, tics=5]{surface_probe.pdf}
+		\put(41, 43){$x_{pp}$}
+		\put(65, 46){$x_{ps}$}
+		\put(94, 29.5){$\Delta x_{pp}$}
+		
+	\end{overpic}
+	\caption{Illustration of surface probing sequence in DUT positioning}
+	\label{fig:surface_probing}
+\end{figure}
+
+To enable surface probing functionality and configure the parameters, add the following lines to the server configuration file and adjust the probing parameter values if needed:
+
+\begin{lstlisting}
+- name: surfaceprobe
+  cls: NodeSurfaceProbe
+  parent: ws
+  connection: ws
+  arguments:
+    robot: Robot1
+  properties:
+    surface_probe_settings:
+      robot_probing_step: 6
+      voicecoil_probe_position: 9
+      surface_detection_threshold: 0.5
+\end{lstlisting}

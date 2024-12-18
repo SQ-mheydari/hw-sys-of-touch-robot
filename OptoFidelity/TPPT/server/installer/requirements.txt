@@ -1,0 +1,8 @@
+# Running setup.py and creation of installer
+PyInstaller==5.4.1
+
+# Encryption support
+cwheel==1.1.3 ; sys.platform == 'win32'
+cwheel_hook==1.1.3 ; sys.platform == 'win32'
+cwheel==1.1.3 ; sys.platform == 'darwin'
+cwheel_hook==1.1.3 ; sys.platform == 'darwin'

@@ -1,0 +1,682 @@
+# TnT Server configuration for standard 3-axis robot (without voicecoil) simulator.
+# See doc/configuration.md for general information on how to use config files.
+port: 8000
+
+# Configuration consists of a list of node.
+nodes:
+
+# Root node of the node hierarchy.
+- name: tnt
+  cls: TnT.TnT
+  parent:
+  connection:
+
+
+# ================ Simulator ================
+
+# Required for running robot and camera simulators.
+# This section should be removed for real robot delivery.
+# See also "Simulator content" section below.
+
+
+- name: fileserver
+  cls: NodeFileServer
+  parent: tnt
+  arguments:
+    path: web
+    port: 8010
+  connection: tnt
+
+# Handles robot and camera simulation.
+- name: simulator
+  cls: NodeSimulator
+  parent: tnt
+  connection: tnt
+
+
+# ================ DUT server ================
+
+# DUT server manages communication with DUT application (Android and TnT Server).
+# Required for automatic DUT xy-positioning, sending image to DUT and other DUT communication.
+# Must be initialized at this point in config file.
+- name: dutserver
+  cls: DutServer
+  parent: tnt
+  arguments:
+    #host: 127.0.0.1
+    #host: 10.118.240.140
+    host: 0.0.0.0
+    port: 50008
+  connection: tnt
+
+
+# ================ Boilerplate config ================
+
+
+- name: workspaces
+  cls: TnT.Workspaces
+  parent: tnt
+  connection: tnt
+
+- name: ws
+  cls: TnT.Workspace
+  parent: workspaces
+  properties: {}
+  connection: workspaces
+
+# API Document parser.
+- name: doc
+  cls: NodeDoc
+  parent: tnt
+  connection: tnt
+
+
+# ================ Surface probe ================
+
+
+# Surface probe is needed for general surface probing when robot has voicecoil or similar trigger.
+# Required for automatic DUT and tip z-positioning.
+- name: surfaceprobe
+  cls: NodeSurfaceProbe
+  parent: ws
+  connection: ws
+  arguments:
+    robot: Robot1
+  properties:
+    surface_probe_settings:
+      surface_detection_threshold: 1.0
+      voicecoil_probe_position: 6
+      robot_probing_step: 4
+- name: dutpositioning
+  cls: NodeDutPositioning
+  parent: ws
+  connection: ws
+  arguments:
+    robot: Robot1
+    camera: Camera1
+    # Surface probe must be specified if automatic z-positioning is used.
+    surfaceprobe: surfaceprobe
+
+
+# ================ Containers ================
+
+
+- name: robots
+  cls: TnT.Robots
+  parent: ws
+  connection: ws
+
+- name: cameras
+  cls: TnT.Cameras
+  parent: ws
+  connection: ws
+
+- name: tools
+  cls: TnT.Tools
+  parent: ws
+  connection: ws
+
+- name: duts
+  cls: TnT.Duts
+  parent: ws
+  connection: ws
+  arguments:
+    # Choose this according to robot (TnT.Gestures, Synchro.Gestures or Voicecoil.Gestures)
+    gestures_cls: TnT.Gestures
+
+- name: tips
+  cls: TnT.Tips
+  parent: ws
+  connection: ws
+
+- name: icons
+  cls: NodeIcons
+  parent: ws
+  connection: ws
+  properties:
+    icon_folder_path: data/icons
+
+- name: images
+  cls: TnT.Images
+  parent: ws
+  connection: ws
+  properties:
+    image_folder_path: data/images
+    # Number of most recent images to keep.
+    max_images: 10
+
+- name: detectors
+  cls: TnT.Detectors
+  parent: ws
+  connection: ws
+
+- name: analyzers
+  cls: TnT.Analyzers
+  parent: ws
+
+  connection:
+- name: physical_buttons
+  cls: TnT.PhysicalButtons
+  parent: ws
+  connection: ws
+
+- name: motherboards
+  cls: TnT.Motherboards
+  parent: ws
+  connection: ws
+
+- name: speakers
+  cls: NodeSpeakers
+  parent: ws
+  connection: ws
+
+
+# ================ Detectors ================
+
+
+# Fiducial detector is needed for automatic tip slot XY positioning.
+- name: tip_fiducial
+  cls: TnT.Detector
+  parent: detectors
+  arguments:
+    driver: TipFiducial
+  connection:
+
+# Halcon detector is required for icon detection. Halcon software needs to be also installed separately.
+- name: halcon
+  cls: TnT.Detector
+  parent: detectors
+  connection: detectors
+  arguments:
+    driver: Halcon
+
+# Abbyy detector is required for OCR based on Abbyy (needs to be installed on the system separately).
+- name: abbyy
+  cls: TnT.Detector
+  parent: detectors
+  connection: detectors
+  arguments:
+    driver: Abbyy
+    license: SWED-1000-0003-0684-9595-9238
+    # Version can be 10 or 12.
+    version: 10
+
+# Tesseract detector is required for OCR based on Tesseract.
+- name: tesseract
+  cls: TnT.Detector
+  parent: detectors
+  connection: detectors
+  arguments:
+    driver: Tesseract
+    # Language data path.
+    tessdata_path: C:\OptoFidelity\Tesserocr dependencies\tessdata
+
+
+# ================ Performance testing (HSUP) ================
+
+# Trigger sensor is required for trigger high speed camera and/or PIT
+- name: triggersensor
+  cls: NodeMotherboardTriggerSensor
+  parent: ws
+  arguments:
+    robot: Robot1
+    io_dev_addr: 8
+    trigger_pos: -50
+    debug: false
+  connection:
+
+# Video sensor is required to trigger the high speed camera.
+- name: videosensor
+  cls: NodeVideoSensor
+  parent: ws
+  arguments:
+    port: COM12
+    # Threshold value only needed if videosensor is used as triggersensor for watchdog.
+    # For optical switch typical value is -1 and for voicecoil 50.
+    trigger_threshold: 50
+  connection:
+
+# Watchdog analyzer is part of HSUP feature package.
+# Requires high speed camera (hsup_camera).
+- name: watchdog
+  cls: TnT.Analyzer
+  parent: analyzers
+  arguments:
+    driver: Hsup
+    camera: hsup_camera
+    # Choose triggersensor based on HW configuration. Either triggersensor or videosensor can provide the service.
+    triggersensor: triggersensor
+    videosensor: videosensor
+    analysis: Watchdog
+  connection:
+
+# SPA analyzer is part of HSUP feature package.
+# Requires high speed camera (hsup_camera).
+- name: spa
+  cls: TnT.Analyzer
+  parent: analyzers
+  arguments:
+    driver: Hsup
+    camera: hsup_camera
+    videosensor: videosensor
+    analysis: SPA
+  connection:
+
+# P2I analyzer is part of HSUP feature package.
+# Requires high speed camera (hsup_camera).
+- name: p2i
+  cls: TnT.Analyzer
+  parent: analyzers
+  arguments:
+    driver: Hsup
+    camera: hsup_camera
+    videosensor: videosensor
+    analysis: P2I
+  connection:
+
+
+# ================ Other analyzers ================
+
+
+# Audio analyzer can find frequency peaks (beep sounds) from audio recording.
+- name: audio_analyzer
+  cls: TnT.Analyzer
+  parent: analyzers
+  arguments:
+    driver: Audio
+  connection:
+
+
+# ================ Force calibration ================
+
+
+# Futek sensor is used to measure force readings.
+- name: futek
+  cls: NodeFutek
+  parent: ws
+  connection: ws
+  arguments:
+    serial_number: 765339
+    number_of_averages: 4
+    sample_rate: 25
+    invert_polarity: true
+
+# Force calibration procedure.
+# This is required if force calibration is done via UI or client.
+# Requires Futek sensor (or similar force sensor) configuration.
+- name: forcecalibrator
+  path: forcecalibrator
+  # NodeCalibratorForceVoiceCoil - Open loop force with voicecoil (synchro tool).
+  # NodeCalibratorOptoStdForce - Closed loop force (voicecoil tool with loadcell).
+  cls: NodeCalibratorForceVoiceCoil
+  #cls: NodeCalibratorOptoStdForce
+  parent: ws
+  arguments:
+    robot: Robot1
+    sensor: futek
+
+
+# ================ Motherboard ================
+
+
+# Motherboard IO control. Required if motherboard IO is to be controlled via UI or client.
+  connection:
+- name: Motherboard1
+  cls: TnT.Motherboard
+  parent: motherboards
+  arguments:
+    bus_address: 8
+  properties:
+    robot_name: Robot1
+    io_spec_output:
+      1:
+        alias: light1
+      3:
+        alias: light2
+  connection: ws
+
+
+# ================ Speaker ================
+
+
+# Speaker is used to playback audio by some audio device.
+- name: speaker1
+  cls: NodeSpeaker
+  parent: speakers
+  connection: speakers
+  arguments:
+    device_name: jabra
+    chunk_size: 1024
+  properties:
+    device_name: jabra
+    chunk_size: 1024
+
+
+# ================ Robot ================
+
+
+# Robot base frame.
+# Not strictly required but exists for legacy.
+- name: Robot1_base
+  cls: Node
+  parent: ws
+  connection: ws
+
+
+# Robot node controls a physical robot or a simulation.
+# This robot node is configured for standard 3-axis robot (without voicecoil) simulator.
+# See configuration/robots for other robot configurations that can be used here instead.
+# Make sure that duts node's gestures_cls is appropriate for this robot. For 3-axis it should be TnT.Gestures.
+- name: Robot1
+  # Robot class depends on the type of robot (TnT.Robot, Synchro.Robot, TwoFingerDt.Robot, Voicecoil.Robot).
+  cls: TnT.Robot
+  parent: robots
+  connection: Robot1_base
+  arguments:
+    driver: golden
+    # Run as simulator? Simulator is ran at host 127.0.0.1. Change to correct host for real robot.
+    simulator: true
+    host: 127.0.0.1
+    #host: 192.168.127.254
+    port: 4001
+    # Model determines the robot kinematics (see drivers/robots/goldenmov/kinematics).
+    model: hbot
+    # Speed and acceleration after TnT Server has initialized.
+    speed: 30
+    acceleration: 50
+    # Home axes during init? Should be true in delivery.
+    # Setting to false makes init faster but axes must have been homed properly at some point.
+    home_axes: true
+    # Restore axis configs before homing? Should be true in delivery.
+    # Set to false only when testing custom axis settings.
+    restore_axis_configs: true
+    # Maximum speed to use when attaching or detaching tips.
+    max_tip_change_speed: 100
+    # Maximum acceleration to use when attaching or detaching tips.
+    max_tip_change_acceleration: 300
+    # Define capture position for camera to move robot away from e.g. static camera view.
+    # The z-coordinate is optional. If not given, maximum z is used.
+    camera_capture_positions:
+      Camera1:
+        x: 100
+        y: 10
+    position_limits:
+      x_min: -50
+      x_max: 300
+      y_min: -50
+      y_max: 500
+      z_min: -10
+      z_max: 1
+    axis_specs:
+      11:
+        alias: x
+        homing_priority: 1
+        acceleration: 500
+        velocity: 250
+        max_velocity: 700
+        max_acceleration: 900
+        homing_parameters:
+          # Homing switch for first homing. Integer 0, 1, 2, ...
+          switch_1: 0
+          # Homing switch for second homing.
+          switch_2: 1
+          home_switch_polarity_1: negative
+          home_switch_polarity_2: negative
+          # Offset move out of home switch before homing.
+          speed: 10
+          acceleration: 20
+          offset: 10
+      12:
+        alias: y
+        homing_priority: 1
+        acceleration: 500
+        velocity: 250
+        max_velocity: 800
+        max_acceleration: 3400
+        homing_parameters:
+          # Homing switch for first homing. Integer 0, 1, 2, ...
+          switch_1: 0
+          # Homing switch for second homing.
+          switch_2: 1
+          home_switch_polarity_1: positive
+          home_switch_polarity_2: negative
+          # Offset move out of home switch before homing.
+          speed: 10
+          acceleration: 20
+          offset: 0
+      21:
+        alias: z
+        homing_priority: 1
+        acceleration: 500
+        velocity: 250
+        max_velocity: 800
+        max_acceleration: 3400
+    kinematic_parameters:
+      # Homing method. Possible values: switch_torque, switch_disable, dual.
+      homing_method: dual
+  properties:
+    force_calibration_table:
+      y:
+      - 0
+      - 500
+      x:
+      - 0
+      - 500
+    robot_acceleration: 50.0
+    robot_velocity: 30.0
+    kinematic_name: tool1
+
+# Tool 1 mount is the last point (robot head) in the forward kinematics transform.
+    calibration_data: {}
+    default_kinematic_name: tool1
+    max_robot_acceleration: 100000
+    max_robot_velocity: 250
+- name: tool1_mount
+  cls: Mount
+  parent: Robot1
+  connection: Robot1
+  properties:
+    mount_point: tool1
+
+# Camera mount is fixed in workspace. Mount local z-axis point downwards in workspace.
+- name: camera_mount
+  cls: Node
+  parent: ws
+  connection: ws
+  frame:
+  - [-1.0, 0.0, 0.0, 0.0]
+  - [0.0, 1.0, 0.0, 0.0]
+  - [0.0, 0.0, -1.0, 1.0]
+  - [0.0, 0.0, 0.0, 1.0]
+- name: tool1
+  cls: TnT.Tool
+  parent: tools
+  connection: tool1_mount
+  properties:
+    can_attach_tip: true
+    can_attach_tool: true
+    can_attach_multifinger_tip: false
+
+
+# ================ Cameras ================
+
+
+# Positioning camera that is attached to robot's camera mount.
+- name: Camera1
+  cls: TnT.Camera
+  parent: cameras
+  connection: camera_mount
+  arguments:
+    # Set flips and rotation so that in camera image workspace x point right and y points down.
+    flipx: true
+    flipy: true
+    rotate: false
+    # driver can be one of yasler, ximea, simulator
+    driver: simulator
+    # camtype can be gige or usb (applicable to yasler)
+    camtype: gige
+    # Gige (ethernet) camera settings:
+    ip_address: 192.168.127.23
+    inter_packet_delay: 12000
+    packet_size: 1500
+    # Number of times to retry image capture in case of camera error.
+    retry_count: 10
+
+    # ximea serial number:
+    #serial_number: '23599259'
+
+    focal_length: 8
+    gain: 5.0
+    exposure: 0.005
+
+    # If using stream set max queue size to 1 to avoid memory filling up with images.
+    max_queue_size: 1
+  properties:
+    calibration:
+      intrinsic:
+      - - 156081.44281153128
+        - 0.0
+        - 960.0
+      - - 0.0
+        - 162610.09015056025
+        - 720.0
+      - - 0.0
+        - 0.0
+        - 1.0
+      dist_coeffs:
+      - - -2177.7107267037645
+        - -0.15522208326864567
+        - 0.079627807925882
+        - -0.011756900173060745
+        - -4.763778533478471e-06
+      ppmm: 11.72831916809082
+    max_stream_fps: 30
+  frame:
+  - [1.0, 0.0, 0.0, -149.89999999999998]
+  - [0.0, 1.0, 0.0, 259.9]
+  - [0.0, 0.0, 1.0, 1.0]
+  - [0.0, 0.0, 0.0, 1.0]
+- name: hsup_camera
+  cls: TnT.Camera
+  parent: cameras
+  arguments:
+    # Change driver to 'yasler' for real camera.
+    driver: simulator
+    camtype: usb
+    binning_horizontal_mode: Sum
+    binning_vertical_mode: Sum
+  properties:
+    calibration:
+    camera_info:
+    max_stream_fps: 30
+  connection:
+
+
+# ================ Simulator content ================
+
+# This section should be removed for real robot delivery.
+# Contains various graphical targets to use in testing.
+
+# Visualization of Optofidelity logo.
+- name: test_dut_image
+  cls: NodeSimulatorObject
+  parent: ws
+  arguments:
+    enabled: true
+    type: texture
+    ppmm: 20
+    position: [115, 205, 0, 0, 0, 0]
+    image: tntserver/web/img/test_dut.png
+    #draw: color black; rect 0 0 100 100; color red; rect 10 10 90 90;
+    width: 70
+    height: 118
+    simulator_parent_object: table
+  connection: ws
+
+# Visualization of chess target that can be used to test e.g. camera distortion calibration.
+- name: chess_target
+  cls: NodeSimulatorObject
+  parent: ws
+  arguments:
+    enabled: true
+    type: chessboard
+    ppmm: 4
+    position: [50, 180, 0.1, 0, 0, 0]
+    width: 200
+    height: 160
+    bs: 8
+    bw: 16
+    bh: 12
+    simulator_parent_object: table
+  connection: ws
+
+
+# ================ Resources created at runtime (DUTs, tips, physical buttons etc.) ================
+
+
+- name: dut1
+  cls: TnT.Dut
+  parent: duts
+  frame:
+  - [0.9999999807670799, -0.00019612710155346346, 0.0, 118.364]
+  - [0.00019612710155336542, 0.99999998076708, 0.0, 208.482]
+  - [0.0, 0.0, 1.0, -18.0]
+  - [0.0, 0.0, 0.0, 1.0]
+  properties:
+    base_distance: 5.0
+    tl:
+      z: -18.0
+      x: 118.364
+      y: 208.482
+    height: 104.955297746231
+    data:
+      image_width:
+        value: '0'
+      screen_height:
+        value: '0'
+      image_height:
+        value: '0'
+      screen_width:
+        value: '0'
+    bl:
+      z: -18.0
+      x: 118.114
+      y: 313.437
+    tr:
+      z: -18.0
+      x: 181.187
+      y: 208.357
+    touch_distance: 0.0
+    surface_data:
+    width: 62.82312435719829
+    svg_scale:
+    - 1
+    - 1
+  connection: duts
+
+- properties:
+    voice_coil_position:
+    type: Tip
+    length: 13
+    slot_out:
+    tip_distance:
+    first_finger_offset:
+    slot_in:
+    model: Standard
+    diameter: 6
+    separation:
+    grippable: false
+    num_tips:
+  name: tip1
+  parent: tips
+  cls: TnT.Tip
+  frame:
+  - [1.0, 0.0, 0.0, 0.0]
+  - [0.0, 1.0, 0.0, 0.0]
+  - [0.0, 0.0, 1.0, 13.0]
+  - [0.0, 0.0, 0.0, 1.0]
+  connection: tool1
+  arguments:
+    model: Standard
+    length: 0
+    diameter: 0

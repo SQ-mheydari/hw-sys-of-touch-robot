@@ -1,0 +1,42 @@
+# TnT Server Configuration.
+# Minimal configuration for camera testing.
+port: 8000
+nodes:
+
+# TnT Compatible subtree
+- name: tnt
+  cls: TnT.TnT
+  parent:
+
+- name: workspaces
+  cls: TnT.Workspaces
+  parent: tnt
+  connection: tnt
+
+- name: ws
+  cls: TnT.Workspace
+  parent: workspaces
+  properties: {}
+  connection: workspaces
+
+- name: cameras
+  cls: Node
+  parent: ws
+
+- name: Camera1
+  cls: TnT.Camera
+  parent: cameras
+  arguments:
+    driver: yasler
+    #driver: simulator
+    ip_address: 192.168.127.21
+    serial_number: 21729882
+    flipx: false
+    flipy: false
+    rotate: false
+    inter_packet_delay: 0
+    packet_size: 8000
+  properties:
+    exposure: 0.005
+    gain: 5.0
+

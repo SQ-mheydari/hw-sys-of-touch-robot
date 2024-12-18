@@ -1,0 +1,16 @@
+camera:
+  exposure: 1000.0
+  binning_vertical: 1
+  image_height: 600
+  offset_y: 16
+  offset_x: 16
+  binning_horizontal: 1
+  frame_rate: 0
+  image_width: 800
+analysis:
+  display_backlight_sync: false
+  analysis_type: watchdog
+  timeout: 30.0
+  threshold: 0.1
+  camera_trigger_mode: Manual
+  event_distance_ms: 5.0

@@ -1,0 +1,88 @@
+# Robot configuration for STAFF robot.
+# Replace the Robot section in simulation_3axis.yaml by the section listed below.
+
+# ================ Robot ================
+
+
+# Robot base frame.
+# Not strictly required but exists for legacy.
+- name: Robot1_base
+  cls: Node
+  parent: ws
+  connection: ws
+
+
+# Robot node controls a physical robot or a simulation.
+# This robot node is configured for STAFF robot simulator.
+# See configuration/robots for other robot configurations that can be used here instead.
+# Make sure that duts node's gestures_cls is appropriate for this robot. For 3-axis it should be TnT.Gestures.
+- name: Robot1
+  # Robot class depends on the type of robot (TnT.Robot, Synchro.Robot, TwoFingerDt.Robot, Voicecoil.Robot).
+  cls: TnT.Robot
+  parent: robots
+  connection: Robot1_base
+  arguments:
+    driver: golden
+    # Run as simulator? Simulator is ran at host 127.0.0.1. Change to correct host for real robot.
+    simulator: true
+    host: 127.0.0.1
+    #host: 192.168.127.254
+    port: 4001
+    # Model determines the robot kinematics (see drivers/robots/goldenmov/kinematics).
+    model: staff
+    # Speed and acceleration after TnT Server has initialized.
+    speed: 30
+    acceleration: 50
+    # Home axes during init? Should be true in delivery.
+    # Setting to false makes init faster but axes must have been homed properly at some point.
+    home_axes: true
+    # Restore axis configs before homing? Should be true in delivery.
+    # Set to false only when testing custom axis settings.
+    restore_axis_configs: true
+    # Maximum speed to use when attaching or detaching tips.
+    max_tip_change_speed: 100
+    # Maximum acceleration to use when attaching or detaching tips.
+    max_tip_change_acceleration: 300
+  properties:
+    force_calibration_table:
+      y:
+      - 0
+      - 500
+      x:
+      - 0
+      - 500
+    robot_acceleration: 200
+    robot_velocity: 110.0
+    kinematic_name: tool1
+
+# Tool 1 mount is the last point (robot head) in the forward kinematics transform.
+- name: tool1_mount
+  cls: Mount
+  parent: Robot1
+  connection: Robot1
+  properties:
+    mount_point: tool1
+
+# Camera mount is the point in the FK chain where camera is attached to.
+- name: camera_mount
+  cls: Mount
+  parent: Robot1
+  connection: Robot1
+  properties:
+    mount_point: camera
+
+# Tool 1 is the robot head where a tip can be attached (as child node).
+# This tool has frame that roughly corresponds to the stylus tool in simulator.
+- name: tool1
+  cls: TnT.Tool
+  parent: tools
+  connection: tool1_mount
+  properties:
+    can_attach_tip: true
+    can_attach_tool: true
+    can_attach_multifinger_tip: false
+  frame:
+  - [1.0, 0.0, 0.0, -60]
+  - [0.0, 1.0, 0.0, 60]
+  - [0.0, 0.0, 1.0, 86]
+  - [0.0, 0.0, 0.0, 1.0]

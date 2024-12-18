@@ -1,0 +1,131 @@
+# Robot configuration for RATA type HBOT robot.
+# Replace the Robot section in simulation_3axis.yaml by the section listed below.
+
+
+# ================ Robot ================
+
+
+# Robot base frame.
+# Not strictly required but exists for legacy.
+- name: Robot1_base
+  cls: Node
+  parent: ws
+  connection: ws
+
+# Mount for static camera.
+- name: camera_mount
+  cls: Node
+  parent: Robot1
+  connection: Robot1_base
+  frame:
+  - [-1.0, 0.0, 0.0, 0.0]
+  - [0.0, 1.0, 0.0, 0.0]
+  - [0.0, 0.0, -1.0, 0.0]
+  - [0.0, 0.0, 0.0, 1.0]
+
+- name: Robot1
+  # Robot class depends on the type of robot (TnT.Robot, Synchro.Robot, TwoFingerDt.Robot, Voicecoil.Robot).
+  cls: TnT.Robot
+  parent: robots
+  connection: Robot1_base
+  arguments:
+    driver: golden
+    # Run as simulator? Simulator is ran at host 127.0.0.1. Change to correct host for real robot.
+    simulator: false
+    #host: 127.0.0.1
+    host: 192.168.127.254
+    port: 4001
+    # Model determines the robot kinematics (see drivers/robots/goldenmov/kinematics).
+    model: hbot
+    # Speed and acceleration after TnT Server has initialized.
+    speed: 30
+    acceleration: 50
+    # Home axes during init? Should be true in delivery.
+    # Setting to false makes init faster but axes must have been homed properly at some point.
+    home_axes: true
+    # Restore axis configs before homing? Should be true in delivery.
+    # Set to false only when testing custom axis settings.
+    restore_axis_configs: false
+    # Maximum speed to use when attaching or detaching tips.
+    max_tip_change_speed: 100
+    # Maximum acceleration to use when attaching or detaching tips.
+    max_tip_change_acceleration: 300
+    position_limits:
+      x_min: -1
+      x_max: 80
+      y_min: -1
+      y_max: 143
+      z_min: -9
+      z_max: 0
+    axis_specs:
+      11:
+        alias: x
+        homing_priority: 2
+        acceleration: 500
+        velocity: 250
+        max_velocity: 800
+        max_acceleration: 900
+        homing_parameters:
+          # Homing switch for first homing. Integer 0, 1, 2, ...
+          switch_1: 0
+          # Homing switch for second homing.
+          switch_2: 1
+          home_switch_polarity_1: negative
+          home_switch_polarity_2: negative
+          # Offset move out of home switch before homing.
+          speed: 10
+          acceleration: 20
+          offset: 10
+      12:
+        alias: y
+        homing_priority: 1
+        acceleration: 500
+        velocity: 250
+        max_velocity: 800
+        max_acceleration: 900
+        homing_parameters:
+          # Homing switch for first homing. Integer 0, 1, 2, ...
+          switch_1: 0
+          # Homing switch for second homing.
+          switch_2: 1
+          home_switch_polarity_1: positive
+          home_switch_polarity_2: negative
+          # Offset move out of home switch before homing.
+          speed: 10
+          acceleration: 20
+          offset: 0
+      21:
+        alias: z
+        homing_priority: 1
+        acceleration: 500
+        velocity: 250
+        max_velocity: 800
+        max_acceleration: 100
+        homing_parameters:
+          cont_current_limit: 900
+          peak_current_limit: 900
+    kinematic_parameters:
+      # Homing method. Possible values: switch_torque, switch_disable, dual.
+      homing_method: dual
+  properties:
+    robot_acceleration: 200
+    robot_velocity: 110.0
+    kinematic_name: tool1
+
+# Tool 1 mount is the last point (robot head) in the forward kinematics transform.
+- name: tool1_mount
+  cls: Mount
+  parent: Robot1
+  connection: Robot1
+  properties:
+    mount_point: tool1
+
+# Tool 1 is the robot head where a tip can be attached (as child node).
+- name: tool1
+  cls: TnT.Tool
+  parent: tools
+  connection: tool1_mount
+  properties:
+    can_attach_tip: true
+    can_attach_tool: true
+    can_attach_multifinger_tip: false

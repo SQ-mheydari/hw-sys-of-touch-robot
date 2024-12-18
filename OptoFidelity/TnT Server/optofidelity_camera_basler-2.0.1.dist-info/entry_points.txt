@@ -1,0 +1,5 @@
+[optofidelity.camera.backends]
+basler = optofidelity.camera.basler:BaslerCamera
+
+[pyinstaller40]
+hook-dirs = optofidelity.camera.basler.pyinstaller_hooks:get_hook_dirs

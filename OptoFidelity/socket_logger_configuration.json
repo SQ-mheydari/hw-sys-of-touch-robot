@@ -1,0 +1,72 @@
+{
+ "version": 1,
+ "formatters": {
+  "simple": {
+   "format": "%(asctime)s %(levelname)7s: %(name)11s - %(message)s"
+  },
+  "detailed": {
+   "format": "%(asctime)s %(levelname)7s: %(name)20s %(threadName)s:%(processName)s -> %(funcName)20s %(lineno)5d - %(message)s"
+  }
+ },
+ "loggers": {
+  "default": {
+   "level": "NOTSET",
+   "propagate": false,
+   "handlers": [
+    "console",
+    "file_debug",
+    "file_info",
+    "file_filtered"
+   ]
+  }
+ },
+ "filters": {
+  "tntCherryPyFilter": {
+   "()": "socket_logger.filters.tntCherryPyFilter"
+  }
+ },
+ "root": {
+  "level": "DEBUG",
+  "handlers": [
+   "console",
+   "file_debug",
+   "file_info",
+   "file_filtered"
+  ]
+ },
+ "handlers": {
+  "console": {
+   "level": "NOTSET",
+   "stream": "ext://sys.stdout",
+   "class": "logging.StreamHandler",
+   "formatter": "simple"
+  },
+  "file_info": {
+   "formatter": "simple",
+   "backupCount": 100,
+   "filename": "C:\\OptoFidelity\\log\\socket_logger_info.log",
+   "level": "INFO",
+   "class": "logging.handlers.RotatingFileHandler",
+   "maxBytes": 10240000
+  },
+  "file_debug": {
+   "formatter": "detailed",
+   "backupCount": 100,
+   "filename": "C:\\OptoFidelity\\log\\socket_logger_debug.log",
+   "level": "DEBUG",
+   "class": "logging.handlers.RotatingFileHandler",
+   "maxBytes": 10240000
+  },
+  "file_filtered": {
+   "formatter": "detailed",
+   "filters": [
+    "tntCherryPyFilter"
+   ],
+   "backupCount": 100,
+   "filename": "C:\\OptoFidelity\\log\\socket_logger_filtered.log",
+   "level": "DEBUG",
+   "class": "logging.handlers.RotatingFileHandler",
+   "maxBytes": 10240000
+  }
+ }
+}

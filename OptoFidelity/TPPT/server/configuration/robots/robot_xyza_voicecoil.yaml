@@ -1,0 +1,118 @@
+# Robot configuration for xyz-azimuth-voicecoil robot.
+# Replace the Robot section in simulation_3axis.yaml by the section listed below.
+
+
+# ================ Robot ================
+
+# Robot base frame.
+- name: Robot1_base
+  cls: Node
+  parent: ws
+  connection: ws
+
+# Make sure that duts node's gestures_cls is appropriate for this robot. For xyza-voicecoil it should be Voicecoil.Gestures.
+- name: Robot1
+  cls: Voicecoil.Robot
+  parent: robots
+  connection: Robot1_base
+  arguments:
+    driver: golden
+    host: 192.168.127.254
+    port: 4001
+    model: xyza_voicecoil
+    simulator: false
+    speed: 30
+    acceleration: 50
+    voicecoil_nominal_cont_current: 250
+    voicecoil_nominal_peak_current: 300
+    voicecoil_cont_current: 800
+    voicecoil_peak_current: 900
+    api_name: optomotion
+    force_driver: opto_std_force
+    force_parameters:
+      voicecoil_name: voicecoil1
+      press_start_height: 1
+      voicecoil_speed: 50
+      force_touch_probing_velocity: 0.5
+      force_touch_probing_threshold: 10
+      force_touch_probing_acceleration: 500
+      force_calibration_window_size: 100
+      no_contact_force_threshold: 20
+      voicecoil_acceleration: 30000
+      min_force: 20
+      max_force: 800
+    axis_specs:
+      32:
+        alias: x
+        homing_priority: 3
+        acceleration: 500
+        velocity: 500
+        move_tolerance: 0.005
+      1:
+        alias: y
+        homing_priority: 2
+        acceleration: 500
+        velocity: 500
+        move_tolerance: 0.005
+      31:
+        alias: z
+        homing_priority: 1
+        acceleration: 500
+        velocity: 500
+        move_tolerance: 0.005
+      11:
+        alias: voicecoil1
+        homing_priority: 4
+        acceleration: 20000
+        velocity: 50
+        move_tolerance: 0.005
+        force_support: true
+      22:
+        alias: azimuth
+        homing_priority: 1
+        acceleration: 20000
+        velocity: 50
+        move_tolerance: 0.005
+  properties:
+    force_calibration_table:
+      voicecoil1:
+        setpoint_values:
+        - 25.0
+        - 218.75
+        - 412.5
+        - 606.25
+        - 800.0
+        actual_values:
+        - 24.95145133903874
+        - 223.59202689098854
+        - 424.14806828063155
+        - 623.0573146120728
+        - 821.0765299528325
+    robot_acceleration: 50.0
+    robot_velocity: 30.0
+    kinematic_name: tool1
+    calibration_data: {}
+    default_kinematic_name: tool1
+
+- name: tool1_mount
+  cls: Mount
+  parent: Robot1
+  connection: Robot1
+  properties:
+    mount_point: tool1
+
+- name: camera_mount
+  cls: Mount
+  parent: Robot1
+  connection: Robot1
+  properties:
+    mount_point: camera
+
+- name: tool1
+  cls: TnT.Tool
+  parent: tools
+  connection: tool1_mount
+  properties:
+    can_attach_tip: true
+    can_attach_tool: true
+    can_attach_multifinger_tip: false

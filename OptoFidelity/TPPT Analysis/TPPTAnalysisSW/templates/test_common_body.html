@@ -1,0 +1,173 @@
+<html xmlns:py="http://genshi.edgewall.org/" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <head>
+    <title>${"%s #%s" % (test_type_name,test_id)}, ${testsession['starttime']}, test session ID: ${testsession['id']}</title>
+	<script type="text/javascript" src="/static/script/libs/jquery-2.1.0.min.js"></script>
+    <script type="text/javascript" src="/static/script/test_page.js"></script>
+    <py:if test="defined('test_script')">
+        <script type="text/javascript" src="/static/script/${test_script}"></script>
+    </py:if>
+
+    <link rel="shortcut icon" href="/static/img/favicon.ico"/>
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/static/reportstyle.css" />
+    <link rel="stylesheet" type="text/css" href="/static/daddy.css" />
+    <link rel="stylesheet" type="text/css" href="/static/style.css" />
+    <link rel="stylesheet" type="text/css" href="/static/graph.css" />
+    <link rel="stylesheet" type="text/css" media="print" href="/static/reportstyle_print.css" />
+  </head>
+  <body>
+    <div class="report">
+    <div id="Main" class="content" style="display: block; visibility: visible;">
+
+    <!--! Common header: logo, version, back & print buttons -->
+    <div class="no_summary">
+        <a href="/"><img src="/static/img/logo.jpg"/></a>
+        <p class="version">Analysis software version ${version.simple}</p>
+
+    <span class="no_print"><br/>
+        <a href="/testsessions/${testsession['id']}">
+            <button class="btn btn-primary">Back</button>
+        </a>
+    </span>
+
+    <span class="no_print">
+        <a href="/">
+            <button class="btn btn-primary">Analysis Home</button>
+        </a>
+    </span>
+
+    <span py:if="defined('results')" class="no_print">
+        <a href="?refresh=yes">
+        <button py:if="'test_type_name' in results" class="no_print btn btn-primary" id="refresh_button">
+            Refresh
+        </button>
+        </a>
+    </span>
+
+    <button class="no_print btn btn-info" id="print_button">
+        <span class="glyphicon glyphicon-print"></span> Print
+    </button>
+
+    <button class="no_print btn btn-info" id="csv_button">
+        <span class="glyphicon glyphicon-file"></span> Load CSV
+    </button>
+
+    <button class="no_print btn btn-info" id="json_button">
+        <span class="glyphicon glyphicon-file"></span> Export JSON
+    </button>
+
+     <!--Split html from here for the page showing all test results-->
+     <!--split-->
+    <span py:if="defined('results')">
+        <button py:if="'test_type_name' in results" class="no_print btn btn-info" id="raw_button">
+            <span class="glyphicon glyphicon-file"></span> Load Raw Robot Data CSV
+        </button>
+    </span>
+
+    </div>
+
+    <br/>
+    <br/>
+    <table class="datatable setupinfo">
+        <tr py:if="dut['program'] != ''">
+            <td><b>Program</b></td>
+            <td><div>${dut['program']}</div></td>
+        </tr>
+        <tr>
+            <td><b>Test type</b></td>
+            <td>
+                <div>
+                <span py:if="defined('results') and 'test_type_name' in results">
+                    ${"%s #%s" % (results.test_type_name, test_id)}
+                </span>
+                <span py:if="not defined('results') or 'test_type_name' not in results">
+                    ${"%s #%s" % (test_type_name, test_id)}
+                </span>
+                </div>
+            </td>
+        </tr>
+        <tr py:if="testsession['id'] != ''">
+            <td><b>Test session ID</b></td>
+            <td><div>${testsession['id']}</div></td>
+        </tr>
+        <tr py:if="test_item['starttime'] != ''">
+            <td><b>Start time</b></td>
+            <td><div>${test_item['starttime']}</div></td>
+        </tr>
+        <tr py:if="test_item['starttime'] is not None and test_item['starttime'] != '' and
+                   test_item['endtime'] is not None and test_item['endtime'] != ''">
+            <?python
+                    from datetime import datetime
+                    total_time = datetime.strptime(test_item['endtime'], '%Y-%m-%d %H:%M:%S') - \
+                            datetime.strptime(test_item['starttime'], '%Y-%m-%d %H:%M:%S')
+            ?>
+            <td><b>Total execution time</b></td>
+            <td><div>${total_time}</div></td>
+        </tr>
+        <tr py:if="dut['sample_id'] != ''">
+            <td><b>DUT</b></td>
+            <td><div>${dut['sample_id']}</div></td>
+        </tr>
+        <tr py:if="dut['manufacturer'] != ''">
+            <td><b>Manufacturer</b></td>
+            <td><div>${dut['manufacturer']}</div></td>
+        </tr>
+        <tr py:if="dut['batch'] != ''">
+            <td><b>Model/version</b></td>
+            <td><div>${dut['batch']}</div></td>
+        </tr>
+        <tr py:if="dut['serial'] != ''">
+            <td><b>Serial</b></td>
+            <td><div>${dut['serial']}</div></td>
+        </tr>
+        <tr>
+            <td><b>Test equipment</b></td>
+            <td><div>OptoFidelity TOUCH, Analysis SW version 2.0</div></td>
+        </tr>
+        <tr py:if="test_item['finger_type'] != ''">
+            <td><b>Test finger</b></td>
+            <td><div>${test_item['finger_type']}</div></td>
+        </tr>
+        <tr py:if="testsession['notes'] != ''">
+            <td><b>Notes</b></td>
+            <td><div>${testsession['notes']}</div></td>
+        </tr>
+        <tr py:if="testsession['operator'] != ''">
+            <td><b>Operator</b></td>
+            <td><div>${testsession['operator']}</div></td>
+        </tr>
+        <tr py:if="test_item['speed'] != ''">
+            <td><b>Line drawing speed</b></td>
+            <td><div>${test_item['speed']}</div></td>
+        </tr>
+        <tr py:if="len(azimuth_angles) > 0">
+            <?python
+                from operator import gt  # Can't use greater than sign in html
+                if gt(len(azimuth_angles), 10):
+                    azimuth_str = str(azimuth_angles[:5])[1:-1] + ', ... , ' + str(azimuth_angles[-5:])[1:-1]
+                else:
+                    azimuth_str = str(azimuth_angles)[1:-1]
+            ?>
+            <td><b>Azimuth angles</b></td>
+            <td><div>${azimuth_str}</div></td>
+        </tr>
+        <tr py:if="len(tilt_angles) > 0">
+            <?python
+                from operator import gt  # Can't use greater than sign in html
+                if gt(len(tilt_angles), 10):
+                    tilt_str = str(tilt_angles[:5])[1:-1] + ', ... , ' + str(tilt_angles[-5:])[1:-1]
+                else:
+                    tilt_str = str(tilt_angles)[1:-1]
+            ?>
+            <td><b>Tilt angles</b></td>
+            <td><div>${tilt_str}</div></td>
+        </tr>
+    </table>
+    <br/>
+    <br/>
+    <!--! Actual content of the report -->
+    <xi:include href="templates/$test_page" />
+
+    </div></div>
+  </body>
+</html>

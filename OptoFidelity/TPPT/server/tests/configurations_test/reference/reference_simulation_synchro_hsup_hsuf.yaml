@@ -1,0 +1,566 @@
+# TnT Configuration
+port: 8000
+nodes:
+
+# TnT Compatible subtree
+- name: tnt
+  cls: TnT.TnT
+  parent:
+  connection:
+
+- name: fileserver
+  cls: NodeFileServer
+  parent: tnt
+  arguments:
+    path: web
+    port: 8010
+  connection: tnt
+
+- name: simulator
+  cls: NodeSimulator
+  parent: tnt
+  connection: tnt
+
+- name: dutserver
+  cls: DutServer
+  parent: tnt
+  arguments:
+    #host: 127.0.0.1
+    #host: 10.118.240.140
+    host: 0.0.0.0
+    port: 50008
+  connection: tnt
+
+- name: doc
+  cls: NodeDoc
+  parent: tnt
+  connection: tnt
+
+- name: dutpositioning
+  cls: NodeDutPositioning
+  parent: ws
+  connection: ws
+  arguments:
+    robot: Robot1
+    camera: Camera1
+
+- name: workspaces
+  cls: TnT.Workspaces
+  parent: tnt
+  connection: tnt
+
+- name: ws
+  cls: TnT.Workspace
+  parent: workspaces
+  properties: {}
+  connection: workspaces
+
+- name: robots
+  cls: TnT.Robots
+  parent: ws
+  connection: ws
+
+- name: Robot1_base
+  cls: Node
+  parent: ws
+  connection: ws
+
+- name: Robot1
+  cls: Synchro.Robot
+  parent: robots
+  connection: Robot1_base
+  arguments:
+
+    driver: golden
+    host: 127.0.0.1
+    port: 4001
+    model: synchro
+
+    simulator: true
+    speed: 30
+    acceleration: 50
+    force_driver: open_loop_force
+
+  properties:
+    max_robot_velocity: 250
+    max_robot_acceleration: 100000
+    force_calibration_table:
+      voicecoil1:
+        force:
+        - 24.31415083869524
+        - 72.47096315083155
+        - 119.81907174243958
+        - 167.4255830018359
+        - 214.90876322465883
+        - 262.10667480200294
+        - 309.2118796304289
+        - 356.4124891228748
+        - 404.4336199839037
+        - 452.18582037149275
+        - 499.02646448790705
+        - 545.553794526687
+        - 593.081688417786
+        current:
+        - 100.0
+        - 200.0
+        - 300.0
+        - 400.0
+        - 500.0
+        - 600.0
+        - 700.0
+        - 800.0
+        - 900.0
+        - 1000.0
+        - 1100.0
+        - 1200.0
+        - 1300.0
+    robot_acceleration: 200
+    robot_velocity: 110.0
+    kinematic_name: tool1
+    default_kinematic_name: tool1
+    calibration_data:
+      tool1_offset:
+      - - 1.0
+        - 0.0
+        - 0.0
+        - -5.2290681
+      - - 0.0
+        - 1.0
+        - 0.0
+        - -0.07199028
+      - - 0.0
+        - 0.0
+        - 1.0
+        - 0.0
+      - - 0.0
+        - 0.0
+        - 0.0
+        - 1.0
+      tool2_offset:
+      - - 1.0
+        - 0.0
+        - 0.0
+        - 6.15097277
+      - - 0.0
+        - 1.0
+        - 0.0
+        - -0.02862004
+      - - 0.0
+        - 0.0
+        - 1.0
+        - 0.0
+      - - 0.0
+        - 0.0
+        - 0.0
+        - 1.0
+    driver:
+    program:
+- name: tool1_mount
+  cls: Mount
+  parent: Robot1
+  connection: Robot1
+  properties:
+    mount_point: tool1
+
+- name: tool2_mount
+  cls: Mount
+  parent: Robot1
+  connection: Robot1
+  properties:
+    mount_point: tool2
+
+- name: mid_mount
+  cls: Mount
+  parent: Robot1
+  connection: Robot1
+  properties:
+    mount_point: mid
+
+- name: synchro_mount
+  cls: Mount
+  parent: Robot1
+  connection: Robot1
+  properties:
+    mount_point: synchro
+
+- name: camera_mount
+  cls: Mount
+  parent: Robot1
+  connection: Robot1
+  properties:
+    mount_point: camera
+
+- name: duts
+  cls: TnT.Duts
+  parent: ws
+  connection: ws
+  arguments:
+    gestures_cls: Synchro.Gestures
+
+- name: DUT1
+  cls: TnT.Dut
+  parent: duts
+  frame:
+  - [0.8651203934469648, 0.5015642579392687, 0.0, 20.0]
+  - [-0.5015642579392685, 0.8651203934469648, 0.0, 83.0]
+  - [0.0, 0.0, 1.0000000000000004, -100.0]
+  - [0.0, 0.0, 0.0, 1.0]
+  properties:
+    svg_scale:
+    - 0.9324557114938875
+    - 0.7740327339270348
+    base_distance: 10.0
+    tl:
+      y: 83.0
+      z: -100.0
+      x: 20.0
+    height: 133.09395177843356
+    data:
+      screen_width:
+        value: '0'
+      image_height:
+        value: '0'
+      image_width:
+        value: '0'
+      screen_height:
+        value: '0'
+    bl:
+      y: 198.0
+      z: -100.0
+      x: 87.0
+    tr:
+      y: 53.0
+      z: -100.0
+      x: 72.0
+    touch_distance: 0.0
+    surface_data:
+    width: 60.03332407921454
+  connection: duts
+
+- name: tools
+  cls: TnT.Tools
+  parent: ws
+  connection: ws
+
+- name: tool1
+  cls: TnT.Tool
+  parent: tools
+  connection: tool1_mount
+  properties:
+    can_attach_tip: true
+    can_attach_tool: true
+    can_attach_multifinger_tip: true
+- name: tool2
+  cls: TnT.Tool
+  parent: tools
+  connection: tool2_mount
+  properties:
+    can_attach_tip: true
+    can_attach_tool: true
+    can_attach_multifinger_tip: false
+- name: tips
+  cls: TnT.Tips
+  parent: ws
+  connection: ws
+
+- name: tip1
+  cls: TnT.Tip
+  parent: tips
+  connection: tool1
+  frame:
+  - [1.0, 0.0, 0.0, 0.0]
+  - [0.0, 1.0, 0.0, 0.0]
+  - [0.0, 0.0, 1.0, 6.0]
+  - [0.0, 0.0, 0.0, 1.0]
+  properties:
+    slot_out:
+    - [1.0, 0.0, 0.0, 74.571]
+    - [0.0, 1.0, 0.0, 312.7]
+    - [-0.0, 0.0, 1.0, -73.001]
+    - [0.0, 0.0, 0.0, 1.0]
+    data:
+      unit: 0
+    length: 6
+    type: Universal
+    diameter: 9
+    slot_in:
+    - [1.0, 0.0, 0.0, 54.571]
+    - [0.0, 1.0, 0.0, 312.7]
+    - [-0.0, 0.0, 1.0, -73.001]
+    - [0.0, 0.0, 0.0, 1.0]
+    first_finger_offset:
+    model: Standard
+    num_tips:
+    separation:
+    tip_distance:
+    grippable:
+    voice_coil_position:
+    smart: false
+- name: tip2
+  cls: TnT.Tip
+  parent: tips
+  connection: tool2
+  frame:
+  - [1.0, 0.0, 0.0, 0.0]
+  - [0.0, 1.0, 0.0, 0.0]
+  - [0.0, 0.0, 1.0, 6.0]
+  - [0.0, 0.0, 0.0, 1.0]
+  properties:
+    slot_out:
+    - [1.0, 0.0, 0.0, 74.571]
+    - [-0.0, 1.0, -0.0, 332.7]
+    - [-0.0, 0.0, 1.0, -73.0]
+    - [0.0, 0.0, 0.0, 1.0]
+    data:
+      unit: 1
+    length: 6
+    type: Universal
+    diameter: 9
+    slot_in:
+    - [1.0, 0.0, 0.0, 54.571]
+    - [-0.0, 1.0, -0.0, 332.7]
+    - [-0.0, 0.0, 1.0, -73.0]
+    - [0.0, 0.0, 0.0, 1.0]
+    first_finger_offset:
+    model: Standard
+    num_tips:
+    separation:
+    tip_distance:
+    grippable:
+    voice_coil_position:
+    smart: false
+- name: cameras
+  cls: TnT.Cameras
+  parent: ws
+  connection: ws
+
+
+- name: Camera1
+  cls: TnT.Camera
+  parent: cameras
+  connection: camera_mount
+
+  arguments:
+    flipx: true
+    flipy: true
+    rotate: false
+    driver: simulator
+
+  properties:
+    calibration:
+      dist_coeffs:
+      - - -6.213524048982897
+      - - 83.45526509807402
+      - - -0.000991666070544166
+      - - -0.0014393590785550061
+      - - 1.4201125358596436
+      ppmm: 11.519866980962362
+      intrinsic:
+      - - 11647.174483027153
+        - 0.0
+        - 960.0
+      - - 0.0
+        - 11656.338432976334
+        - 720.0
+      - - 0.0
+        - 0.0
+        - 1.0
+    max_stream_fps: 30
+  frame:
+  - [1.0, 0.0, 0.0, 0.0]
+  - [0.0, 1.0, 0.0, 70.0]
+  - [0.0, 0.0, 1.0, 50.0]
+  - [0.0, 0.0, 0.0, 1.0]
+- name: iphonex
+  cls: NodeSimulatorObject
+  parent: ws
+  arguments:
+    enabled: false
+    type: texture
+    ppmm: 5
+    position: [250, 350, 0, 0, 0, 0]
+    image: tntserver/web/img/iphone_x.jpg
+    #draw: color black; rect 0 0 100 100; color red; rect 10 10 90 90;
+    width: 74
+    height: 155
+    simulator_parent_object: table
+  connection: ws
+
+- name: optofidelity_logo
+  cls: NodeSimulatorObject
+  parent: ws
+  arguments:
+    enabled: false
+    type: texture
+    ppmm: 2
+    position: [-23, 420, 44, 0, 0, 0]
+    image: tntserver/web/model/iphone/tex/optofidelity_logo.png
+    #draw: color black; rect 0 0 100 100; color red; rect 10 10 90 90;
+    width: 128
+    height: 128
+    simulator_parent_object: ox
+  connection: ws
+
+- name: blob_target
+  cls: NodeSimulatorObject
+  parent: ws
+  arguments:
+    enabled: true
+    type: blobs
+    ppmm: 8
+    position: [400, 200, 0, 0, 0, 0]
+    width: 200
+    height: 200
+    margin: 20
+    radius: 3
+    simulator_parent_object: table
+  connection: ws
+
+- name: chess_target
+  cls: NodeSimulatorObject
+  parent: ws
+  arguments:
+    enabled: false
+    type: chessboard
+    ppmm: 4
+    position: [50, -100, 300, 0, 0, 0]
+    width: 180
+    height: 180
+    bs: 5
+    bw: 12
+    bh: 8
+    simulator_parent_object: table
+  connection: ws
+
+- name: single_blob_target
+  cls: NodeSimulatorObject
+  parent: ws
+  arguments:
+    enabled: false
+    type: texture
+    ppmm: 2
+    position: [200, 200, 0, 0, 0, 0]
+    width: 180
+    height: 180
+    simulator_parent_object: table
+    draw: color black; rect 0 0 180 180 0; color white; circle 90 90 5 0;
+  connection: ws
+
+- name: camera_offset_target
+  cls: NodeSimulatorObject
+  parent: ws
+  arguments:
+    enabled: false
+    type: texture
+    ppmm: 8
+    position: [550, 350, 0, 0, 0, 0]
+    width: 50
+    height: 50
+    simulator_parent_object: table
+    draw: color black; circle 25 25 6 4; line 10 25 40 25 2; line 25 10 25 40 2;
+  connection: ws
+
+- name: simu_dut
+  cls: DutSimulation
+  #cls: Node
+  parent: duts
+  arguments:
+    screen:
+      width: 62
+      height: 134
+      ppmm: 10
+      position: [100, 200, 0, 0, 0, 10]
+    host: 127.0.0.1
+    port: 50008
+
+  properties:
+    svg_scale:
+    - 0.9324557114938875
+    - 0.7740327339270348
+    tl:
+      y: 84.53248385951754
+      z: -115.0
+      x: 119.10983859886251
+    tr:
+      y: 95.27782571014828
+      z: -115.0
+      x: 180.05693617382886
+    server_host: 127.0.0.1
+    base_distance: 10.0
+    width: 61.88708325894334
+    bl:
+      y: 216.3839411359445
+      z: -115.0
+      x: 95.86079256242863
+    height: 133.88549184852582
+    touch_distance: 0.0
+    server_port: 50008
+    data:
+      screen_width:
+        value: '0'
+      image_height:
+        value: '0'
+      screen_height:
+        value: '0'
+      image_width:
+        value: '0'
+  connection: duts
+
+  frame:
+  - [0.9848094667468109, -0.17363845831457314, 0.0, 119.10983859886251]
+  - [0.17363845831457345, 0.9848094667468107, 0.0, 84.53248385951754]
+  - [0.0, 0.0, 0.9999999999999997, -115.0]
+  - [0.0, 0.0, 0.0, 1.0]
+- properties:
+    svg_scale:
+    - 0.9324557114938875
+    - 0.7740327339270348
+    base_distance: 10.0
+    width: 0
+    bl:
+      y: 0.0
+      z: 0.0
+      x: 0.0
+    tr:
+      y: 0.0
+      z: 0.0
+      x: 0.0
+    data:
+      screen_width:
+        value: '0'
+      image_height:
+        value: '0'
+      screen_height:
+        value: '0'
+      image_width:
+        value: '0'
+    touch_distance: 0.0
+    surface_data:
+    tl:
+      y: 0.0
+      z: 0.0
+      x: 0.0
+    height: 0
+  name: dut_x
+  parent: duts
+  cls: TnT.Dut
+  arguments: {}
+  connection: duts
+
+- name: icons
+  cls: NodeIcons
+  parent: ws
+  connection: ws
+
+- name: images
+  cls: TnT.Images
+  parent: ws
+  connection: ws
+  properties:
+    image_folder_path: data/images
+    max_images: 10
+
+- name: physical_buttons
+  cls: TnT.PhysicalButtons
+  parent: ws
+  connection: ws
