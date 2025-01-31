@@ -372,7 +372,7 @@ class Context:
         self.html_color('Test sequence completed', 'green')
         self.indicators.set_status("Test sequence completed")
 
-    def _try_execute(self):
+    def _try_execute(self, db_path=None):
         """
         Execute test cases in try block to catch stop condition.
         """
@@ -380,7 +380,10 @@ class Context:
         # Open database just before execution to make sure that SQL objects are created in the same thread.
         test_case_modules = get_test_case_modules(self.tests_node)
 
-        self.db = MeasurementDB.ResultDatabase(self.database_path, test_case_modules)
+        if db_path:
+            self.db = MeasurementDB.ResultDatabase(db_path, test_case_modules)
+        else:
+            self.db = MeasurementDB.ResultDatabase(self.database_path, test_case_modules) #CW
 
         try:
             self._execute()
@@ -778,7 +781,7 @@ class Context:
         self.ui.log('<font color="red">%s</font>' % (error_message))
         logger.error(error_message)
 
-    def execute_tests(self):
+    def execute_tests(self, db_path=None):
         """
         Executes test cases.
         This is called by UI.
@@ -792,8 +795,10 @@ class Context:
         self.state = STATE_EXECUTING
 
         # self.root.traverse('execute', self)
-
-        self.execution_thread = threading.Thread(target=self._try_execute)
+        if db_path:  #CW
+            self.execution_thread = threading.Thread(target=self._try_execute(db_path=db_path))
+        else:
+            self.execution_thread = threading.Thread(target=self._try_execute())
         self.execution_thread.start()
 
     def set_database_path(self, path):

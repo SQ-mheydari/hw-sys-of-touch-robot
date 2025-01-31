@@ -285,12 +285,18 @@ def dict_to_node(dict, node):
         logger.error('"children" key not found in script history!')
 
     for child_name, child_data in children.items():
+        print(child_name)
         child = node.get_child(child_name)
+        print(child)
 
         if child is None:
+            print(child)
             if bool(child_data.get('enabled', False)):
+                print(child_data.get('enabled'))
                 logger.warning("Node {} is enabled in history but it no longer exists in node tree.".format(child_name))
         else:
+            print(child_data)
+            print(child)
             dict_to_node(child_data, child)
 
 

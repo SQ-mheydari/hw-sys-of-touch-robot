@@ -408,3 +408,261 @@
 [10/31/2024 10:06:43] Adapter 0 with IP address 10.10.10.100 found but not used
 [10/31/2024 10:06:43] Adapter 1 with IP address 172.24.116.196 found but not used
 [10/31/2024 10:06:43] Adapter 2 with IP address 192.168.127.105 found but not used
+[10/31/2024 21:56:02] DHCP Server is terminating (ignore error messages that follow)
+[10/31/2024 21:56:02] DHCP Server terminated
+[10/31/2024 21:56:02] DHCP Server V2.4.1 started as Service
+[10/31/2024 21:56:02] NetworkAdapter Initialization returns 0
+[10/31/2024 21:56:02] Adapter 0 with IP address 10.10.10.100 found but not used
+[10/31/2024 21:56:02] Adapter 1 with IP address 172.24.116.196 found but not used
+[10/31/2024 21:56:02] Adapter 2 with IP address 192.168.127.105 found but not used
+[10/31/2024 21:56:09] DHCP Server is terminating (ignore error messages that follow)
+[10/31/2024 21:56:09] DHCP Server terminated
+[10/31/2024 21:56:09] DHCP Server V2.4.1 started as Service
+[10/31/2024 21:56:09] NetworkAdapter Initialization returns 0
+[10/31/2024 21:56:09] Adapter 0 with IP address 10.10.10.100 found but not used
+[10/31/2024 21:56:09] Adapter 1 with IP address 172.24.116.196 found but not used
+[10/31/2024 21:56:09] Adapter 2 with IP address 192.168.127.105 found but not used
+[10/31/2024 22:20:45] DHCP Server V2.4.1 started as Service
+[10/31/2024 22:20:45] NetworkAdapter Initialization returns 0
+[10/31/2024 22:20:45] Adapter 0 with IP address 10.10.10.100 found but not used
+[10/31/2024 22:20:45] Adapter 1 with IP address 192.168.127.105 found but not used
+[10/31/2024 22:20:48] DHCP Server is terminating (ignore error messages that follow)
+[10/31/2024 22:20:48] DHCP Server terminated
+[10/31/2024 22:20:48] DHCP Server V2.4.1 started as Service
+[10/31/2024 22:20:48] NetworkAdapter Initialization returns 0
+[10/31/2024 22:20:48] Adapter 0 with IP address 10.10.10.100 found but not used
+[10/31/2024 22:20:48] Adapter 1 with IP address 172.24.116.196 found but not used
+[10/31/2024 22:20:48] Adapter 2 with IP address 192.168.127.105 found but not used
+[10/31/2024 22:20:52] DHCP Server is terminating (ignore error messages that follow)
+[10/31/2024 22:20:52] DHCP Server terminated
+[10/31/2024 22:20:52] DHCP Server V2.4.1 started as Service
+[10/31/2024 22:20:52] NetworkAdapter Initialization returns 0
+[10/31/2024 22:20:52] Adapter 0 with IP address 10.10.10.100 found but not used
+[10/31/2024 22:20:52] Adapter 1 with IP address 172.24.116.196 found but not used
+[10/31/2024 22:20:52] Adapter 2 with IP address 192.168.127.105 found but not used
+[10/31/2024 22:21:53] DHCP Server is terminating (ignore error messages that follow)
+[10/31/2024 22:21:53] DHCP Server terminated
+[10/31/2024 22:21:53] DHCP Server V2.4.1 started as Service
+[10/31/2024 22:21:53] NetworkAdapter Initialization returns 0
+[10/31/2024 22:21:53] Adapter 0 with IP address 10.10.10.100 found but not used
+[10/31/2024 22:21:53] Adapter 1 with IP address 192.168.127.105 found but not used
+[10/31/2024 22:22:48] DHCP Server V2.4.1 started as Service
+[10/31/2024 22:22:48] NetworkAdapter Initialization returns 0
+[10/31/2024 22:22:48] Adapter 0 with IP address 192.168.127.105 found but not used
+[10/31/2024 22:22:51] DHCP Server is terminating (ignore error messages that follow)
+[10/31/2024 22:22:51] DHCP Server terminated
+[10/31/2024 22:22:51] DHCP Server V2.4.1 started as Service
+[10/31/2024 22:22:51] NetworkAdapter Initialization returns 0
+[10/31/2024 22:22:51] Adapter 0 with IP address 10.10.10.100 found but not used
+[10/31/2024 22:22:51] Adapter 1 with IP address 192.168.127.105 found but not used
+[10/31/2024 22:22:54] DHCP Server is terminating (ignore error messages that follow)
+[10/31/2024 22:22:54] DHCP Server terminated
+[10/31/2024 22:22:54] DHCP Server V2.4.1 started as Service
+[10/31/2024 22:22:54] NetworkAdapter Initialization returns 0
+[10/31/2024 22:22:54] Adapter 0 with IP address 10.10.10.100 found but not used
+[10/31/2024 22:22:54] Adapter 1 with IP address 172.24.116.196 found but not used
+[10/31/2024 22:22:54] Adapter 2 with IP address 192.168.127.105 found but not used
+[10/31/2024 22:22:57] DHCP Server is terminating (ignore error messages that follow)
+[10/31/2024 22:22:57] DHCP Server terminated
+[10/31/2024 22:22:57] DHCP Server V2.4.1 started as Service
+[10/31/2024 22:22:57] NetworkAdapter Initialization returns 0
+[10/31/2024 22:22:57] Adapter 0 with IP address 10.10.10.100 found but not used
+[10/31/2024 22:22:57] Adapter 1 with IP address 172.24.116.196 found but not used
+[10/31/2024 22:22:57] Adapter 2 with IP address 192.168.127.105 found but not used
+[11/01/2024 10:12:07] DHCP Server is terminating (ignore error messages that follow)
+[11/01/2024 10:12:07] DHCP Server terminated
+[11/01/2024 10:12:07] DHCP Server V2.4.1 started as Service
+[11/01/2024 10:12:07] NetworkAdapter Initialization returns 0
+[11/01/2024 10:12:07] Adapter 0 with IP address 172.24.116.196 found but not used
+[11/01/2024 10:12:07] Adapter 1 with IP address 192.168.127.105 found but not used
+[11/01/2024 10:12:14] DHCP Server is terminating (ignore error messages that follow)
+[11/01/2024 10:12:14] DHCP Server terminated
+[11/01/2024 10:12:14] DHCP Server V2.4.1 started as Service
+[11/01/2024 10:12:14] NetworkAdapter Initialization returns 0
+[11/01/2024 10:12:14] Adapter 0 with IP address 172.24.116.196 found but not used
+[11/01/2024 10:12:14] Adapter 1 with IP address 192.168.127.105 found but not used
+[11/01/2024 10:12:18] DHCP Server is terminating (ignore error messages that follow)
+[11/01/2024 10:12:18] DHCP Server terminated
+[11/01/2024 10:12:18] DHCP Server V2.4.1 started as Service
+[11/01/2024 10:12:18] NetworkAdapter Initialization returns 0
+[11/01/2024 10:12:18] Adapter 0 with IP address 10.10.10.100 found but not used
+[11/01/2024 10:12:18] Adapter 1 with IP address 172.24.116.196 found but not used
+[11/01/2024 10:12:18] Adapter 2 with IP address 192.168.127.105 found but not used
+[11/02/2024 05:15:13] DHCP Server is terminating (ignore error messages that follow)
+[11/02/2024 05:15:13] DHCP Server terminated
+[11/02/2024 05:15:13] DHCP Server V2.4.1 started as Service
+[11/02/2024 05:15:13] NetworkAdapter Initialization returns 0
+[11/02/2024 05:15:13] Adapter 0 with IP address 10.10.10.100 found but not used
+[11/02/2024 05:15:13] Adapter 1 with IP address 172.24.116.196 found but not used
+[11/02/2024 05:15:13] Adapter 2 with IP address 192.168.127.105 found but not used
+[11/04/2024 05:50:39] DHCP Server is terminating (ignore error messages that follow)
+[11/04/2024 05:50:39] DHCP Server terminated
+[11/04/2024 05:50:39] DHCP Server V2.4.1 started as Service
+[11/04/2024 05:50:39] NetworkAdapter Initialization returns 0
+[11/04/2024 05:50:39] Adapter 0 with IP address 10.10.10.100 found but not used
+[11/04/2024 05:50:39] Adapter 1 with IP address 172.24.116.196 found but not used
+[11/04/2024 05:50:39] Adapter 2 with IP address 192.168.127.105 found but not used
+[11/05/2024 05:10:43] DHCP Server is terminating (ignore error messages that follow)
+[11/05/2024 05:10:43] DHCP Server terminated
+[11/05/2024 05:10:43] DHCP Server V2.4.1 started as Service
+[11/05/2024 05:10:43] NetworkAdapter Initialization returns 0
+[11/05/2024 05:10:43] Adapter 0 with IP address 10.10.10.100 found but not used
+[11/05/2024 05:10:43] Adapter 1 with IP address 172.24.116.196 found but not used
+[11/05/2024 05:10:43] Adapter 2 with IP address 192.168.127.105 found but not used
+[11/07/2024 05:47:41] DHCP Server is terminating (ignore error messages that follow)
+[11/07/2024 05:47:41] DHCP Server terminated
+[11/07/2024 05:47:41] DHCP Server V2.4.1 started as Service
+[11/07/2024 05:47:41] NetworkAdapter Initialization returns 0
+[11/07/2024 05:47:41] Adapter 0 with IP address 10.10.10.100 found but not used
+[11/07/2024 05:47:41] Adapter 1 with IP address 172.24.116.196 found but not used
+[11/07/2024 05:47:41] Adapter 2 with IP address 192.168.127.105 found but not used
+[11/12/2024 17:38:24] DHCP Server is terminating (ignore error messages that follow)
+[11/12/2024 17:38:24] DHCP Server terminated
+[11/12/2024 17:38:24] DHCP Server V2.4.1 started as Service
+[11/12/2024 17:38:24] NetworkAdapter Initialization returns 0
+[11/12/2024 17:38:24] Adapter 0 with IP address 10.10.10.100 found but not used
+[11/12/2024 17:38:24] Adapter 1 with IP address 192.168.127.105 found but not used
+[11/12/2024 17:39:17] DHCP Server V2.4.1 started as Service
+[11/12/2024 17:39:17] NetworkAdapter Initialization returns 0
+[11/12/2024 17:39:17] Adapter 0 with IP address 10.10.10.100 found but not used
+[11/12/2024 17:39:17] Adapter 1 with IP address 192.168.127.105 found but not used
+[11/12/2024 17:39:21] DHCP Server is terminating (ignore error messages that follow)
+[11/12/2024 17:39:21] DHCP Server terminated
+[11/12/2024 17:39:21] DHCP Server V2.4.1 started as Service
+[11/12/2024 17:39:21] NetworkAdapter Initialization returns 0
+[11/12/2024 17:39:21] Adapter 0 with IP address 10.10.10.100 found but not used
+[11/12/2024 17:39:21] Adapter 1 with IP address 172.24.116.196 found but not used
+[11/12/2024 17:39:21] Adapter 2 with IP address 192.168.127.105 found but not used
+[11/12/2024 17:39:24] DHCP Server is terminating (ignore error messages that follow)
+[11/12/2024 17:39:24] DHCP Server terminated
+[11/12/2024 17:39:24] DHCP Server V2.4.1 started as Service
+[11/12/2024 17:39:24] NetworkAdapter Initialization returns 0
+[11/12/2024 17:39:24] Adapter 0 with IP address 10.10.10.100 found but not used
+[11/12/2024 17:39:24] Adapter 1 with IP address 172.24.116.196 found but not used
+[11/12/2024 17:39:24] Adapter 2 with IP address 192.168.127.105 found but not used
+[11/12/2024 17:39:32] DHCP Server is terminating (ignore error messages that follow)
+[11/12/2024 17:39:32] DHCP Server terminated
+[11/12/2024 17:39:32] DHCP Server V2.4.1 started as Service
+[11/12/2024 17:39:32] NetworkAdapter Initialization returns 0
+[11/12/2024 17:39:32] Adapter 0 with IP address 10.10.10.100 found but not used
+[11/12/2024 17:39:32] Adapter 1 with IP address 192.168.127.105 found but not used
+[11/12/2024 17:40:25] DHCP Server V2.4.1 started as Service
+[11/12/2024 17:40:25] NetworkAdapter Initialization returns 0
+[11/12/2024 17:40:25] Adapter 0 with IP address 192.168.127.105 found but not used
+[11/12/2024 17:40:27] DHCP Server is terminating (ignore error messages that follow)
+[11/12/2024 17:40:27] DHCP Server terminated
+[11/12/2024 17:40:27] DHCP Server V2.4.1 started as Service
+[11/12/2024 17:40:27] NetworkAdapter Initialization returns 0
+[11/12/2024 17:40:27] Adapter 0 with IP address 10.10.10.100 found but not used
+[11/12/2024 17:40:27] Adapter 1 with IP address 192.168.127.105 found but not used
+[11/12/2024 17:40:30] DHCP Server is terminating (ignore error messages that follow)
+[11/12/2024 17:40:30] DHCP Server terminated
+[11/12/2024 17:40:30] DHCP Server V2.4.1 started as Service
+[11/12/2024 17:40:30] NetworkAdapter Initialization returns 0
+[11/12/2024 17:40:30] Adapter 0 with IP address 10.10.10.100 found but not used
+[11/12/2024 17:40:30] Adapter 1 with IP address 172.24.116.196 found but not used
+[11/12/2024 17:40:30] Adapter 2 with IP address 192.168.127.105 found but not used
+[11/12/2024 17:40:33] DHCP Server is terminating (ignore error messages that follow)
+[11/12/2024 17:40:33] DHCP Server terminated
+[11/12/2024 17:40:33] DHCP Server V2.4.1 started as Service
+[11/12/2024 17:40:33] NetworkAdapter Initialization returns 0
+[11/12/2024 17:40:33] Adapter 0 with IP address 10.10.10.100 found but not used
+[11/12/2024 17:40:33] Adapter 1 with IP address 172.24.116.196 found but not used
+[11/12/2024 17:40:33] Adapter 2 with IP address 192.168.127.105 found but not used
+[11/12/2024 20:48:54] DHCP Server is terminating (ignore error messages that follow)
+[11/12/2024 20:48:54] DHCP Server terminated
+[11/12/2024 20:48:54] DHCP Server V2.4.1 started as Service
+[11/12/2024 20:48:54] NetworkAdapter Initialization returns 0
+[11/12/2024 20:48:54] Adapter 0 with IP address 10.10.10.100 found but not used
+[11/12/2024 20:48:54] Adapter 1 with IP address 172.24.116.196 found but not used
+[11/12/2024 20:48:54] Adapter 2 with IP address 192.168.127.105 found but not used
+[11/20/2024 20:21:40] DHCP Server is terminating (ignore error messages that follow)
+[11/20/2024 20:21:40] DHCP Server terminated
+[11/20/2024 20:21:40] DHCP Server V2.4.1 started as Service
+[11/20/2024 20:21:40] NetworkAdapter Initialization returns 0
+[11/20/2024 20:21:40] Adapter 0 with IP address 10.10.10.100 found but not used
+[11/20/2024 20:21:40] Adapter 1 with IP address 172.24.116.196 found but not used
+[11/20/2024 20:21:40] Adapter 2 with IP address 192.168.127.105 found but not used
+[12/02/2024 00:50:06] DHCP Server V2.4.1 started as Service
+[12/02/2024 00:50:07] NetworkAdapter Initialization returns 0
+[12/02/2024 00:50:07] Adapter 0 with IP address 10.10.10.100 found but not used
+[12/02/2024 00:50:07] Adapter 1 with IP address 192.168.127.105 found but not used
+[12/02/2024 00:50:11] DHCP Server is terminating (ignore error messages that follow)
+[12/02/2024 00:50:11] DHCP Server terminated
+[12/02/2024 00:50:11] DHCP Server V2.4.1 started as Service
+[12/02/2024 00:50:11] NetworkAdapter Initialization returns 0
+[12/02/2024 00:50:11] Adapter 0 with IP address 10.10.10.100 found but not used
+[12/02/2024 00:50:11] Adapter 1 with IP address 172.24.116.196 found but not used
+[12/02/2024 00:50:11] Adapter 2 with IP address 192.168.127.105 found but not used
+[12/02/2024 00:50:14] DHCP Server is terminating (ignore error messages that follow)
+[12/02/2024 00:50:14] DHCP Server terminated
+[12/02/2024 00:50:14] DHCP Server V2.4.1 started as Service
+[12/02/2024 00:50:14] NetworkAdapter Initialization returns 0
+[12/02/2024 00:50:14] Adapter 0 with IP address 10.10.10.100 found but not used
+[12/02/2024 00:50:14] Adapter 1 with IP address 172.24.116.196 found but not used
+[12/02/2024 00:50:14] Adapter 2 with IP address 192.168.127.105 found but not used
+[12/11/2024 17:37:05] DHCP Server V2.4.1 started as Service
+[12/11/2024 17:37:05] NetworkAdapter Initialization returns 0
+[12/11/2024 17:37:05] Adapter 0 with IP address 10.10.10.100 found but not used
+[12/11/2024 17:37:05] Adapter 1 with IP address 192.168.127.105 found but not used
+[12/11/2024 17:37:11] DHCP Server is terminating (ignore error messages that follow)
+[12/11/2024 17:37:11] DHCP Server terminated
+[12/11/2024 17:37:11] DHCP Server V2.4.1 started as Service
+[12/11/2024 17:37:11] NetworkAdapter Initialization returns 0
+[12/11/2024 17:37:11] Adapter 0 with IP address 10.10.10.100 found but not used
+[12/11/2024 17:37:11] Adapter 1 with IP address 172.24.116.196 found but not used
+[12/11/2024 17:37:11] Adapter 2 with IP address 192.168.127.105 found but not used
+[12/11/2024 17:37:14] DHCP Server is terminating (ignore error messages that follow)
+[12/11/2024 17:37:14] DHCP Server terminated
+[12/11/2024 17:37:14] DHCP Server V2.4.1 started as Service
+[12/11/2024 17:37:14] NetworkAdapter Initialization returns 0
+[12/11/2024 17:37:14] Adapter 0 with IP address 10.10.10.100 found but not used
+[12/11/2024 17:37:14] Adapter 1 with IP address 192.168.127.105 found but not used
+[12/11/2024 17:37:20] DHCP Server is terminating (ignore error messages that follow)
+[12/11/2024 17:37:20] DHCP Server terminated
+[12/11/2024 17:37:20] DHCP Server V2.4.1 started as Service
+[12/11/2024 17:37:20] NetworkAdapter Initialization returns 0
+[12/11/2024 17:37:20] Adapter 0 with IP address 10.10.10.100 found but not used
+[12/11/2024 17:37:20] Adapter 1 with IP address 172.24.116.196 found but not used
+[12/11/2024 17:37:20] Adapter 2 with IP address 192.168.127.105 found but not used
+[12/11/2024 17:37:23] DHCP Server is terminating (ignore error messages that follow)
+[12/11/2024 17:37:23] DHCP Server terminated
+[12/11/2024 17:37:23] DHCP Server V2.4.1 started as Service
+[12/11/2024 17:37:23] NetworkAdapter Initialization returns 0
+[12/11/2024 17:37:23] Adapter 0 with IP address 10.10.10.100 found but not used
+[12/11/2024 17:37:23] Adapter 1 with IP address 192.168.127.105 found but not used
+[12/11/2024 17:37:29] DHCP Server is terminating (ignore error messages that follow)
+[12/11/2024 17:37:29] DHCP Server terminated
+[12/11/2024 17:37:29] DHCP Server V2.4.1 started as Service
+[12/11/2024 17:37:30] NetworkAdapter Initialization returns 0
+[12/11/2024 17:37:30] Adapter 0 with IP address 10.10.10.100 found but not used
+[12/11/2024 17:37:30] Adapter 1 with IP address 172.24.116.196 found but not used
+[12/11/2024 17:37:30] Adapter 2 with IP address 192.168.127.105 found but not used
+[12/11/2024 17:37:33] DHCP Server is terminating (ignore error messages that follow)
+[12/11/2024 17:37:33] DHCP Server terminated
+[12/11/2024 17:37:33] DHCP Server V2.4.1 started as Service
+[12/11/2024 17:37:33] NetworkAdapter Initialization returns 0
+[12/11/2024 17:37:33] Adapter 0 with IP address 10.10.10.100 found but not used
+[12/11/2024 17:37:33] Adapter 1 with IP address 172.24.116.196 found but not used
+[12/11/2024 17:37:33] Adapter 2 with IP address 192.168.127.105 found but not used
+[01/08/2025 23:57:26] DHCP Server is terminating (ignore error messages that follow)
+[01/08/2025 23:57:26] DHCP Server terminated
+[01/08/2025 23:57:26] DHCP Server V2.4.1 started as Service
+[01/08/2025 23:57:26] NetworkAdapter Initialization returns 0
+[01/08/2025 23:57:26] Adapter 0 with IP address 10.10.10.100 found but not used
+[01/08/2025 23:57:26] Adapter 1 with IP address 172.24.116.196 found but not used
+[01/08/2025 23:57:26] Adapter 2 with IP address 192.168.127.105 found but not used
+[01/10/2025 00:06:51] DHCP Server is terminating (ignore error messages that follow)
+[01/10/2025 00:06:51] DHCP Server terminated
+[01/10/2025 00:06:51] DHCP Server V2.4.1 started as Service
+[01/10/2025 00:06:51] NetworkAdapter Initialization returns 0
+[01/10/2025 00:06:51] Adapter 0 with IP address 10.10.10.100 found but not used
+[01/10/2025 00:06:51] Adapter 1 with IP address 172.24.116.196 found but not used
+[01/10/2025 00:06:51] Adapter 2 with IP address 192.168.127.105 found but not used
+[01/11/2025 00:24:39] DHCP Server is terminating (ignore error messages that follow)
+[01/11/2025 00:24:39] DHCP Server terminated
+[01/11/2025 00:24:39] DHCP Server V2.4.1 started as Service
+[01/11/2025 00:24:39] NetworkAdapter Initialization returns 0
+[01/11/2025 00:24:39] Adapter 0 with IP address 10.10.10.100 found but not used
+[01/11/2025 00:24:39] Adapter 1 with IP address 172.24.116.196 found but not used
+[01/11/2025 00:24:39] Adapter 2 with IP address 192.168.127.105 found but not used

@@ -1,0 +1,256 @@
+{
+    "test_parameters": {
+        "nodes": {
+            "Duts": {
+                "children": {
+                    "T3": {
+                        "children": {},
+                        "controls": {
+                            "command": "shell",
+                            "device": "d89cf5b9",
+                            "driver": "TCP Socket",
+                            "dut_resolution": [
+                                1080,
+                                2340
+                            ],
+                            "fetch_resolution": "False",
+                            "flip_x": "False",
+                            "flip_x_and_y": "False",
+                            "flip_y": "False",
+                            "input_dev": "event2",
+                            "pit_driver": "CYAT816XX.py",
+                            "pit_slot": 1,
+                            "program": "getevent"
+                        },
+                        "enabled": 1
+                    }
+                },
+                "controls": {},
+                "enabled": true
+            },
+            "Settings": {
+                "children": {},
+                "controls": {
+                    "default_acceleration": 200.0,
+                    "default_force": 100.0,
+                    "default_speed": 100.0,
+                    "force_application": "None",
+                    "line_drawing_speed": "100.0"
+                },
+                "enabled": true
+            },
+            "Tests": {
+                "children": {
+                    "MultiFinger tests": {
+                        "children": {
+                            "MultiFinger Swipe": {
+                                "children": {},
+                                "controls": {
+                                    "clearance": -0.5,
+                                    "swipe_radius": 6.0
+                                },
+                                "enabled": 0
+                            },
+                            "MultiFinger Tap": {
+                                "children": {},
+                                "controls": {},
+                                "enabled": 0
+                            }
+                        },
+                        "controls": {},
+                        "enabled": true
+                    },
+                    "One finger tests": {
+                        "children": {
+                            "First Contact Latency": {
+                                "children": {},
+                                "controls": {
+                                    "AmountOfPoints": 5,
+                                    "clearance": -0.1,
+                                    "edge_offset": 0.0,
+                                    "gridfile": "fivepoints.txt",
+                                    "gridunit": "mm",
+                                    "usegridfile": "False"
+                                },
+                                "enabled": 0
+                            },
+                            "Non-Stationary Reporting Rate": {
+                                "children": {},
+                                "controls": {
+                                    "clearance": -0.1,
+                                    "edge_offset": 0.0,
+                                    "swipe_radius": 6.0,
+                                    "swipe_type": "swipe"
+                                },
+                                "enabled": 0
+                            },
+                            "Repeatability": {
+                                "children": {},
+                                "controls": {
+                                    "AmountOfPoints": 5,
+                                    "AmountOfTaps": 5,
+                                    "azimuth_angles": "-45, 0, 45",
+                                    "clearance": -0.1,
+                                    "edge_offset": 0.0,
+                                    "gridfile": "fivepoints.txt",
+                                    "gridunit": "mm",
+                                    "usegridfile": "False"
+                                },
+                                "enabled": 0
+                            },
+                            "Stationary Jitter": {
+                                "children": {},
+                                "controls": {
+                                    "AmountOfPoints": 5,
+                                    "azimuth_angles": "-45, 0, 45",
+                                    "clearance": -0.1,
+                                    "edge_offset": 0.0,
+                                    "gridfile": "fivepoints.txt",
+                                    "gridunit": "mm",
+                                    "usegridfile": "False"
+                                },
+                                "enabled": 0
+                            },
+                            "Stationary Reporting Rate": {
+                                "children": {},
+                                "controls": {
+                                    "AmountOfPoints": 5,
+                                    "clearance": -0.1,
+                                    "edge_offset": 0.0,
+                                    "gridfile": "fivepoints.txt",
+                                    "gridunit": "mm",
+                                    "usegridfile": "False"
+                                },
+                                "enabled": 0
+                            },
+                            "Swipe": {
+                                "children": {},
+                                "controls": {
+                                    "azimuth_angles": "-45, 0, 45",
+                                    "clearance": -0.1,
+                                    "diagonallines": "False",
+                                    "edge_offset_x": 0.0,
+                                    "edge_offset_y": 0.0,
+                                    "grid_spacing": 2.0,
+                                    "swipe_radius": 6.0,
+                                    "swipe_type": "swipe",
+                                    "verticallines": "False",
+                                    "worstcasetest": "True"
+                                },
+                                "enabled": 1
+                            },
+                            "Tap": {
+                                "children": {},
+                                "controls": {
+                                    "azimuth_angles": "-45, 0, 45",
+                                    "clearance": -0.1,
+                                    "edge_offset_x": 0.0,
+                                    "edge_offset_y": 0.0,
+                                    "grid_spacing_x": 2.0,
+                                    "grid_spacing_y": 2.0,
+                                    "gridfile": "fivepoints.txt",
+                                    "gridunit": "mm",
+                                    "tap_duration": 0.0,
+                                    "usegridfile": "False"
+                                },
+                                "enabled": 0
+                            }
+                        },
+                        "controls": {},
+                        "enabled": true
+                    },
+                    "Two finger tests": {
+                        "children": {
+                            "Pinch": {
+                                "children": {},
+                                "controls": {
+                                    "azimuth_angles": "-45, 0, 45",
+                                    "min_separation": 10.0,
+                                    "pinch_direction": "Both",
+                                    "pinch_length": 10.0,
+                                    "speed": 30.0,
+                                    "test_locations": "Center",
+                                    "tip1": "6mm-1",
+                                    "tip2": "6mm-1"
+                                },
+                                "enabled": 0
+                            },
+                            "Separation": {
+                                "children": {},
+                                "controls": {
+                                    "azimuth_angles": "0, -90, diagonal",
+                                    "number_of_steps": 13,
+                                    "start_separation": 10.0,
+                                    "step_size": 1.0,
+                                    "tip1": "6mm-1",
+                                    "tip2": "6mm-2"
+                                },
+                                "enabled": 0
+                            }
+                        },
+                        "controls": {},
+                        "enabled": true
+                    }
+                },
+                "controls": {},
+                "enabled": true
+            },
+            "Tips": {
+                "children": {
+                    "6mm-1": {
+                        "children": {},
+                        "controls": {},
+                        "enabled": 1
+                    },
+                    "6mm-2": {
+                        "children": {},
+                        "controls": {},
+                        "enabled": 0
+                    },
+                    "9mm-1": {
+                        "children": {},
+                        "controls": {},
+                        "enabled": 0
+                    },
+                    "9mm-2": {
+                        "children": {},
+                        "controls": {},
+                        "enabled": 0
+                    },
+                    "Soft 9mm-1": {
+                        "children": {},
+                        "controls": {},
+                        "enabled": 0
+                    },
+                    "Soft 9mm-2": {
+                        "children": {},
+                        "controls": {},
+                        "enabled": 0
+                    }
+                },
+                "controls": {},
+                "enabled": true
+            }
+        },
+        "parameters": {
+            "Manufacturer": {
+                "value": "HWSE-P1-F1b-AUO-CELLULAR-SN427-00145"
+            },
+            "Notes": {
+                "value": "usb connected, display black"
+            },
+            "Operator": {
+                "value": "CC"
+            },
+            "Program": {
+                "value": "test t3 swipe and tap 6mm 1 finger"
+            },
+            "Serial": {
+                "value": "HWSE-P1-F1b-AUO-CELLULAR-SN427-00145"
+            },
+            "Version": {
+                "value": "MTI: 7.3.0035 MCHP: 4.11"
+            }
+        }
+    }
+}
