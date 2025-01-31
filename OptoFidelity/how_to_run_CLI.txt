@@ -1,0 +1,9 @@
+## Setup - make suyre cli_test.json has the necessary tests you want to run. enable them with a "1" in the enable field. 
+
+
+## First double click and open TnTServer
+# Then open a new command line and run the following 
+
+cd C:\OptoFidelity\TPPT
+C:\OptoFidelity\TPPT\venv\Scripts\activate.bat
+python C:\OptoFidelity\TPPT\standalone.py "test_parameters"
