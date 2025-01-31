@@ -79,56 +79,29 @@ class PinchTest(TestBase):
         # Add the image name and parameters to the report
         # Typically image is added like this:
         #
-        templateParams['figure'] = ImageFactory.create_image_name(self.test_id, 'p2pdiff')
-
         t = Timer()
 
+        # data for the report
         results = self.read_test_results()
         templateParams['results'] = results
+        dutinfo = self.get_dutinfo()
+
+        t.Time("Results")
+        templateParams['figures'] = [ImageFactory.create_image_name(self.test_id, 'p2pdiff'),
+                                    ImageFactory.create_image_name(self.test_id, 'timeseries')]
+
 
         t.Time("Results")
 
         # set the content to be used
-        templateParams['test_page'] = 'test_dummy.html'
+        #templateParams['test_page'] = 'test_dummy.html'
+        templateParams['test_page'] = 'test_pinch.html'
         templateParams['version'] = Version
         
         template = MarkupTemplate(open("templates/test_common_body.html"))
         stream = template.generate(**(templateParams))
         t.Time("Markup")
-        #return stream.render('xhtml'), results['verdict']
-        return stream.render('xhtml'), 'Pass'
-
-##        self.clearanalysis()
-##
-##        # Create common template parameters (including ddttest dictionary, testsession dictionary, test_id, test_type_name etc)
-##        templateParams = super(PinchTest, self).create_common_templateparams(**kwargs)
-##        t = Timer()
-##        results = self.read_test_results()
-##
-##        # data for the report
-##        templateParams['results'] = results
-##        templateParams['figures'] = [ImageFactory.create_image_name(self.test_id, 'sepgen'),
-##                                     ImageFactory.create_image_name(self.test_id, 'sepdet')]
-##
-##        t.Time("Results")
-##
-##        # set the content to be used
-##        templateParams['test_page'] = 'test_separation.html'
-##        templateParams['test_script'] = 'test_page_subplots.js'
-##        templateParams['version'] = Version
-##
-##        template = MarkupTemplate(open("templates/test_common_body.html"))
-##        stream = template.generate(**(templateParams))
-##        t.Time("Markup")
-##
-##        if results['verdict'] is None:
-##            verdict = 'N/A'
-##        elif results['verdict']:
-##            verdict = 'Pass'
-##        else:
-##            verdict = 'Fail'
-##
-##        return stream.render('xhtml'), verdict
+        return stream.render('xhtml'), results['verdict']
 
     # Create images for the report. If the function returns a value, it is used as the new image (including full path)
     def createimage(self, imagepath, image_name, *args, **kwargs):
@@ -139,9 +112,21 @@ class PinchTest(TestBase):
                 dutinfo = plotinfo.TestDUTInfo(testdut_id=self.dut['id'], dbsession=dbsession)
                 results = self.read_test_results(dutinfo=dutinfo, dbsession=dbsession)
                 t.Time("Results")
-                title = 'Preview: One Finger Tap'
+                title = 'Pinch - Maxoffset touch to line'
+                print(results["failed_points"])
                 plot_factory.plot_pinch_swipes_on_target(imagepath, dutinfo, results["passed_points"],results["failed_points"],results["lines"], *args, title=title, **kwargs)
                 t.Time("Image")
+
+        elif image_name == 'timeseries':
+            t = Timer(1)
+            with db.get_database().session() as dbsession:
+                dutinfo = plotinfo.TestDUTInfo(testdut_id=self.dut['id'], dbsession=dbsession)
+                results = self.read_test_results(dutinfo=dutinfo, dbsession=dbsession)
+            t = Timer(1)
+            t.Time("Results")
+            title = 'Preview: Time Series Plot'
+            plot_factory.plot_pinch_timeseries(imagepath, dutinfo, results["all_points"],results["lines"], *args, title=title, **kwargs)
+            t.Time("Image")
 
         return None
 
@@ -164,18 +149,9 @@ class PinchTest(TestBase):
         lines = []
         passed_points = []
         failed_points = []
+        all_points = []
 
         for test in tests:
-            # Single separation angle & distance
-            # Single location and angle
-##            location =[test.start_x, test.start_y]
-##            if location not in locations:
-##                locations[location] = {'angles':{}}
-##
-##            angle = test.azimuth
-##            dresults = {}
-##            locations[location]['angles'][angle] = dresults
-
             panel_points = [(p.panel_x, p.panel_y) for p in test.pinch_results]
             target_points = analyzers.panel_to_target(panel_points, dutinfo)
             start1_x, start1_y, end1_x, end1_y, start2_x, start2_y, end2_x, end2_y = self.calculate_start_end(test.center_x, test.center_y, test.robot_azimuth, test.start_separation, test.end_separation)
@@ -183,125 +159,88 @@ class PinchTest(TestBase):
             swipe2_start, swipe2_end = analyzers.robot_to_target([(start2_x, start2_y), (end2_x, end2_y)], dutinfo)
             lines.append((swipe1_start, swipe1_end))
             lines.append((swipe2_start, swipe2_end))##come back to this
-            swipe1_points = analyzers.target_to_swipe(target_points, swipe1_start, swipe1_end)
-            swipe2_points = analyzers.target_to_swipe(target_points, swipe2_start, swipe2_end)
+            # swipe1_points = analyzers.target_to_swipe(target_points, swipe1_start, swipe1_end)
+            # swipe2_points = analyzers.target_to_swipe(target_points, swipe2_start, swipe2_end)
+            swipe1_target_points = self.calculate_target_swipe_points(swipe1_start, swipe1_end,0.1)
+            swipe2_target_points = self.calculate_target_swipe_points(swipe2_start, swipe2_end,0.1)
 
-            ## Everything will be recorded as a PASS for now until we dial in our alogrithm 
+            maxoffset = get_setting('maxoffset', dutinfo.sample_id)
+
             passfail_values = []
-            for p1, p2 in zip(swipe1_points, swipe2_points):
-                if analyzers.round_dec(abs(p1[1])) <= get_setting('maxoffset', dutinfo.sample_id) or analyzers.round_dec(abs(p2[1])) <= get_setting('maxoffset', dutinfo.sample_id):
-                    passfail_values.append(True)
-                else:
-                    passfail_values.append(True)
+            for point in target_points:
+                passed = False
+                for p1 in swipe1_target_points:
+                    if self.calculate_distance(point, p1) <  maxoffset:
+                        passed = True
+                for p2 in swipe2_target_points:
+                    if self.calculate_distance(point, p2) <  maxoffset:
+                        passed = True
+                passfail_values.append(passed)
 
-            #passfail_values = [analyzers.round_dec(abs(p[1])) <= get_setting('maxoffset', dutinfo.sample_id) for p in (swipe1_points)]
             passed = [target_points[i] for (i,t) in enumerate(passfail_values) if t]
             failed = [target_points[i] for (i,t) in enumerate(passfail_values) if not t]
             passed_points.extend(passed)
             failed_points.extend(failed)
+            all_points.extend(target_points)
+
+        print(failed_points)
+        if len(failed_points)>0:
+            verdict = 'Fail'
+        else:
+            verdict = 'Pass'
 
         results = {'lines': lines,
         'passed_points': passed_points,
-        'failed_points': failed_points}
-            
-
-##            pdist = (math.cos(math.radians(-test.separation_angle)) * test.tool_separation,
-##                     math.sin(math.radians(-test.separation_angle)) * test.tool_separation)
-##            dresults['point']    = analyzers.robot_to_target((test.robot_x, test.robot_y), dutinfo)
-##            dresults['point_diameter'] = test.finger1_diameter
-##            dresults['angle']    = test.separation_angle
-##            dresults['point2']   = [c + d for c, d in zip(dresults['point'], pdist)]
-##            dresults['point2_diameter'] = test.finger2_diameter
-##            dresults['errors']   = set()
-##            dresults['image']    = ImageFactory.create_image_name(self.test_id, 'sepdtls', angle, distance)
-##            taps = {}
-##            dresults['taps']     = taps
-##            for tap in test.separation_results:
-##                if tap.finger_id not in taps:
-##                    taps[tap.finger_id] = []
-##                taps[tap.finger_id].append(analyzers.panel_to_target((tap.panel_x, tap.panel_y), dutinfo))
-##
-##            if len(taps.keys()) == 0:
-##                # No measurements found
-##                dresults['errors'].add('No measurements for tap')
-##                errors.add('No measurements for tap')
-##                dresults['verdict'] = False
-##                dresults['verdict_text'] = 'N/A'
-##            elif len(taps.keys()) == 1:
-##                # No separation
-##                dresults['verdict'] = False
-##                dresults['verdict_text'] = 'Fail'
-##            elif len(taps.keys()) == 2:
-##                # Separation found
-##                dresults['verdict'] = True
-##                dresults['verdict_text'] = 'Pass'
-##            else:
-##                # Too many id's
-##                dresults['errors'].add('Too many ids for tap')
-##                errors.add('Too many ids for tap')
-##                dresults['verdict'] = False
-##                dresults['verdict_text'] = 'Fail'
-##
-##        # Calculate results
-##        verdict = None
-##        for angle, values in angles.items():
-##            sorteddist = sorted(values['distances'].keys(), key=cmp_to_key(lambda x,y: cmp(float(x), float(y))))
-##            #print "Angle %s - %s" % (angle, str(sorteddist))
-##            mindist = None
-##            for dist in sorteddist:
-##                if values['distances'][dist]['verdict']:
-##                    if mindist is None:
-##                        mindist = dist
-##                else:
-##                    mindist = None
-##
-##            values['distance_ids'] = sorteddist
-##            values['separation'] = mindist
-##            # Verdict calculation
-##            if angle == '0.0' or angle == '90.0':
-##                dverdict = mindist is not None and (float(mindist) <= get_setting('maxseparation', dutinfo.sample_id))
-##                values['maxseparation'] = get_setting('maxseparation', dutinfo.sample_id)
-##            else:
-##                dverdict = mindist is not None and (float(mindist) <= get_setting('maxdiagseparation', dutinfo.sample_id))
-##                values['maxseparation'] = get_setting('maxdiagseparation', dutinfo.sample_id)
-##            values['verdict'] = dverdict
-##            if verdict is None:
-##                verdict = dverdict
-##            elif dverdict == False:
-##                verdict = False
-##
-##        angle_ids = sorted(angles.keys(), key=cmp_to_key(lambda x,y: cmp(float(x), float(y))))
-
-##        results = {'max_input_error': max_input_error,
-##                   'max_input_verdict': max_input_verdict,
-##                   'total_points': len(targets),
-##                   'missing_inputs': len(missing),
-##                   'missing_inputs_verdict': (len(missing) - len(missing_edge) <= get_setting('maxmissing', dutinfo.sample_id)),
-##                   'missing_edge_inputs': len(missing_edge),
-##                   'missing_edge_inputs_verdict': (len(missing_edge) <= get_setting('maxedgemissing', dutinfo.sample_id)),
-##                   'passed_points': passed_points,
-##                   'failed_points': failed_points,
-##                   'targets': targets,
-##                   'maxposerror': get_setting('maxposerror', dutinfo.sample_id),
-##                   'hits': hits,
-##                   'missing': missing,
-##                   'distances': distances,
-##                   }
+        'failed_points': failed_points,
+        'all_points': all_points,
+        'verdict': verdict,
+        'number_of_failed_points': len(failed_points), 
+        'maxoffset': get_setting('maxoffset', dutinfo.sample_id)}
 
         return results
     
+    def calculate_distance(self, point1, point2): 
+        distance = math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)
+        return distance
+
+
+    def calculate_target_swipe_points(self, start, end, step_size):
+        # Unpack start and end coordinates
+        x1, y1 = start
+        x2, y2 = end
+
+        # Calculate the total distance between start and end points
+        total_distance = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+
+        # Determine the number of steps required
+        num_steps = int(total_distance / step_size)
+
+        # Calculate the x and y increments for each step
+        x_increment = (x2 - x1) / num_steps
+        y_increment = (y2 - y1) / num_steps
+
+        # Generate the points along the line
+        points = []
+        for step in range(num_steps + 1):
+            x = x1 + step * x_increment
+            y = y1 + step * y_increment
+            points.append((x, y))
+
+        return points
+    
     def calculate_start_end(self, center_x, center_y, angle, start_separation, end_separation):
+        #multiplying the angle by -1 because otherwise the angle was inverted compared to the angle for the gathered swipe
         
-        y_diff = math.sin(math.radians(angle))*.5*start_separation
+        y_diff = math.sin(math.radians(angle*-1))*.5*start_separation
         start1_y = (center_y+y_diff)
         start2_y = (center_y-y_diff)
-        x_diff = math.cos(math.radians(angle))*.5*start_separation
+        x_diff = math.cos(math.radians(angle*-1))*.5*start_separation
         start1_x = (center_x+x_diff)
         start2_x = (center_x-x_diff)
-        y_end_diff = math.sin(math.radians(angle))*.5*end_separation
+        y_end_diff = math.sin(math.radians(angle*-1))*.5*end_separation
         end1_y = (center_y+y_end_diff)
         end2_y = (center_y-y_end_diff)
-        x_end_diff = math.cos(math.radians(angle))*.5*end_separation
+        x_end_diff = math.cos(math.radians(angle)*-1)*.5*end_separation
         end1_x = (center_x+x_end_diff)
         end2_x = (center_x-x_end_diff)
         
@@ -309,18 +248,19 @@ class PinchTest(TestBase):
         
 
     def get_results(self) -> dict:
+       ## I don't think this function is really used for anything at this moment
+       ## Ideally the results should be split out by angle and location but that will require more development in the future
        dutinfo = self.get_dutinfo()
        all_results = self.read_test_results(dutinfo)
 
-       results = {
-           'summary': [],
-       }
+    #    results = {
+    #        'summary': [],
+    #    }
        
-       angle_result = {
-            'location': [0,0],
-            'verdict': "Pass"
-        }
-       results['summary'].append(angle_result)
+    #    angle_result = {
+    #         'location': [0,0],
+    #         'verdict': "Pass"
+    #     }
     #    for angle, values in all_results['angles'].items():
     #        angle_result = {
     #            'angle': float(angle),
@@ -339,4 +279,4 @@ class PinchTest(TestBase):
     #            }
     #            results['angles'].append(angle_result)
 
-       return results
+       return all_results

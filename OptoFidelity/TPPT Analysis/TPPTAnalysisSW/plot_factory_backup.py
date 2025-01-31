@@ -34,12 +34,11 @@ plotSemaphore = Semaphore()
 # Color constants
 _PASS = '#00FF00'
 _FAIL = '#FF0000'
-_HOTPINK = '#FF69B4'
 _DEFAULT = 'r'
 _STATIONARY_EDGE_PINCH = '#DFDF51'
 
 # Scatter plot marker size (in points)
-_markersize = 5
+_markersize = 40
 
 # Z-orders for different elements
 _zorder = {'pass': 3,
@@ -520,54 +519,6 @@ def plot_swipes_on_target(imagepath, plotinfo, dutinfo, *args, **kwargs):
     t.Time("Save")
 
 @synchronized
-def plot_pinch_timeseries(imagepath, dutinfo, points, lines, *args, **kwargs):
-#def plot_pinch_swipes_on_target(imagepath, plotinfo, dutinfo, passed_points, failed_points, lines, *args, **kwargs):
-    """ Plots swipe diagram -  'target_points' of points (x,y) on target coordinates and
-        'lines' that are tuple of (x,y) coordinates giving swipe start and end coordinates.
-       alternatively, 'target_points' can be replaced by 'passed_points' and 'failed_points' """
-    # Used by: hover, one finger swipe, non-stationary reporting rate
-    t = Timer(3)
-
-    if len(args) > 0 and args[0] == 'detailed':
-        fig = plt.figure(num=2, dpi=100, figsize=(25, 25))
-    else:
-        fig = plt.figure(num=2, dpi=100, figsize=(25, 25))
-        #fig = plt.figure(num=1, dpi=100, figsize=(10, 8))
-    plt.clf()
-
-    order = np.arange(len(points))
-    norm = plt.Normalize(order.min())
-    cmap = plt.get_cmap('rainbow')
-
-    # Plot panel borders
-    plt.axis('equal')
-    plt.axis([-5.0, dutinfo.dimensions[0] + 5.0, dutinfo.dimensions[1] + 5.0, -5.0])
-    plotters.plot_panel_borders(dutinfo.dimensions[0], dutinfo.dimensions[1],zorder=_zorder['edges'])
-
-    # if 'title' in kwargs:
-    #     plt.suptitle(kwargs['title'])
-
-    # Plot arrows in the image
-    for line in lines:
-        plt.arrow(line[0][0], line[0][1],
-                    line[1][0] - line[0][0],
-                    line[1][1] - line[0][1],
-                    width=0.2, length_includes_head=True, color='black')
-
-    t.Time("Arrows")
-
-    x = [p[0] for p in points]
-    y = [p[1] for p in points]
-    plt.scatter(x, y, s=_markersize, c=order, cmap = cmap, norm = norm, zorder=_zorder['pass'])
-
-    t.Time("Plots")
-
-    # Create the image
-    fig.savefig(imagepath)
-    plt.close('all')
-    t.Time("Save")
-
-@synchronized
 def plot_pinch_swipes_on_target(imagepath, dutinfo, passed_points, failed_points, lines, *args, **kwargs):
 #def plot_pinch_swipes_on_target(imagepath, plotinfo, dutinfo, passed_points, failed_points, lines, *args, **kwargs):
     """ Plots swipe diagram -  'target_points' of points (x,y) on target coordinates and
@@ -596,16 +547,16 @@ def plot_pinch_swipes_on_target(imagepath, dutinfo, passed_points, failed_points
         plt.arrow(line[0][0], line[0][1],
                     line[1][0] - line[0][0],
                     line[1][1] - line[0][1],
-                    width=0.2, length_includes_head=True, color='black')
+                    width=0.2, length_includes_head=True)
 
     t.Time("Arrows")
 
     x = [p[0] for p in passed_points]
     y = [p[1] for p in passed_points]
-    plt.scatter(x, y, s=_markersize, c=_PASS, zorder=_zorder['pass'],edgecolors='none')
+    plt.scatter(x, y, s=_markersize, c=_PASS, zorder=_zorder['pass'],edgecolors='k')
     x = [p[0] for p in failed_points]
     y = [p[1] for p in failed_points]
-    plt.scatter(x, y, s=_markersize, c=_FAIL, zorder=_zorder['fail'],edgecolors='none')
+    plt.scatter(x, y, s=_markersize, c=_FAIL, zorder=_zorder['fail'],edgecolors='k')
 
     t.Time("Plots")
 

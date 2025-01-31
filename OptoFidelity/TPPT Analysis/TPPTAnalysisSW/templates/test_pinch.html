@@ -1,0 +1,26 @@
+    <div xmlns:py="http://genshi.edgewall.org/">
+    <?python from genshi.builder import tag ?>
+    <?python from genshi.util import flatten ?>
+      <h3>Pinch Test Summary</h3>
+      <table class="datatable test_verdicts">
+        <tr>
+            <th></th>
+            <th>Number of failed points</th>
+            <th>Maximum offest allowed</th>
+            <th>Pass/Fail</th>
+        </tr>
+        <tr>
+            <td class="vertical_header_th">''</td>
+            <td>${"%s" % results.number_of_failed_points}</td>
+            <td>${"%s" % results.maxoffset} mm</td>
+            <td class="${'passed' if results.verdict == 'Pass' else 'failed' if results.verdict == 'Fail' else ''}">${results.verdict}
+            </td>
+        </tr>
+      </table>
+
+      <py:if test="'noimages' not in kwargs">
+      <py:for each="figure in figures">
+        <img class="preview" src="${figure}" alt="Preview image"/>
+      </py:for>
+      </py:if>
+    </div>
